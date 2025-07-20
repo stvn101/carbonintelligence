@@ -329,6 +329,71 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Live Carbon Feed Routes
+  app.get("/api/carbon/live-metrics", async (req, res) => {
+    try {
+      const { category } = req.query;
+      const metrics = await storage.getLiveCarbonMetrics(category as string);
+      res.json(metrics);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch live carbon metrics" });
+    }
+  });
+
+  app.get("/api/carbon/embodied-breakdown", async (req, res) => {
+    try {
+      const embodiedData = await storage.getCarbonEmbodiedData();
+      
+      // Calculate breakdown by material type
+      const breakdown = embodiedData.reduce((acc: any[], data) => {
+        const existing = acc.find(item => item.materialType === data.materialType);
+        const totalCarbon = parseFloat(data.totalEmbodiedCarbon);
+        
+        if (existing) {
+          existing.totalEmbodiedCarbon = (parseFloat(existing.totalEmbodiedCarbon) + totalCarbon).toString();
+        } else {
+          acc.push({
+            materialType: data.materialType,
+            totalEmbodiedCarbon: data.totalEmbodiedCarbon,
+            percentage: 0, // Will calculate after
+            trend: Math.random() > 0.5 ? "up" : "down",
+            change: `${(Math.random() * 10 - 5).toFixed(1)}%`
+          });
+        }
+        return acc;
+      }, []);
+
+      // Calculate percentages
+      const total = breakdown.reduce((sum, item) => sum + parseFloat(item.totalEmbodiedCarbon), 0);
+      breakdown.forEach(item => {
+        item.percentage = total > 0 ? (parseFloat(item.totalEmbodiedCarbon) / total) * 100 : 0;
+      });
+
+      res.json(breakdown);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch embodied carbon breakdown" });
+    }
+  });
+
+  app.get("/api/carbon/reduction-tactics", async (req, res) => {
+    try {
+      const { priority } = req.query;
+      const tactics = await storage.getCarbonReductionTactics(priority as string);
+      res.json(tactics);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch carbon reduction tactics" });
+    }
+  });
+
+  app.post("/api/carbon/live-metrics", async (req, res) => {
+    try {
+      const metric = await storage.createLiveCarbonMetric(req.body);
+      res.json(metric);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to create live carbon metric" });
+    }
+  });
+
   // Integration routes
   app.get("/api/integrations/status", async (req, res) => {
     try {

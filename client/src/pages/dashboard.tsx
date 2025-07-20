@@ -10,6 +10,7 @@ import { CarbonBudget } from "@/components/dashboard/carbon-budget";
 import { AIChatModal } from "@/components/dashboard/ai-chat-modal";
 import { MLInsights } from "@/components/dashboard/ml-insights";
 import { PlatformIntegrations } from "@/components/dashboard/platform-integrations";
+import { LiveCarbonFeed } from "@/components/dashboard/live-carbon-feed";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 
@@ -79,6 +80,11 @@ export default function Dashboard() {
               progress={overview?.netZeroProgress || 0}
               subtitle="Target: Net Zero by 2030"
             />
+          </div>
+
+          {/* Live Carbon Feed - Featured Section */}
+          <div className="grid grid-cols-1 gap-6 mb-6">
+            <LiveCarbonFeed />
           </div>
 
           {/* Charts and Analysis Row */}

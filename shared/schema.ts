@@ -120,6 +120,76 @@ export const integrations = pgTable("integrations", {
   createdAt: timestamp("created_at").defaultNow(),
 });
 
+// Real-time carbon embodied tracking
+export const carbonEmbodiedData = pgTable("carbon_embodied_data", {
+  id: serial("id").primaryKey(),
+  projectId: integer("project_id").references(() => projects.id),
+  materialType: text("material_type").notNull(), // concrete, steel, aluminum, timber, etc.
+  materialSubtype: text("material_subtype"), // reinforced_concrete, structural_steel, etc.
+  quantity: decimal("quantity", { precision: 10, scale: 2 }).notNull(),
+  unit: text("unit").notNull(), // kg, m3, tonnes, etc.
+  embodiedCarbon: decimal("embodied_carbon", { precision: 10, scale: 3 }).notNull(), // kgCO2e per unit
+  totalEmbodiedCarbon: decimal("total_embodied_carbon", { precision: 10, scale: 2 }).notNull(),
+  supplier: text("supplier"),
+  certifications: jsonb("certifications"), // EPD, BREEAM, LEED, etc.
+  transportDistance: decimal("transport_distance", { precision: 8, scale: 2 }),
+  transportMode: text("transport_mode"), // truck, rail, ship
+  transportEmissions: decimal("transport_emissions", { precision: 10, scale: 2 }),
+  wastePercentage: decimal("waste_percentage", { precision: 5, scale: 2 }),
+  recycledContent: decimal("recycled_content", { precision: 5, scale: 2 }),
+  endOfLifeScenario: text("end_of_life_scenario"), // recycle, landfill, incineration
+  installationDate: timestamp("installation_date"),
+  dataSource: text("data_source").notNull(), // manual, api, sensor, integration
+  confidence: decimal("confidence", { precision: 3, scale: 2 }), // data quality score
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+// Live carbon metrics for real-time monitoring
+export const liveCarbonMetrics = pgTable("live_carbon_metrics", {
+  id: serial("id").primaryKey(),
+  metricType: text("metric_type").notNull(), // embodied, operational, transport, total
+  value: decimal("value", { precision: 12, scale: 3 }).notNull(),
+  unit: text("unit").notNull().default("tCO2e"),
+  timestamp: timestamp("timestamp").notNull().defaultNow(),
+  projectId: integer("project_id").references(() => projects.id),
+  category: text("category"), // materials, energy, transport, waste
+  subcategory: text("subcategory"),
+  benchmark: decimal("benchmark", { precision: 12, scale: 3 }), // industry benchmark
+  target: decimal("target", { precision: 12, scale: 3 }), // target value
+  trend: text("trend"), // increasing, decreasing, stable
+  changeFromPrevious: decimal("change_from_previous", { precision: 8, scale: 3 }),
+  alerts: jsonb("alerts"), // threshold alerts, anomalies
+});
+
+// Carbon reduction tactics and recommendations
+export const carbonReductionTactics = pgTable("carbon_reduction_tactics", {
+  id: serial("id").primaryKey(),
+  title: text("title").notNull(),
+  description: text("description").notNull(),
+  category: text("category").notNull(), // material_substitution, design_optimization, transport, etc.
+  applicablePhases: jsonb("applicable_phases"), // design, procurement, construction, operation
+  potentialReduction: decimal("potential_reduction", { precision: 10, scale: 2 }), // tCO2e
+  reductionPercentage: decimal("reduction_percentage", { precision: 5, scale: 2 }), // %
+  implementationCost: decimal("implementation_cost", { precision: 10, scale: 2 }),
+  paybackPeriod: integer("payback_period"), // months
+  feasibilityScore: decimal("feasibility_score", { precision: 3, scale: 2 }), // 0-1
+  priority: text("priority").notNull(), // critical, high, medium, low
+  implementationComplexity: text("implementation_complexity"), // low, medium, high
+  requiredResources: jsonb("required_resources"),
+  timeline: text("timeline"), // immediate, short_term, medium_term, long_term
+  materialTypes: jsonb("material_types"), // applicable material types
+  projectTypes: jsonb("project_types"), // applicable project types
+  evidenceBase: text("evidence_base"), // case_study, research, expert_opinion
+  successMetrics: jsonb("success_metrics"),
+  risks: jsonb("risks"),
+  dependencies: jsonb("dependencies"),
+  source: text("source"), // ai_generated, expert_input, literature
+  aiConfidence: decimal("ai_confidence", { precision: 3, scale: 2 }),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
 export const carbonPatterns = pgTable("carbon_patterns", {
   id: serial("id").primaryKey(),
   patternType: text("pattern_type").notNull(), // seasonal, material_usage, efficiency
@@ -144,6 +214,9 @@ export const insertAiInsightSchema = createInsertSchema(aiInsights).omit({ id: t
 export const insertMlModelSchema = createInsertSchema(mlModels).omit({ id: true, createdAt: true });
 export const insertIntegrationSchema = createInsertSchema(integrations).omit({ id: true, createdAt: true });
 export const insertCarbonPatternSchema = createInsertSchema(carbonPatterns).omit({ id: true, createdAt: true });
+export const insertCarbonEmbodiedDataSchema = createInsertSchema(carbonEmbodiedData).omit({ id: true, createdAt: true, updatedAt: true });
+export const insertLiveCarbonMetricsSchema = createInsertSchema(liveCarbonMetrics).omit({ id: true });
+export const insertCarbonReductionTacticsSchema = createInsertSchema(carbonReductionTactics).omit({ id: true, createdAt: true, updatedAt: true });
 
 // Types
 export type User = typeof users.$inferSelect;
@@ -166,3 +239,9 @@ export type Integration = typeof integrations.$inferSelect;
 export type InsertIntegration = z.infer<typeof insertIntegrationSchema>;
 export type CarbonPattern = typeof carbonPatterns.$inferSelect;
 export type InsertCarbonPattern = z.infer<typeof insertCarbonPatternSchema>;
+export type CarbonEmbodiedData = typeof carbonEmbodiedData.$inferSelect;
+export type InsertCarbonEmbodiedData = z.infer<typeof insertCarbonEmbodiedDataSchema>;
+export type LiveCarbonMetrics = typeof liveCarbonMetrics.$inferSelect;
+export type InsertLiveCarbonMetrics = z.infer<typeof insertLiveCarbonMetricsSchema>;
+export type CarbonReductionTactics = typeof carbonReductionTactics.$inferSelect;
+export type InsertCarbonReductionTactics = z.infer<typeof insertCarbonReductionTacticsSchema>;
