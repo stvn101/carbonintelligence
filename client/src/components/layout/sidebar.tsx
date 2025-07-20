@@ -1,4 +1,5 @@
 import { Leaf, ChartLine, ChartGantt, ShieldHalf, File, Calculator, ChartBar, Bot, Settings, Brain, Zap } from "lucide-react";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
 
 interface SidebarProps {
   onAiChatOpen: () => void;
@@ -6,73 +7,76 @@ interface SidebarProps {
 
 export function Sidebar({ onAiChatOpen }: SidebarProps) {
   return (
-    <div className="w-64 bg-white shadow-lg border-r border-neutral-200 flex flex-col">
+    <div className="w-64 bg-white dark:bg-gray-900 shadow-lg border-r border-neutral-200 dark:border-gray-700 flex flex-col">
       {/* Logo Section */}
-      <div className="p-6 border-b border-neutral-200">
-        <div className="flex items-center space-x-3">
-          <div className="w-10 h-10 rounded-lg flex items-center justify-center overflow-hidden bg-neutral-900">
-            <img 
-              src="/attached_assets/A77859E5-E5A0-423F-9B71-25DDB54D6537_1753020499508.png" 
-              alt="CarbonConstruct Logo" 
-              className="w-full h-full object-contain"
-            />
+      <div className="p-6 border-b border-neutral-200 dark:border-gray-700">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-3">
+            <div className="w-10 h-10 rounded-lg flex items-center justify-center overflow-hidden bg-primary">
+              <img 
+                src="/attached_assets/A77859E5-E5A0-423F-9B71-25DDB54D6537_1753020499508.png" 
+                alt="CarbonConstruct Logo" 
+                className="w-full h-full object-contain"
+              />
+            </div>
+            <div>
+              <h1 className="text-sm font-semibold text-neutral-900 dark:text-white">CarbonConstruct Tech</h1>
+              <p className="text-xs text-neutral-500 dark:text-neutral-400">AI Agentic V1</p>
+            </div>
           </div>
-          <div>
-            <h1 className="text-lg font-semibold text-neutral-900 dark:text-white">CarbonConstruct Tech AI Agentic V1</h1>
-            <p className="text-xs text-neutral-500 dark:text-neutral-400">Strategic Carbon Agent</p>
-          </div>
+          <ThemeToggle />
         </div>
       </div>
 
       {/* Navigation Menu */}
       <nav className="flex-1 py-4">
         <div className="px-4 space-y-2">
-          <div className="bg-primary-50 text-primary-700 rounded-lg px-4 py-3 flex items-center space-x-3 cursor-pointer">
-            <ChartLine className="text-lg" />
+          <div className="bg-primary/20 text-primary rounded-lg px-4 py-3 flex items-center space-x-3 cursor-pointer border border-primary/30">
+            <ChartLine className="w-5 h-5" />
             <span className="font-medium">Strategic Dashboard</span>
           </div>
           
-          <div className="text-neutral-600 hover:bg-neutral-100 rounded-lg px-4 py-3 flex items-center space-x-3 cursor-pointer">
-            <ChartGantt className="text-lg" />
+          <div className="text-neutral-600 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-gray-800 rounded-lg px-4 py-3 flex items-center space-x-3 cursor-pointer transition-colors">
+            <ChartGantt className="w-5 h-5" />
             <span>Portfolio Optimization</span>
           </div>
           
-          <div className="text-neutral-600 hover:bg-neutral-100 rounded-lg px-4 py-3 flex items-center space-x-3 cursor-pointer">
-            <ShieldHalf className="text-lg" />
+          <div className="text-neutral-600 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-gray-800 rounded-lg px-4 py-3 flex items-center space-x-3 cursor-pointer transition-colors">
+            <ShieldHalf className="w-5 h-5" />
             <span>Regulatory Intelligence</span>
           </div>
           
-          <div className="text-neutral-600 hover:bg-neutral-100 rounded-lg px-4 py-3 flex items-center space-x-3 cursor-pointer">
-            <File className="text-lg" />
+          <div className="text-neutral-600 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-gray-800 rounded-lg px-4 py-3 flex items-center space-x-3 cursor-pointer transition-colors">
+            <File className="w-5 h-5" />
             <span>Compliance Reports</span>
           </div>
           
-          <div className="text-neutral-600 hover:bg-neutral-100 rounded-lg px-4 py-3 flex items-center space-x-3 cursor-pointer">
-            <Calculator className="text-lg" />
+          <div className="text-neutral-600 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-gray-800 rounded-lg px-4 py-3 flex items-center space-x-3 cursor-pointer transition-colors">
+            <Calculator className="w-5 h-5" />
             <span>Carbon Budget Planning</span>
           </div>
           
-          <div className="text-neutral-600 hover:bg-neutral-100 rounded-lg px-4 py-3 flex items-center space-x-3 cursor-pointer">
-            <ChartBar className="text-lg" />
+          <div className="text-neutral-600 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-gray-800 rounded-lg px-4 py-3 flex items-center space-x-3 cursor-pointer transition-colors">
+            <ChartBar className="w-5 h-5" />
             <span>Investment Analysis</span>
           </div>
           
-          <div className="text-neutral-600 hover:bg-neutral-100 rounded-lg px-4 py-3 flex items-center space-x-3 cursor-pointer">
-            <Brain className="text-lg" />
+          <div className="text-neutral-600 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-gray-800 rounded-lg px-4 py-3 flex items-center space-x-3 cursor-pointer transition-colors">
+            <Brain className="w-5 h-5" />
             <span>ML Models & Forecasting</span>
           </div>
           
-          <div className="text-neutral-600 hover:bg-neutral-100 rounded-lg px-4 py-3 flex items-center space-x-3 cursor-pointer">
-            <Zap className="text-lg" />
+          <div className="text-neutral-600 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-gray-800 rounded-lg px-4 py-3 flex items-center space-x-3 cursor-pointer transition-colors">
+            <Zap className="w-5 h-5" />
             <span>Platform Integrations</span>
           </div>
         </div>
 
         {/* AI Assistant Section */}
         <div className="px-4 mt-8">
-          <div className="bg-gradient-to-r from-primary-500 to-secondary-500 rounded-lg p-4 text-white">
+          <div className="bg-gradient-to-r from-primary to-secondary rounded-lg p-4 text-white shadow-lg">
             <div className="flex items-center space-x-2 mb-2">
-              <Bot />
+              <Bot className="w-5 h-5" />
               <span className="font-medium">AI Assistant</span>
             </div>
             <p className="text-xs opacity-90">Ask strategic questions about your carbon portfolio</p>

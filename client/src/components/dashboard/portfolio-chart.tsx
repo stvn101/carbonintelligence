@@ -29,16 +29,16 @@ export function PortfolioChart() {
   const maxEmissions = Math.max(...mockTrends.map(t => t.emissions));
 
   return (
-    <div className="bg-white rounded-lg shadow-sm border border-neutral-200 p-6">
+    <div className="bg-white dark:bg-gray-900 rounded-lg shadow-sm border border-neutral-200 dark:border-gray-700 p-6 transition-colors">
       <div className="flex items-center justify-between mb-6">
-        <h3 className="text-lg font-semibold text-neutral-900">Portfolio Carbon Performance</h3>
+        <h3 className="text-lg font-semibold text-neutral-900 dark:text-white">Portfolio Carbon Performance</h3>
         <div className="flex items-center space-x-2">
-          <select className="text-sm border border-neutral-300 rounded px-3 py-1">
+          <select className="text-sm border border-neutral-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-neutral-900 dark:text-white rounded px-3 py-1">
             <option>Last 12 months</option>
             <option>Last 6 months</option>
             <option>YTD</option>
           </select>
-          <button className="text-sm text-primary-600 hover:text-primary-700">
+          <button className="text-sm text-primary hover:text-primary/80 transition-colors">
             <Download className="w-4 h-4" />
           </button>
         </div>
@@ -50,26 +50,26 @@ export function PortfolioChart() {
             <div key={trend.month} className="flex flex-col items-center space-y-2">
               <div 
                 className={`rounded-t transition-all duration-700 ${
-                  index >= 3 ? 'bg-secondary-400' : 'bg-primary-400'
+                  index >= 3 ? 'bg-primary' : 'bg-primary/70'
                 }`}
                 style={{ 
                   height: `${(trend.emissions / maxEmissions) * 160}px`, 
                   width: "24px" 
                 }}
               ></div>
-              <span className="text-xs text-neutral-500">{trend.month}</span>
+              <span className="text-xs text-neutral-500 dark:text-neutral-400">{trend.month}</span>
             </div>
           ))}
         </div>
       </div>
       
-      <div className="flex items-center justify-between mt-4 pt-4 border-t border-neutral-200">
-        <div className="text-sm text-neutral-600">
-          <div className="w-3 h-3 bg-primary-500 rounded-full inline-block mr-2"></div>
+      <div className="flex items-center justify-between mt-4 pt-4 border-t border-neutral-200 dark:border-gray-700">
+        <div className="text-sm text-neutral-600 dark:text-neutral-400">
+          <div className="w-3 h-3 bg-primary/70 rounded-full inline-block mr-2"></div>
           Current Period
         </div>
-        <div className="text-sm text-neutral-600">
-          <div className="w-3 h-3 bg-secondary-500 rounded-full inline-block mr-2"></div>
+        <div className="text-sm text-neutral-600 dark:text-neutral-400">
+          <div className="w-3 h-3 bg-primary rounded-full inline-block mr-2"></div>
           Target Trajectory
         </div>
       </div>

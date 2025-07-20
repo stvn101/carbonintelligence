@@ -46,11 +46,11 @@ export function Header({ onAiChatOpen }: HeaderProps) {
   };
 
   return (
-    <div className="bg-white border-b border-neutral-200 px-6 py-4">
+    <div className="bg-white dark:bg-gray-900 border-b border-neutral-200 dark:border-gray-700 px-6 py-4 transition-colors">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-xl font-semibold text-neutral-900">Strategic Planning Dashboard</h2>
-          <p className="text-sm text-neutral-500">Portfolio-wide carbon performance insights powered by AI</p>
+          <h2 className="text-xl font-semibold text-neutral-900 dark:text-white">Strategic Planning Dashboard</h2>
+          <p className="text-sm text-neutral-500 dark:text-neutral-400">Portfolio-wide carbon performance insights powered by AI</p>
         </div>
         
         {/* AI Query Interface */}
@@ -59,15 +59,15 @@ export function Header({ onAiChatOpen }: HeaderProps) {
             <input 
               type="text" 
               placeholder="Ask me: How can we reduce portfolio emissions by 25%?"
-              className="w-96 px-4 py-2 pl-10 pr-12 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+              className="w-96 px-4 py-2 pl-10 pr-12 border border-neutral-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-neutral-900 dark:text-white rounded-lg focus:ring-2 focus:ring-primary focus:border-primary"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               onKeyPress={handleKeyPress}
               disabled={queryMutation.isPending}
             />
-            <Search className="absolute left-3 top-3 text-neutral-400 w-4 h-4" />
+            <Search className="absolute left-3 top-3 text-neutral-400 dark:text-neutral-500 w-4 h-4" />
             <button 
-              className="absolute right-2 top-2 bg-primary-500 text-white px-3 py-1 rounded-md text-sm hover:bg-primary-600 disabled:opacity-50"
+              className="absolute right-2 top-2 bg-primary text-white px-3 py-1 rounded-md text-sm hover:bg-primary/90 disabled:opacity-50 transition-colors"
               onClick={handleQuery}
               disabled={queryMutation.isPending}
             >
@@ -76,8 +76,8 @@ export function Header({ onAiChatOpen }: HeaderProps) {
           </div>
           
           <div className="flex items-center space-x-2">
-            <div className="w-2 h-2 bg-secondary-500 rounded-full animate-pulse"></div>
-            <span className="text-sm text-neutral-600">Live Data</span>
+            <div className="w-2 h-2 bg-primary rounded-full animate-pulse"></div>
+            <span className="text-sm text-neutral-600 dark:text-neutral-400">Live Data</span>
           </div>
         </div>
       </div>

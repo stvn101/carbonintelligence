@@ -17,7 +17,12 @@ export default function Dashboard() {
   const [aiChatOpen, setAiChatOpen] = useState(false);
 
   // Fetch dashboard overview data
-  const { data: overview, isLoading } = useQuery({
+  const { data: overview, isLoading } = useQuery<{
+    totalEmissions?: string;
+    savingsOpportunity?: string;
+    activeAlerts?: number;
+    netZeroProgress?: number;
+  }>({
     queryKey: ["/api/dashboard/overview"],
   });
 
@@ -30,7 +35,7 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="flex h-screen overflow-hidden bg-neutral-50">
+    <div className="flex h-screen overflow-hidden bg-neutral-50 dark:bg-gray-950">
       <Sidebar onAiChatOpen={() => setAiChatOpen(true)} />
       
       <div className="flex-1 flex flex-col overflow-hidden">
