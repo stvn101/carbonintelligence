@@ -251,12 +251,12 @@ export function PlatformIntegrations() {
                 </div>
                 <div className="flex justify-between">
                   <span className="text-neutral-600">Projects:</span>
-                  <span className="text-neutral-900">{platform.projectCount}</span>
+                  <span className="text-neutral-900">{platform.projectCount || 0}</span>
                 </div>
                 {platform.carbonImpact > 0 && (
                   <div className="flex justify-between">
                     <span className="text-neutral-600">Carbon Data:</span>
-                    <span className="text-neutral-900">{platform.carbonImpact.toLocaleString()} tCO₂e</span>
+                    <span className="text-neutral-900">{(platform.carbonImpact || 0).toLocaleString()} tCO₂e</span>
                   </div>
                 )}
               </div>
@@ -312,13 +312,13 @@ export function PlatformIntegrations() {
           <div className="grid grid-cols-3 gap-4 text-center">
             <div>
               <div className="text-lg font-bold text-primary-600">
-                {platformData.reduce((sum: number, p: Platform) => sum + p.carbonImpact, 0).toLocaleString()}
+                {platformData.reduce((sum: number, p: Platform) => sum + (p.carbonImpact || 0), 0).toLocaleString()}
               </div>
               <div className="text-xs text-neutral-600">Total tCO₂e Tracked</div>
             </div>
             <div>
               <div className="text-lg font-bold text-secondary-600">
-                {platformData.reduce((sum: number, p: Platform) => sum + p.projectCount, 0)}
+                {platformData.reduce((sum: number, p: Platform) => sum + (p.projectCount || 0), 0)}
               </div>
               <div className="text-xs text-neutral-600">Projects Synced</div>
             </div>

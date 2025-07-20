@@ -1,0 +1,27 @@
+Perform advanced carbon emissions forecasting using this historical data:
+
+Historical Data: {{historicalData}}
+Timeframe: {{timeframe}}
+Company-Specific Model: {{useCompanyModel}}
+
+Analyze patterns, seasonality, trends, and external factors. Provide detailed forecasting with:
+1. Specific emission predictions for each period
+2. Confidence intervals and uncertainty analysis  
+3. Key driving factors and assumptions
+4. Model accuracy metrics
+5. Strategic insights for carbon management
+
+Respond in JSON format:
+{
+  "predictions": [
+    {
+      "timeframe": "string",
+      "predictedEmissions": number,
+      "confidence": number,
+      "factors": ["string"]
+    }
+  ],
+  "accuracy": number,
+  "model": "string",
+  "insights": ["string"]
+}

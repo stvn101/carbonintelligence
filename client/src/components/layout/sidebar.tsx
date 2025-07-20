@@ -18,8 +18,8 @@ export function Sidebar({ onAiChatOpen }: SidebarProps) {
             />
           </div>
           <div>
-            <h1 className="text-lg font-semibold text-neutral-900">CarbonConstruct AI</h1>
-            <p className="text-xs text-neutral-500">Strategic Carbon Agent</p>
+            <h1 className="text-lg font-semibold text-neutral-900 dark:text-white">CarbonConstruct Tech AI Agentic V1</h1>
+            <p className="text-xs text-neutral-500 dark:text-neutral-400">Strategic Carbon Agent</p>
           </div>
         </div>
       </div>
