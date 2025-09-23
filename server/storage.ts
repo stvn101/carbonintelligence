@@ -1,13 +1,16 @@
 import {
   users, projects, emissions, regulatoryAlerts, carbonBudgets, investments, aiInsights,
   carbonEmbodiedData, liveCarbonMetrics, carbonReductionTactics, mlModels, integrations, carbonPatterns,
+  greenStarRatings, nabersRatings, nccCompliance, ratingAssessments,
   type User, type InsertUser, type Project, type InsertProject,
   type Emission, type InsertEmission, type RegulatoryAlert, type InsertRegulatoryAlert,
   type CarbonBudget, type InsertCarbonBudget, type Investment, type InsertInvestment,
   type AiInsight, type InsertAiInsight, type CarbonEmbodiedData, type InsertCarbonEmbodiedData,
   type LiveCarbonMetrics, type InsertLiveCarbonMetrics, type CarbonReductionTactics, type InsertCarbonReductionTactics,
   type MlModel, type InsertMlModel, type Integration, type InsertIntegration,
-  type CarbonPattern, type InsertCarbonPattern
+  type CarbonPattern, type InsertCarbonPattern,
+  type GreenStarRating, type InsertGreenStarRating, type NabersRating, type InsertNabersRating,
+  type NccCompliance, type InsertNccCompliance, type RatingAssessment, type InsertRatingAssessment
 } from "@shared/schema";
 
 export interface IStorage {
@@ -99,6 +102,38 @@ export interface IStorage {
   createCarbonPattern(pattern: InsertCarbonPattern): Promise<CarbonPattern>;
   updateCarbonPattern(id: number, updates: Partial<InsertCarbonPattern>): Promise<CarbonPattern>;
   deleteCarbonPattern(id: number): Promise<void>;
+
+  // Australian Rating Systems operations
+  
+  // Green Star operations
+  getGreenStarRatings(projectId?: number): Promise<GreenStarRating[]>;
+  getGreenStarRating(id: number): Promise<GreenStarRating | undefined>;
+  createGreenStarRating(rating: InsertGreenStarRating): Promise<GreenStarRating>;
+  updateGreenStarRating(id: number, updates: Partial<InsertGreenStarRating>): Promise<GreenStarRating>;
+  deleteGreenStarRating(id: number): Promise<void>;
+  
+  // NABERS operations
+  getNabersRatings(projectId?: number): Promise<NabersRating[]>;
+  getNabersRating(id: number): Promise<NabersRating | undefined>;
+  getNabersRatingsByType(ratingType: string): Promise<NabersRating[]>;
+  createNabersRating(rating: InsertNabersRating): Promise<NabersRating>;
+  updateNabersRating(id: number, updates: Partial<InsertNabersRating>): Promise<NabersRating>;
+  deleteNabersRating(id: number): Promise<void>;
+  
+  // NCC Compliance operations
+  getNccCompliance(projectId?: number): Promise<NccCompliance[]>;
+  getNccComplianceByProject(projectId: number): Promise<NccCompliance | undefined>;
+  createNccCompliance(compliance: InsertNccCompliance): Promise<NccCompliance>;
+  updateNccCompliance(id: number, updates: Partial<InsertNccCompliance>): Promise<NccCompliance>;
+  deleteNccCompliance(id: number): Promise<void>;
+  
+  // Rating Assessment operations
+  getRatingAssessments(projectId?: number): Promise<RatingAssessment[]>;
+  getRatingAssessment(id: number): Promise<RatingAssessment | undefined>;
+  getRatingAssessmentsByType(assessmentType: string): Promise<RatingAssessment[]>;
+  createRatingAssessment(assessment: InsertRatingAssessment): Promise<RatingAssessment>;
+  updateRatingAssessment(id: number, updates: Partial<InsertRatingAssessment>): Promise<RatingAssessment>;
+  deleteRatingAssessment(id: number): Promise<void>;
 }
 
 export class MemStorage implements IStorage {
@@ -115,6 +150,10 @@ export class MemStorage implements IStorage {
   private mlModels: Map<number, MlModel>;
   private integrations: Map<number, Integration>;
   private carbonPatterns: Map<number, CarbonPattern>;
+  private greenStarRatings: Map<number, GreenStarRating>;
+  private nabersRatings: Map<number, NabersRating>;
+  private nccCompliance: Map<number, NccCompliance>;
+  private ratingAssessments: Map<number, RatingAssessment>;
   private currentId: number;
 
   constructor() {
@@ -131,6 +170,10 @@ export class MemStorage implements IStorage {
     this.mlModels = new Map();
     this.integrations = new Map();
     this.carbonPatterns = new Map();
+    this.greenStarRatings = new Map();
+    this.nabersRatings = new Map();
+    this.nccCompliance = new Map();
+    this.ratingAssessments = new Map();
     this.currentId = 1;
 
     this.initializeSampleData();
@@ -831,6 +874,258 @@ export class MemStorage implements IStorage {
   async deleteCarbonPattern(id: number): Promise<void> {
     if (!this.carbonPatterns.has(id)) throw new Error('Carbon Pattern not found');
     this.carbonPatterns.delete(id);
+  }
+
+  // Australian Rating Systems implementations
+
+  // Green Star operations
+  async getGreenStarRatings(projectId?: number): Promise<GreenStarRating[]> {
+    const ratings = Array.from(this.greenStarRatings.values());
+    return projectId ? ratings.filter(r => r.projectId === projectId) : ratings;
+  }
+
+  async getGreenStarRating(id: number): Promise<GreenStarRating | undefined> {
+    return this.greenStarRatings.get(id);
+  }
+
+  async createGreenStarRating(insertRating: InsertGreenStarRating): Promise<GreenStarRating> {
+    const id = this.currentId++;
+    const rating: GreenStarRating = {
+      ...insertRating,
+      id,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      certificationStatus: insertRating.certificationStatus || "in_progress",
+      climatePositivePathway: insertRating.climatePositivePathway ?? false,
+      registrationDate: insertRating.registrationDate || null,
+      certificationDate: insertRating.certificationDate || null,
+      expiryDate: insertRating.expiryDate || null,
+      totalPoints: insertRating.totalPoints || null,
+      maxPoints: insertRating.maxPoints || null,
+      managementPoints: insertRating.managementPoints || null,
+      indoorEnvironmentPoints: insertRating.indoorEnvironmentPoints || null,
+      energyPoints: insertRating.energyPoints || null,
+      transportPoints: insertRating.transportPoints || null,
+      waterPoints: insertRating.waterPoints || null,
+      materialsPoints: insertRating.materialsPoints || null,
+      emissionsPoints: insertRating.emissionsPoints || null,
+      landUsePoints: insertRating.landUsePoints || null,
+      assessorName: insertRating.assessorName || null,
+      assessorCompany: insertRating.assessorCompany || null,
+      notes: insertRating.notes || null,
+      targetRating: insertRating.targetRating || null,
+      currentRating: insertRating.currentRating || null
+    };
+    this.greenStarRatings.set(id, rating);
+    return rating;
+  }
+
+  async updateGreenStarRating(id: number, updates: Partial<InsertGreenStarRating>): Promise<GreenStarRating> {
+    const rating = this.greenStarRatings.get(id);
+    if (!rating) throw new Error('Green Star rating not found');
+    
+    const updatedRating = { 
+      ...rating, 
+      ...updates, 
+      updatedAt: new Date() 
+    };
+    this.greenStarRatings.set(id, updatedRating);
+    return updatedRating;
+  }
+
+  async deleteGreenStarRating(id: number): Promise<void> {
+    if (!this.greenStarRatings.has(id)) throw new Error('Green Star rating not found');
+    this.greenStarRatings.delete(id);
+  }
+
+  // NABERS operations
+  async getNabersRatings(projectId?: number): Promise<NabersRating[]> {
+    const ratings = Array.from(this.nabersRatings.values());
+    return projectId ? ratings.filter(r => r.projectId === projectId) : ratings;
+  }
+
+  async getNabersRating(id: number): Promise<NabersRating | undefined> {
+    return this.nabersRatings.get(id);
+  }
+
+  async getNabersRatingsByType(ratingType: string): Promise<NabersRating[]> {
+    return Array.from(this.nabersRatings.values()).filter(r => r.ratingType === ratingType);
+  }
+
+  async createNabersRating(insertRating: InsertNabersRating): Promise<NabersRating> {
+    const id = this.currentId++;
+    const rating: NabersRating = {
+      ...insertRating,
+      id,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      commitmentAgreement: insertRating.commitmentAgreement ?? false,
+      currentRating: insertRating.currentRating || null,
+      targetRating: insertRating.targetRating || null,
+      benchmarkRating: insertRating.benchmarkRating || null,
+      energyIntensity: insertRating.energyIntensity || null,
+      waterConsumption: insertRating.waterConsumption || null,
+      wasteGeneration: insertRating.wasteGeneration || null,
+      recyclingRate: insertRating.recyclingRate || null,
+      thermalComfort: insertRating.thermalComfort || null,
+      airQuality: insertRating.airQuality || null,
+      lightingQuality: insertRating.lightingQuality || null,
+      acousticComfort: insertRating.acousticComfort || null,
+      assessmentPeriod: insertRating.assessmentPeriod || null,
+      certificationDate: insertRating.certificationDate || null,
+      expiryDate: insertRating.expiryDate || null,
+      assessorId: insertRating.assessorId || null,
+      improvementTrend: insertRating.improvementTrend || null,
+      previousRating: insertRating.previousRating || null,
+      yearOverYearChange: insertRating.yearOverYearChange || null,
+      notes: insertRating.notes || null
+    };
+    this.nabersRatings.set(id, rating);
+    return rating;
+  }
+
+  async updateNabersRating(id: number, updates: Partial<InsertNabersRating>): Promise<NabersRating> {
+    const rating = this.nabersRatings.get(id);
+    if (!rating) throw new Error('NABERS rating not found');
+    
+    const updatedRating = { 
+      ...rating, 
+      ...updates, 
+      updatedAt: new Date() 
+    };
+    this.nabersRatings.set(id, updatedRating);
+    return updatedRating;
+  }
+
+  async deleteNabersRating(id: number): Promise<void> {
+    if (!this.nabersRatings.has(id)) throw new Error('NABERS rating not found');
+    this.nabersRatings.delete(id);
+  }
+
+  // NCC Compliance operations
+  async getNccCompliance(projectId?: number): Promise<NccCompliance[]> {
+    const compliance = Array.from(this.nccCompliance.values());
+    return projectId ? compliance.filter(c => c.projectId === projectId) : compliance;
+  }
+
+  async getNccComplianceByProject(projectId: number): Promise<NccCompliance | undefined> {
+    return Array.from(this.nccCompliance.values()).find(c => c.projectId === projectId);
+  }
+
+  async createNccCompliance(insertCompliance: InsertNccCompliance): Promise<NccCompliance> {
+    const id = this.currentId++;
+    const compliance: NccCompliance = {
+      ...insertCompliance,
+      id,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      nccVersion: insertCompliance.nccVersion || "2022",
+      j1p1Compliance: insertCompliance.j1p1Compliance ?? false,
+      j1p2Compliance: insertCompliance.j1p2Compliance ?? false,
+      j1p4Compliance: insertCompliance.j1p4Compliance ?? false,
+      nabersCommitmentAgreement: insertCompliance.nabersCommitmentAgreement ?? false,
+      renewableEnergyProvision: insertCompliance.renewableEnergyProvision ?? false,
+      batteryProvision: insertCompliance.batteryProvision ?? false,
+      evChargingProvision: insertCompliance.evChargingProvision ?? false,
+      complianceStatus: insertCompliance.complianceStatus || "in_progress",
+      requiredNabersRating: insertCompliance.requiredNabersRating || null,
+      achievedNabersRating: insertCompliance.achievedNabersRating || null,
+      heatingLoad: insertCompliance.heatingLoad || null,
+      coolingLoad: insertCompliance.coolingLoad || null,
+      thermalEnergyLoad: insertCompliance.thermalEnergyLoad || null,
+      heatingLoadLimit: insertCompliance.heatingLoadLimit || null,
+      coolingLoadLimit: insertCompliance.coolingLoadLimit || null,
+      thermalEnergyLoadLimit: insertCompliance.thermalEnergyLoadLimit || null,
+      baseGhgEmissions: insertCompliance.baseGhgEmissions || null,
+      maxAllowedGhgEmissions: insertCompliance.maxAllowedGhgEmissions || null,
+      actualGhgEmissions: insertCompliance.actualGhgEmissions || null,
+      assessmentDate: insertCompliance.assessmentDate || null,
+      complianceDate: insertCompliance.complianceDate || null,
+      certifierName: insertCompliance.certifierName || null,
+      certifierNumber: insertCompliance.certifierNumber || null,
+      notes: insertCompliance.notes || null
+    };
+    this.nccCompliance.set(id, compliance);
+    return compliance;
+  }
+
+  async updateNccCompliance(id: number, updates: Partial<InsertNccCompliance>): Promise<NccCompliance> {
+    const compliance = this.nccCompliance.get(id);
+    if (!compliance) throw new Error('NCC compliance record not found');
+    
+    const updatedCompliance = { 
+      ...compliance, 
+      ...updates, 
+      updatedAt: new Date() 
+    };
+    this.nccCompliance.set(id, updatedCompliance);
+    return updatedCompliance;
+  }
+
+  async deleteNccCompliance(id: number): Promise<void> {
+    if (!this.nccCompliance.has(id)) throw new Error('NCC compliance record not found');
+    this.nccCompliance.delete(id);
+  }
+
+  // Rating Assessment operations
+  async getRatingAssessments(projectId?: number): Promise<RatingAssessment[]> {
+    const assessments = Array.from(this.ratingAssessments.values());
+    return projectId ? assessments.filter(a => a.projectId === projectId) : assessments;
+  }
+
+  async getRatingAssessment(id: number): Promise<RatingAssessment | undefined> {
+    return this.ratingAssessments.get(id);
+  }
+
+  async getRatingAssessmentsByType(assessmentType: string): Promise<RatingAssessment[]> {
+    return Array.from(this.ratingAssessments.values()).filter(a => a.assessmentType === assessmentType);
+  }
+
+  async createRatingAssessment(insertAssessment: InsertRatingAssessment): Promise<RatingAssessment> {
+    const id = this.currentId++;
+    const assessment: RatingAssessment = {
+      ...insertAssessment,
+      id,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      overallProgress: insertAssessment.overallProgress ?? 0,
+      status: insertAssessment.status || "scheduled",
+      scheduledDate: insertAssessment.scheduledDate || null,
+      completedDate: insertAssessment.completedDate || null,
+      documentsRequired: insertAssessment.documentsRequired || null,
+      documentsCompleted: insertAssessment.documentsCompleted || null,
+      creditsTargeted: insertAssessment.creditsTargeted || null,
+      creditsAchieved: insertAssessment.creditsAchieved || null,
+      assessorContact: insertAssessment.assessorContact || null,
+      estimatedCost: insertAssessment.estimatedCost || null,
+      actualCost: insertAssessment.actualCost || null,
+      nextMilestone: insertAssessment.nextMilestone || null,
+      milestoneDueDate: insertAssessment.milestoneDueDate || null,
+      outstandingIssues: insertAssessment.outstandingIssues || null,
+      riskFactors: insertAssessment.riskFactors || null,
+      recommendations: insertAssessment.recommendations || null,
+      notes: insertAssessment.notes || null
+    };
+    this.ratingAssessments.set(id, assessment);
+    return assessment;
+  }
+
+  async updateRatingAssessment(id: number, updates: Partial<InsertRatingAssessment>): Promise<RatingAssessment> {
+    const assessment = this.ratingAssessments.get(id);
+    if (!assessment) throw new Error('Rating assessment not found');
+    
+    const updatedAssessment = { 
+      ...assessment, 
+      ...updates, 
+      updatedAt: new Date() 
+    };
+    this.ratingAssessments.set(id, updatedAssessment);
+    return updatedAssessment;
+  }
+
+  async deleteRatingAssessment(id: number): Promise<void> {
+    if (!this.ratingAssessments.has(id)) throw new Error('Rating assessment not found');
+    this.ratingAssessments.delete(id);
   }
 }
 
