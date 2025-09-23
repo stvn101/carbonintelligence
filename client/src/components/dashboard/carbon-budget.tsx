@@ -1,10 +1,20 @@
 import { useQuery } from "@tanstack/react-query";
 import { Brain } from "lucide-react";
+import type { CarbonBudget } from "@shared/schema";
+
+interface BudgetForecast {
+  recommendations: string[];
+}
+
+interface CarbonBudgetResponse {
+  budget: CarbonBudget;
+  forecast: BudgetForecast;
+}
 
 export function CarbonBudget() {
   const currentYear = new Date().getFullYear();
   
-  const { data: budgetData, isLoading } = useQuery({
+  const { data: budgetData, isLoading } = useQuery<CarbonBudgetResponse>({
     queryKey: [`/api/carbon-budget/${currentYear}`],
   });
 

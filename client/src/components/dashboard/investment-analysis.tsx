@@ -1,7 +1,20 @@
 import { useQuery } from "@tanstack/react-query";
 
+interface InvestmentOpportunity {
+  name: string;
+  investment: string;
+  reduction: string;
+  paybackPeriod: string;
+}
+
+interface InvestmentAnalysisResponse {
+  currentROI: number;
+  projectedROI: number;
+  opportunities: InvestmentOpportunity[];
+}
+
 export function InvestmentAnalysis() {
-  const { data: analysis, isLoading } = useQuery({
+  const { data: analysis, isLoading } = useQuery<InvestmentAnalysisResponse>({
     queryKey: ["/api/investments/analysis"],
   });
 
@@ -70,7 +83,7 @@ export function InvestmentAnalysis() {
         <div className="space-y-3">
           <h4 className="font-medium text-neutral-900">Top Investment Opportunities</h4>
           
-          {opportunities.length > 0 ? opportunities.map((opportunity, index) => (
+          {opportunities.length > 0 ? opportunities.map((opportunity: InvestmentOpportunity, index: number) => (
             <div key={index} className={`flex items-center justify-between p-3 bg-gradient-to-r ${getGradientColor(index)} rounded-lg`}>
               <div>
                 <div className="font-medium text-neutral-900">{opportunity.name}</div>

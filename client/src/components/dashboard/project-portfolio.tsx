@@ -1,7 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
+import type { Project } from "@shared/schema";
+
+interface ProjectsResponse {
+  projects: Project[];
+}
 
 export function ProjectPortfolio() {
-  const { data: projects, isLoading } = useQuery({
+  const { data: projects, isLoading } = useQuery<ProjectsResponse>({
     queryKey: ["/api/projects"],
   });
 
@@ -72,7 +77,7 @@ export function ProjectPortfolio() {
               </tr>
             </thead>
             <tbody>
-              {projectList.map((project, index) => {
+              {projectList.map((project: Project, index: number) => {
                 const progress = project.progress || Math.floor(Math.random() * 100);
                 const carbonFootprint = parseFloat(project.carbonFootprint) || 0;
                 const targetEmissions = parseFloat(project.targetEmissions) || carbonFootprint;
