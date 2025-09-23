@@ -6,7 +6,36 @@ import { carbonConstructService } from "./services/carbonConstruct";
 import { regulatoryService } from "./services/regulatory";
 import { mlService } from "./services/mlService";
 import { integrationsService } from "./services/integrations";
-import { insertProjectSchema, insertEmissionSchema, insertRegulatoryAlertSchema, insertInvestmentSchema } from "@shared/schema";
+import { 
+  insertProjectSchema, insertEmissionSchema, insertRegulatoryAlertSchema, insertInvestmentSchema,
+  insertLiveCarbonMetricsSchema, insertMlModelSchema, insertIntegrationSchema 
+} from "@shared/schema";
+import { z } from "zod";
+
+// Custom validation schemas for complex routes
+const aiQuerySchema = z.object({
+  query: z.string().min(1, "Query is required")
+});
+
+const complianceReportSchema = z.object({
+  region: z.string().optional(),
+  projectIds: z.array(z.number()).optional()
+});
+
+const mlForecastSchema = z.object({
+  model: z.string().optional(),
+  timeframe: z.string().min(1, "Timeframe is required")
+});
+
+const integrationSyncSchema = z.object({
+  platform: z.string().min(1, "Platform is required")
+});
+
+const integrationConfigureSchema = z.object({
+  platform: z.string().min(1, "Platform is required"),
+  apiKey: z.string().min(1, "API key is required"),
+  settings: z.record(z.any()).optional()
+});
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Dashboard overview
@@ -200,11 +229,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // AI chat
   app.post("/api/ai/query", async (req, res) => {
     try {
-      const { query } = req.body;
-      
-      if (!query) {
-        return res.status(400).json({ error: "Query is required" });
-      }
+      const validatedData = aiQuerySchema.parse(req.body);
+      const { query } = validatedData;
 
       // Gather context data
       const projects = await storage.getAllProjects();
@@ -231,6 +257,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       res.json({ response });
     } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ error: "Invalid request data", details: error.errors });
+      }
       res.status(500).json({ error: "Failed to process AI query" });
     }
   });
@@ -257,12 +286,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Compliance reporting
   app.post("/api/compliance/report", async (req, res) => {
     try {
-      const { region, projectIds } = req.body;
+      const validatedData = complianceReportSchema.parse(req.body);
+      const { region, projectIds } = validatedData;
       
       const report = await regulatoryService.generateComplianceReport(projectIds || [], region || "Global");
       
       res.json({ report });
     } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ error: "Invalid request data", details: error.errors });
+      }
       res.status(500).json({ error: "Failed to generate compliance report" });
     }
   });
@@ -304,13 +337,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/api/ml/forecast", async (req, res) => {
     try {
-      const { model, timeframe } = req.body;
+      const validatedData = mlForecastSchema.parse(req.body);
+      const { model, timeframe } = validatedData;
       const emissions = await storage.getAllEmissions();
       
       const forecast = await mlService.forecastEmissions(emissions, timeframe, model === "company_specific");
       
       res.json(forecast);
     } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ error: "Invalid request data", details: error.errors });
+      }
       res.status(500).json({ error: "Failed to generate forecast" });
     }
   });
@@ -387,9 +424,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/api/carbon/live-metrics", async (req, res) => {
     try {
-      const metric = await storage.createLiveCarbonMetric(req.body);
+      const validatedData = insertLiveCarbonMetricsSchema.parse(req.body);
+      const metric = await storage.createLiveCarbonMetric(validatedData);
       res.json(metric);
     } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ error: "Invalid request data", details: error.errors });
+      }
       res.status(500).json({ error: "Failed to create live carbon metric" });
     }
   });
@@ -421,7 +462,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/api/integrations/sync", async (req, res) => {
     try {
-      const { platform } = req.body;
+      const validatedData = integrationSyncSchema.parse(req.body);
+      const { platform } = validatedData;
       
       if (platform === "all") {
         const results = await integrationsService.syncAllPlatforms();
@@ -444,13 +486,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
         res.json(result);
       }
     } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ error: "Invalid request data", details: error.errors });
+      }
       res.status(500).json({ error: "Failed to sync platform data" });
     }
   });
 
   app.post("/api/integrations/configure", async (req, res) => {
     try {
-      const { platform, apiKey, settings } = req.body;
+      const validatedData = integrationConfigureSchema.parse(req.body);
+      const { platform, apiKey, settings } = validatedData;
       
       // In production, this would save encrypted API keys and settings
       res.json({ 
@@ -458,6 +504,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         message: `${platform} integration configured successfully` 
       });
     } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ error: "Invalid request data", details: error.errors });
+      }
       res.status(500).json({ error: "Failed to configure integration" });
     }
   });
