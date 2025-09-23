@@ -30,7 +30,7 @@ export default function Reports() {
       title="Compliance Reports"
       description="Compliance Reports - CarbonConstruct AI"
       pageTitle="Compliance Reports"
-      pageSubtitle="Generate comprehensive carbon footprint and compliance reports"
+      pageSubtitle="Generate comprehensive carbon footprint and Australian compliance reports"
       metaDescription="Generate and manage carbon footprint reports, compliance summaries, and regulatory documentation. Download detailed analytics and track reporting requirements."
       testId="page-title-reports"
     >
@@ -58,7 +58,7 @@ export default function Reports() {
           change="↑ 2%"
           changeType="positive"
           icon="target"
-          progress={reportMetrics?.complianceRate || 98}
+          progress={reportMetrics?.complianceRate || 96}
           subtitle="On-time report submissions"
         />
         <KPICard
@@ -128,7 +128,7 @@ export default function Reports() {
             </div>
             <div className="flex items-center justify-between p-4 border rounded-lg">
               <div>
-                <h4 className="font-medium">EU Taxonomy Compliance</h4>
+                <h4 className="font-medium">Green Star & NABERS Compliance</h4>
                 <p className="text-sm text-neutral-600 dark:text-neutral-400">Generated on Sept 10, 2025</p>
               </div>
               <Button variant="ghost" size="sm">

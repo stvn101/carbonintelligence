@@ -29,7 +29,7 @@ export default function Regulatory() {
       title="Regulatory Intelligence"
       description="Regulatory Intelligence - CarbonConstruct AI"
       pageTitle="Regulatory Intelligence"
-      pageSubtitle="Stay compliant with evolving carbon regulations and reporting requirements"
+      pageSubtitle="Stay compliant with Australian carbon regulations and NGER reporting requirements"
       metaDescription="Monitor carbon regulations and compliance requirements across global jurisdictions. Get real-time regulatory alerts, track compliance scores, and ensure timely reporting."
       testId="page-title-regulatory"
     >
@@ -55,10 +55,10 @@ export default function Regulatory() {
         <KPICard
           title="Jurisdictions"
           value={complianceData?.jurisdictions?.toString() || "12"}
-          change="EU, US, CA"
+          change="AU, NSW, VIC"
           changeType="positive"
           icon="target"
-          subtitle="Monitored regulatory regions"
+          subtitle="Australian jurisdictions monitored"
         />
         <KPICard
           title="Next Deadline"
@@ -66,7 +66,7 @@ export default function Regulatory() {
           change="14 days"
           changeType="warning"
           icon="target"
-          subtitle="CSRD reporting deadline"
+          subtitle="NGER reporting deadline"
         />
       </div>
 
@@ -88,7 +88,7 @@ export default function Regulatory() {
               <div className="flex items-center space-x-3">
                 <CheckCircle className="w-5 h-5 text-green-600" />
                 <div>
-                  <p className="font-medium text-green-800 dark:text-green-300">EU Taxonomy</p>
+                  <p className="font-medium text-green-800 dark:text-green-300">Green Star</p>
                   <p className="text-sm text-green-600 dark:text-green-400">Compliant</p>
                 </div>
               </div>
@@ -99,7 +99,7 @@ export default function Regulatory() {
               <div className="flex items-center space-x-3">
                 <Clock className="w-5 h-5 text-amber-600" />
                 <div>
-                  <p className="font-medium text-amber-800 dark:text-amber-300">CSRD Reporting</p>
+                  <p className="font-medium text-amber-800 dark:text-amber-300">NGER Reporting</p>
                   <p className="text-sm text-amber-600 dark:text-amber-400">Due Feb 28</p>
                 </div>
               </div>
@@ -110,7 +110,7 @@ export default function Regulatory() {
               <div className="flex items-center space-x-3">
                 <Globe className="w-5 h-5 text-blue-600" />
                 <div>
-                  <p className="font-medium text-blue-800 dark:text-blue-300">SEC Climate</p>
+                  <p className="font-medium text-blue-800 dark:text-blue-300">NABERS Rating</p>
                   <p className="text-sm text-blue-600 dark:text-blue-400">In Progress</p>
                 </div>
               </div>
@@ -135,8 +135,8 @@ export default function Regulatory() {
           <div className="flex items-start space-x-3 p-3 bg-red-50 dark:bg-red-900/20 rounded-lg border-l-4 border-red-500">
             <AlertTriangle className="w-5 h-5 text-red-600 mt-0.5" />
             <div>
-              <p className="font-medium text-red-800 dark:text-red-300">EU Taxonomy Regulation Update</p>
-              <p className="text-sm text-red-600 dark:text-red-400">New technical screening criteria for construction activities effective March 2025</p>
+              <p className="font-medium text-red-800 dark:text-red-300">NCC Energy Efficiency Update</p>
+              <p className="text-sm text-red-600 dark:text-red-400">New energy efficiency provisions for construction activities effective March 2025</p>
               <p className="text-xs text-red-500 dark:text-red-500 mt-1">2 hours ago • High Priority</p>
             </div>
           </div>
@@ -144,8 +144,8 @@ export default function Regulatory() {
           <div className="flex items-start space-x-3 p-3 bg-amber-50 dark:bg-amber-900/20 rounded-lg border-l-4 border-amber-500">
             <Clock className="w-5 h-5 text-amber-600 mt-0.5" />
             <div>
-              <p className="font-medium text-amber-800 dark:text-amber-300">CSRD Reporting Deadline Reminder</p>
-              <p className="text-sm text-amber-600 dark:text-amber-400">Sustainability reporting must be submitted by February 28, 2025</p>
+              <p className="font-medium text-amber-800 dark:text-amber-300">NGER Reporting Deadline Reminder</p>
+              <p className="text-sm text-amber-600 dark:text-amber-400">NGER reporting must be submitted by February 28, 2025</p>
               <p className="text-xs text-amber-500 dark:text-amber-500 mt-1">1 day ago • Medium Priority</p>
             </div>
           </div>

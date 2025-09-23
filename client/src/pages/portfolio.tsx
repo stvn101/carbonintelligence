@@ -54,7 +54,7 @@ export default function Portfolio() {
             changeType="positive"
             icon="leaf"
             progress={72}
-            subtitle="72% below industry average"
+            subtitle="72% below Australian industry average"
           />
         </div>
         <div data-testid="card-kpi-avg-performance-score">
