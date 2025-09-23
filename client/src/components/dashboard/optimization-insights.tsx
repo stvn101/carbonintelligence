@@ -2,11 +2,31 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Lightbulb, Route, Bolt, Check, TrendingUp, TrendingDown, ArrowRight } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
+interface Recommendation {
+  id: string;
+  title: string;
+  description: string;
+  priority: string;
+  category: string;
+  roi: string;
+  carbonReduction?: string;
+  status?: string;
+  projections?: {
+    before: string;
+    after: string;
+    savings: string;
+  };
+}
+
+interface RecommendationsResponse {
+  recommendations: Recommendation[];
+}
+
 export function OptimizationInsights() {
   const queryClient = useQueryClient();
   const { toast } = useToast();
   
-  const { data: recommendations, isLoading, isError } = useQuery({
+  const { data: recommendations, isLoading, isError } = useQuery<RecommendationsResponse>({
     queryKey: ["/api/optimization/recommendations"],
   });
 
@@ -19,10 +39,31 @@ export function OptimizationInsights() {
         body: JSON.stringify({ applied: true })
       });
       if (!response.ok) throw new Error('Failed to apply recommendation');
-      return response.json();
+      return { recommendationId, ...await response.json() };
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/optimization/recommendations"] });
+    onMutate: async (recommendationId: string) => {
+      // Cancel outgoing refetches
+      await queryClient.cancelQueries({ queryKey: ["/api/optimization/recommendations"] });
+      
+      // Snapshot the previous value
+      const previousRecommendations = queryClient.getQueryData(["/api/optimization/recommendations"]);
+      
+      // Optimistically update to the new value
+      queryClient.setQueryData(["/api/optimization/recommendations"], (old: any) => {
+        if (!old?.recommendations) return old;
+        return {
+          ...old,
+          recommendations: old.recommendations.map((rec: any) => 
+            rec.id === recommendationId 
+              ? { ...rec, status: 'applied' }
+              : rec
+          )
+        };
+      });
+      
+      return { previousRecommendations };
+    },
+    onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["/api/portfolio/analysis"] });
       queryClient.invalidateQueries({ queryKey: ["/api/portfolio/kpis"] });
       toast({ 
@@ -30,7 +71,11 @@ export function OptimizationInsights() {
         description: "The optimization recommendation has been successfully applied to your portfolio." 
       });
     },
-    onError: () => {
+    onError: (err, recommendationId, context) => {
+      // Rollback the optimistic update
+      if (context?.previousRecommendations) {
+        queryClient.setQueryData(["/api/optimization/recommendations"], context.previousRecommendations);
+      }
       toast({ 
         title: "Error", 
         description: "Failed to apply recommendation. Please try again.", 
