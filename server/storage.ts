@@ -258,7 +258,11 @@ export class MemStorage implements IStorage {
 
   async createUser(insertUser: InsertUser): Promise<User> {
     const id = this.currentId++;
-    const user: User = { ...insertUser, id };
+    const user: User = { 
+      ...insertUser, 
+      id, 
+      role: insertUser.role || "user" 
+    };
     this.users.set(id, user);
     return user;
   }
@@ -274,7 +278,17 @@ export class MemStorage implements IStorage {
 
   async createProject(insertProject: InsertProject): Promise<Project> {
     const id = this.currentId++;
-    const project: Project = { ...insertProject, id, createdAt: new Date() };
+    const project: Project = { 
+      ...insertProject, 
+      id, 
+      createdAt: new Date(),
+      progress: insertProject.progress ?? 0,
+      startDate: insertProject.startDate || null,
+      endDate: insertProject.endDate || null,
+      materials: insertProject.materials || null,
+      energyConsumption: insertProject.energyConsumption || null,
+      transportationEmissions: insertProject.transportationEmissions || null
+    };
     this.projects.set(id, project);
     return project;
   }
@@ -299,7 +313,14 @@ export class MemStorage implements IStorage {
 
   async createEmission(insertEmission: InsertEmission): Promise<Emission> {
     const id = this.currentId++;
-    const emission: Emission = { ...insertEmission, id };
+    const emission: Emission = { 
+      ...insertEmission, 
+      id,
+      unit: insertEmission.unit || "tCO2e",
+      verified: insertEmission.verified ?? false,
+      source: insertEmission.source || null,
+      projectId: insertEmission.projectId || null
+    };
     this.emissions.set(id, emission);
     return emission;
   }
@@ -315,7 +336,17 @@ export class MemStorage implements IStorage {
 
   async createRegulatoryAlert(insertAlert: InsertRegulatoryAlert): Promise<RegulatoryAlert> {
     const id = this.currentId++;
-    const alert: RegulatoryAlert = { ...insertAlert, id, createdAt: new Date() };
+    const alert: RegulatoryAlert = { 
+      ...insertAlert, 
+      id, 
+      createdAt: new Date(),
+      status: insertAlert.status || "active",
+      effectiveDate: insertAlert.effectiveDate || null,
+      deadline: insertAlert.deadline || null,
+      affectedProjects: insertAlert.affectedProjects || null,
+      source: insertAlert.source || null,
+      impact: insertAlert.impact || null
+    };
     this.regulatoryAlerts.set(id, alert);
     return alert;
   }
@@ -336,7 +367,13 @@ export class MemStorage implements IStorage {
 
   async createCarbonBudget(insertBudget: InsertCarbonBudget): Promise<CarbonBudget> {
     const id = this.currentId++;
-    const budget: CarbonBudget = { ...insertBudget, id };
+    const budget: CarbonBudget = { 
+      ...insertBudget, 
+      id,
+      categories: insertBudget.categories || null,
+      projects: insertBudget.projects || null,
+      status: insertBudget.status || "active"
+    };
     this.carbonBudgets.set(id, budget);
     return budget;
   }
@@ -357,7 +394,15 @@ export class MemStorage implements IStorage {
 
   async createInvestment(insertInvestment: InsertInvestment): Promise<Investment> {
     const id = this.currentId++;
-    const investment: Investment = { ...insertInvestment, id, createdAt: new Date() };
+    const investment: Investment = { 
+      ...insertInvestment, 
+      id, 
+      createdAt: new Date(),
+      status: insertInvestment.status || "proposed",
+      priority: insertInvestment.priority || "medium",
+      paybackPeriod: insertInvestment.paybackPeriod || null,
+      roi: insertInvestment.roi || null
+    };
     this.investments.set(id, investment);
     return investment;
   }
@@ -382,7 +427,17 @@ export class MemStorage implements IStorage {
 
   async createAiInsight(insertInsight: InsertAiInsight): Promise<AiInsight> {
     const id = this.currentId++;
-    const insight: AiInsight = { ...insertInsight, id, createdAt: new Date() };
+    const insight: AiInsight = { 
+      ...insertInsight, 
+      id, 
+      createdAt: new Date(),
+      data: insertInsight.data || null,
+      status: insertInsight.status || "active",
+      priority: insertInsight.priority || "medium",
+      confidence: insertInsight.confidence || null,
+      modelVersion: insertInsight.modelVersion || null,
+      accuracy: insertInsight.accuracy || null
+    };
     this.aiInsights.set(id, insight);
     return insight;
   }
@@ -395,7 +450,20 @@ export class MemStorage implements IStorage {
 
   async createLiveCarbonMetric(insertMetric: InsertLiveCarbonMetrics): Promise<LiveCarbonMetrics> {
     const id = this.currentId++;
-    const metric: LiveCarbonMetrics = { ...insertMetric, id };
+    const metric: LiveCarbonMetrics = { 
+      ...insertMetric, 
+      id,
+      unit: insertMetric.unit || "tCO2e",
+      timestamp: insertMetric.timestamp || new Date(),
+      projectId: insertMetric.projectId || null,
+      category: insertMetric.category || null,
+      subcategory: insertMetric.subcategory || null,
+      benchmark: insertMetric.benchmark || null,
+      target: insertMetric.target || null,
+      trend: insertMetric.trend || null,
+      changeFromPrevious: insertMetric.changeFromPrevious || null,
+      alerts: insertMetric.alerts || null
+    };
     this.liveCarbonMetrics.set(id, metric);
     return metric;
   }
@@ -412,7 +480,19 @@ export class MemStorage implements IStorage {
       ...insertData, 
       id, 
       createdAt: new Date(), 
-      updatedAt: new Date() 
+      updatedAt: new Date(),
+      projectId: insertData.projectId || null,
+      materialSubtype: insertData.materialSubtype || null,
+      supplier: insertData.supplier || null,
+      certifications: insertData.certifications || null,
+      transportDistance: insertData.transportDistance || null,
+      transportMode: insertData.transportMode || null,
+      transportEmissions: insertData.transportEmissions || null,
+      wastePercentage: insertData.wastePercentage || null,
+      recycledContent: insertData.recycledContent || null,
+      endOfLifeScenario: insertData.endOfLifeScenario || null,
+      installationDate: insertData.installationDate || null,
+      confidence: insertData.confidence || null
     };
     this.carbonEmbodiedData.set(id, data);
     return data;
@@ -430,7 +510,24 @@ export class MemStorage implements IStorage {
       ...insertTactic, 
       id, 
       createdAt: new Date(), 
-      updatedAt: new Date() 
+      updatedAt: new Date(),
+      applicablePhases: insertTactic.applicablePhases || null,
+      potentialReduction: insertTactic.potentialReduction || null,
+      reductionPercentage: insertTactic.reductionPercentage || null,
+      implementationCost: insertTactic.implementationCost || null,
+      paybackPeriod: insertTactic.paybackPeriod || null,
+      feasibilityScore: insertTactic.feasibilityScore || null,
+      implementationComplexity: insertTactic.implementationComplexity || null,
+      requiredResources: insertTactic.requiredResources || null,
+      timeline: insertTactic.timeline || null,
+      materialTypes: insertTactic.materialTypes || null,
+      projectTypes: insertTactic.projectTypes || null,
+      evidenceBase: insertTactic.evidenceBase || null,
+      successMetrics: insertTactic.successMetrics || null,
+      risks: insertTactic.risks || null,
+      dependencies: insertTactic.dependencies || null,
+      source: insertTactic.source || null,
+      aiConfidence: insertTactic.aiConfidence || null
     };
     this.carbonReductionTactics.set(id, tactic);
     return tactic;
