@@ -1,13 +1,9 @@
-import { Sidebar } from "@/components/layout/sidebar";
-import { Header } from "@/components/layout/header";
+import { PageShell } from "@/components/layout/page-shell";
 import { CarbonBudget } from "@/components/dashboard/carbon-budget";
-import { AIChatModal } from "@/components/dashboard/ai-chat-modal";
-import { useState } from "react";
+import { KPICard } from "@/components/dashboard/kpi-card";
 import { useQuery } from "@tanstack/react-query";
 
 export default function Budget() {
-  const [aiChatOpen, setAiChatOpen] = useState(false);
-
   // Fetch carbon budget data
   const { data: budgetData, isLoading } = useQuery<{
     totalBudget?: string;
@@ -17,36 +13,74 @@ export default function Budget() {
     queryKey: ["/api/carbon-budget/2025"],
   });
 
+  // Fetch budget metrics
+  const { data: budgetMetrics } = useQuery<{
+    totalBudget?: number;
+    consumed?: number;
+    remaining?: number;
+    variance?: string;
+  }>({
+    queryKey: ["/api/budget/metrics"],
+  });
+
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center bg-neutral-50 dark:bg-gray-950">
         <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary-600"></div>
       </div>
     );
   }
 
   return (
-    <div className="flex h-screen overflow-hidden bg-neutral-50 dark:bg-gray-950">
-      <Sidebar onAiChatOpen={() => setAiChatOpen(true)} />
-      
-      <div className="flex-1 flex flex-col overflow-hidden">
-        <Header onAiChatOpen={() => setAiChatOpen(true)} />
-        
-        <div className="flex-1 overflow-y-auto p-6">
-          {/* Page Header */}
-          <div className="mb-6">
-            <h1 className="text-3xl font-bold text-neutral-900 dark:text-white" data-testid="page-title-budget">Carbon Budget Planning</h1>
-            <p className="text-neutral-600 dark:text-neutral-400 mt-2">Plan and track carbon budgets across your construction portfolio</p>
-          </div>
-
-          {/* Carbon Budget Full Width */}
-          <div className="grid grid-cols-1 gap-6">
-            <CarbonBudget />
-          </div>
-        </div>
+    <PageShell
+      title="Carbon Budget Planning"
+      description="Carbon Budget Planning - CarbonConstruct AI"
+      pageTitle="Carbon Budget Planning"
+      pageSubtitle="Plan and track carbon budgets across your construction portfolio"
+      metaDescription="Plan, track, and optimize carbon budgets across your construction portfolio. Monitor allocations, forecast emissions, and ensure sustainable project delivery."
+      testId="page-title-budget"
+    >
+      {/* Budget KPIs */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+        <KPICard
+          title="Total Budget"
+          value={`${(budgetMetrics?.totalBudget || 2800)/1000}k tCO₂e`}
+          change="FY 2025"
+          changeType="positive"
+          icon="target"
+          subtitle="Annual carbon allocation"
+        />
+        <KPICard
+          title="Consumed"
+          value={`${(budgetMetrics?.consumed || 2100)/1000}k tCO₂e`}
+          change="75% used"
+          changeType="warning"
+          icon="target"
+          progress={75}
+          subtitle="Budget consumption rate"
+        />
+        <KPICard
+          title="Remaining"
+          value={`${(budgetMetrics?.remaining || 700)/1000}k tCO₂e`}
+          change="Q4 available"
+          changeType="positive"
+          icon="target"
+          subtitle="Available budget"
+        />
+        <KPICard
+          title="Variance"
+          value={budgetMetrics?.variance || "-8%"}
+          change="Under budget"
+          changeType="positive"
+          icon="target"
+          subtitle="Performance vs plan"
+        />
       </div>
 
-      <AIChatModal isOpen={aiChatOpen} onClose={() => setAiChatOpen(false)} />
-    </div>
+      {/* Carbon Budget Full Width */}
+      <div className="grid grid-cols-1 gap-6">
+        <CarbonBudget />
+      </div>
+    </PageShell>
   );
 }

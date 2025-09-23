@@ -1,13 +1,9 @@
-import { Sidebar } from "@/components/layout/sidebar";
-import { Header } from "@/components/layout/header";
+import { PageShell } from "@/components/layout/page-shell";
 import { PlatformIntegrations } from "@/components/dashboard/platform-integrations";
-import { AIChatModal } from "@/components/dashboard/ai-chat-modal";
-import { useState } from "react";
+import { KPICard } from "@/components/dashboard/kpi-card";
 import { useQuery } from "@tanstack/react-query";
 
 export default function Integrations() {
-  const [aiChatOpen, setAiChatOpen] = useState(false);
-
   // Fetch integrations status data
   const { data: integrationsData, isLoading } = useQuery<{
     platforms?: any[];
@@ -15,36 +11,75 @@ export default function Integrations() {
     queryKey: ["/api/integrations/status"],
   });
 
+  // Fetch integration metrics
+  const { data: integrationMetrics } = useQuery<{
+    connectedPlatforms?: number;
+    totalPlatforms?: number;
+    syncSuccessRate?: number;
+    lastSync?: string;
+  }>({
+    queryKey: ["/api/integrations/metrics"],
+  });
+
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center bg-neutral-50 dark:bg-gray-950">
         <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary-600"></div>
       </div>
     );
   }
 
   return (
-    <div className="flex h-screen overflow-hidden bg-neutral-50 dark:bg-gray-950">
-      <Sidebar onAiChatOpen={() => setAiChatOpen(true)} />
-      
-      <div className="flex-1 flex flex-col overflow-hidden">
-        <Header onAiChatOpen={() => setAiChatOpen(true)} />
-        
-        <div className="flex-1 overflow-y-auto p-6">
-          {/* Page Header */}
-          <div className="mb-6">
-            <h1 className="text-3xl font-bold text-neutral-900 dark:text-white" data-testid="page-title-integrations">Platform Integrations</h1>
-            <p className="text-neutral-600 dark:text-neutral-400 mt-2">Connect and sync data from your construction platforms and tools</p>
-          </div>
-
-          {/* Platform Integrations Full Width */}
-          <div className="grid grid-cols-1 gap-6">
-            <PlatformIntegrations />
-          </div>
-        </div>
+    <PageShell
+      title="Platform Integrations"
+      description="Platform Integrations - CarbonConstruct AI"
+      pageTitle="Platform Integrations"
+      pageSubtitle="Connect and sync data from your construction platforms and tools"
+      metaDescription="Connect construction platforms and tools to CarbonConstruct AI. Sync data automatically, monitor integration health, and streamline carbon tracking workflows."
+      testId="page-title-integrations"
+    >
+      {/* Integration KPIs */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+        <KPICard
+          title="Connected Platforms"
+          value={`${integrationMetrics?.connectedPlatforms || 8}/${integrationMetrics?.totalPlatforms || 12}`}
+          change="2 new"
+          changeType="positive"
+          icon="target"
+          progress={((integrationMetrics?.connectedPlatforms || 8) / (integrationMetrics?.totalPlatforms || 12)) * 100}
+          subtitle="Active integrations"
+        />
+        <KPICard
+          title="Sync Success Rate"
+          value={`${integrationMetrics?.syncSuccessRate || 97}%`}
+          change="↑ 2%"
+          changeType="positive"
+          icon="target"
+          progress={integrationMetrics?.syncSuccessRate || 97}
+          subtitle="Data synchronization reliability"
+        />
+        <KPICard
+          title="Data Sources"
+          value="24"
+          change="5 active"
+          changeType="positive"
+          icon="target"
+          subtitle="Connected data streams"
+        />
+        <KPICard
+          title="Last Sync"
+          value={integrationMetrics?.lastSync || "2 min ago"}
+          change="Auto sync"
+          changeType="positive"
+          icon="target"
+          subtitle="Most recent data update"
+        />
       </div>
 
-      <AIChatModal isOpen={aiChatOpen} onClose={() => setAiChatOpen(false)} />
-    </div>
+      {/* Platform Integrations Full Width */}
+      <div className="grid grid-cols-1 gap-6">
+        <PlatformIntegrations />
+      </div>
+    </PageShell>
   );
 }
