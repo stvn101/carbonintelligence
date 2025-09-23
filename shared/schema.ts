@@ -203,6 +203,160 @@ export const carbonPatterns = pgTable("carbon_patterns", {
   createdAt: timestamp("created_at").defaultNow(),
 });
 
+// Australian Rating Systems
+
+// Green Star certifications and assessments
+export const greenStarRatings = pgTable("green_star_ratings", {
+  id: serial("id").primaryKey(),
+  projectId: integer("project_id").references(() => projects.id),
+  toolType: text("tool_type").notNull(), // Buildings, Performance, Communities, Fitouts
+  toolVersion: text("tool_version").notNull(), // v1.1, v2, etc.
+  targetRating: integer("target_rating"), // 1-6 stars
+  currentRating: integer("current_rating"), // achieved rating
+  certificationStatus: text("certification_status").notNull().default("in_progress"), // planning, in_progress, certified, expired
+  registrationDate: timestamp("registration_date"),
+  certificationDate: timestamp("certification_date"),
+  expiryDate: timestamp("expiry_date"),
+  totalPoints: integer("total_points"),
+  maxPoints: integer("max_points"),
+  
+  // Category scores
+  managementPoints: integer("management_points"),
+  indoorEnvironmentPoints: integer("indoor_environment_points"),
+  energyPoints: integer("energy_points"),
+  transportPoints: integer("transport_points"),
+  waterPoints: integer("water_points"),
+  materialsPoints: integer("materials_points"),
+  emissionsPoints: integer("emissions_points"),
+  landUsePoints: integer("land_use_points"),
+  
+  climatePositivePathway: boolean("climate_positive_pathway").default(false),
+  assessorName: text("assessor_name"),
+  assessorCompany: text("assessor_company"),
+  notes: text("notes"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+// NABERS performance ratings and metrics
+export const nabersRatings = pgTable("nabers_ratings", {
+  id: serial("id").primaryKey(),
+  projectId: integer("project_id").references(() => projects.id),
+  buildingType: text("building_type").notNull(), // Office, Hotel, Shopping Centre, Apartment, etc.
+  ratingType: text("rating_type").notNull(), // Energy, Water, Waste, Indoor Environment
+  currentRating: decimal("current_rating", { precision: 2, scale: 1 }), // 0.0-6.0
+  targetRating: decimal("target_rating", { precision: 2, scale: 1 }),
+  benchmarkRating: decimal("benchmark_rating", { precision: 2, scale: 1 }), // market average
+  
+  // Performance metrics
+  energyIntensity: decimal("energy_intensity", { precision: 10, scale: 2 }), // MJ/m²/year or similar
+  waterConsumption: decimal("water_consumption", { precision: 10, scale: 2 }), // L/m²/year
+  wasteGeneration: decimal("waste_generation", { precision: 10, scale: 2 }), // kg/m²/year
+  recyclingRate: decimal("recycling_rate", { precision: 5, scale: 2 }), // percentage
+  
+  // Indoor environment metrics
+  thermalComfort: decimal("thermal_comfort", { precision: 3, scale: 1 }), // PMV score
+  airQuality: decimal("air_quality", { precision: 5, scale: 2 }), // various metrics
+  lightingQuality: decimal("lighting_quality", { precision: 5, scale: 2 }),
+  acousticComfort: decimal("acoustic_comfort", { precision: 5, scale: 2 }),
+  
+  assessmentPeriod: text("assessment_period"), // 12-month period
+  commitmentAgreement: boolean("commitment_agreement").default(false),
+  certificationDate: timestamp("certification_date"),
+  expiryDate: timestamp("expiry_date"),
+  assessorId: text("assessor_id"),
+  
+  // Performance tracking
+  improvementTrend: text("improvement_trend"), // improving, stable, declining
+  previousRating: decimal("previous_rating", { precision: 2, scale: 1 }),
+  yearOverYearChange: decimal("year_over_year_change", { precision: 3, scale: 2 }),
+  
+  notes: text("notes"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+// NCC Section J compliance tracking
+export const nccCompliance = pgTable("ncc_compliance", {
+  id: serial("id").primaryKey(),
+  projectId: integer("project_id").references(() => projects.id),
+  nccVersion: text("ncc_version").notNull().default("2022"), // NCC 2022, etc.
+  buildingClass: text("building_class").notNull(), // Class 2, 3, 5, 6, etc.
+  state: text("state").notNull(), // NSW, VIC, QLD, etc.
+  
+  // Section J Performance Requirements
+  j1p1Compliance: boolean("j1p1_compliance").default(false), // Energy efficiency
+  j1p2Compliance: boolean("j1p2_compliance").default(false), // Thermal performance (Class 2/4)
+  j1p4Compliance: boolean("j1p4_compliance").default(false), // Distributed energy resources
+  
+  // NABERS requirements by building class
+  requiredNabersRating: decimal("required_nabers_rating", { precision: 2, scale: 1 }), // Class 5: 5.5, Class 3: 4.0, Class 6: 4.5
+  achievedNabersRating: decimal("achieved_nabers_rating", { precision: 2, scale: 1 }),
+  nabersCommitmentAgreement: boolean("nabers_commitment_agreement").default(false),
+  
+  // Thermal performance metrics
+  heatingLoad: decimal("heating_load", { precision: 10, scale: 2 }), // MJ/m²/year
+  coolingLoad: decimal("cooling_load", { precision: 10, scale: 2 }),
+  thermalEnergyLoad: decimal("thermal_energy_load", { precision: 10, scale: 2 }),
+  heatingLoadLimit: decimal("heating_load_limit", { precision: 10, scale: 2 }),
+  coolingLoadLimit: decimal("cooling_load_limit", { precision: 10, scale: 2 }),
+  thermalEnergyLoadLimit: decimal("thermal_energy_load_limit", { precision: 10, scale: 2 }),
+  
+  // Distributed energy provisions
+  renewableEnergyProvision: boolean("renewable_energy_provision").default(false),
+  batteryProvision: boolean("battery_provision").default(false),
+  evChargingProvision: boolean("ev_charging_provision").default(false),
+  
+  // Greenhouse gas emissions
+  baseGhgEmissions: decimal("base_ghg_emissions", { precision: 10, scale: 2 }), // tCO2e/year
+  maxAllowedGhgEmissions: decimal("max_allowed_ghg_emissions", { precision: 10, scale: 2 }), // 67% of 5.5-star level
+  actualGhgEmissions: decimal("actual_ghg_emissions", { precision: 10, scale: 2 }),
+  
+  complianceStatus: text("compliance_status").notNull().default("in_progress"), // compliant, non_compliant, in_progress
+  assessmentDate: timestamp("assessment_date"),
+  complianceDate: timestamp("compliance_date"),
+  certifierName: text("certifier_name"),
+  certifierNumber: text("certifier_number"),
+  
+  notes: text("notes"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+// Rating assessment history and progress tracking
+export const ratingAssessments = pgTable("rating_assessments", {
+  id: serial("id").primaryKey(),
+  projectId: integer("project_id").references(() => projects.id),
+  assessmentType: text("assessment_type").notNull(), // green_star, nabers, ncc
+  assessmentStage: text("assessment_stage").notNull(), // design, construction, operation, renewal
+  scheduledDate: timestamp("scheduled_date"),
+  completedDate: timestamp("completed_date"),
+  
+  // Progress tracking
+  overallProgress: integer("overall_progress").default(0), // percentage 0-100
+  documentsRequired: integer("documents_required"),
+  documentsCompleted: integer("documents_completed"),
+  creditsTargeted: integer("credits_targeted"),
+  creditsAchieved: integer("credits_achieved"),
+  
+  // Assessment details
+  assessorContact: text("assessor_contact"),
+  estimatedCost: decimal("estimated_cost", { precision: 10, scale: 2 }),
+  actualCost: decimal("actual_cost", { precision: 10, scale: 2 }),
+  nextMilestone: text("next_milestone"),
+  milestoneDueDate: timestamp("milestone_due_date"),
+  
+  // Issues and risks
+  outstandingIssues: jsonb("outstanding_issues"),
+  riskFactors: jsonb("risk_factors"),
+  recommendations: jsonb("recommendations"),
+  
+  status: text("status").notNull().default("scheduled"), // scheduled, in_progress, completed, on_hold
+  notes: text("notes"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
 // Insert schemas
 export const insertUserSchema = createInsertSchema(users).omit({ id: true });
 export const insertProjectSchema = createInsertSchema(projects).omit({ id: true, createdAt: true });
@@ -217,6 +371,12 @@ export const insertCarbonPatternSchema = createInsertSchema(carbonPatterns).omit
 export const insertCarbonEmbodiedDataSchema = createInsertSchema(carbonEmbodiedData).omit({ id: true, createdAt: true, updatedAt: true });
 export const insertLiveCarbonMetricsSchema = createInsertSchema(liveCarbonMetrics).omit({ id: true });
 export const insertCarbonReductionTacticsSchema = createInsertSchema(carbonReductionTactics).omit({ id: true, createdAt: true, updatedAt: true });
+
+// Australian rating system insert schemas
+export const insertGreenStarRatingSchema = createInsertSchema(greenStarRatings).omit({ id: true, createdAt: true, updatedAt: true });
+export const insertNabersRatingSchema = createInsertSchema(nabersRatings).omit({ id: true, createdAt: true, updatedAt: true });
+export const insertNccComplianceSchema = createInsertSchema(nccCompliance).omit({ id: true, createdAt: true, updatedAt: true });
+export const insertRatingAssessmentSchema = createInsertSchema(ratingAssessments).omit({ id: true, createdAt: true, updatedAt: true });
 
 // Types
 export type User = typeof users.$inferSelect;
@@ -245,3 +405,13 @@ export type LiveCarbonMetrics = typeof liveCarbonMetrics.$inferSelect;
 export type InsertLiveCarbonMetrics = z.infer<typeof insertLiveCarbonMetricsSchema>;
 export type CarbonReductionTactics = typeof carbonReductionTactics.$inferSelect;
 export type InsertCarbonReductionTactics = z.infer<typeof insertCarbonReductionTacticsSchema>;
+
+// Australian rating system types
+export type GreenStarRating = typeof greenStarRatings.$inferSelect;
+export type InsertGreenStarRating = z.infer<typeof insertGreenStarRatingSchema>;
+export type NabersRating = typeof nabersRatings.$inferSelect;
+export type InsertNabersRating = z.infer<typeof insertNabersRatingSchema>;
+export type NccCompliance = typeof nccCompliance.$inferSelect;
+export type InsertNccCompliance = z.infer<typeof insertNccComplianceSchema>;
+export type RatingAssessment = typeof ratingAssessments.$inferSelect;
+export type InsertRatingAssessment = z.infer<typeof insertRatingAssessmentSchema>;
