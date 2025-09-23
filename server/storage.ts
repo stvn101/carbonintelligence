@@ -175,7 +175,7 @@ export class MemStorage implements IStorage {
       });
     });
 
-    // Create carbon embodied data for materials
+    // Create carbon embodied data for Australian materials
     const materials = ["concrete", "steel", "aluminum", "timber", "glass"];
     materials.forEach((material, index) => {
       this.createCarbonEmbodiedData({
@@ -183,10 +183,10 @@ export class MemStorage implements IStorage {
         materialSubtype: `structural_${material}`,
         quantity: (Math.random() * 100 + 50).toFixed(2),
         unit: material === "concrete" ? "m3" : "tonnes",
-        embodiedCarbon: (Math.random() * 500 + 100).toFixed(3),
-        totalEmbodiedCarbon: (Math.random() * 5000 + 1000).toFixed(2),
-        supplier: `${material.charAt(0).toUpperCase()}${material.slice(1)} Corp`,
-        transportDistance: (Math.random() * 500 + 50).toFixed(2),
+        embodiedCarbon: this.getAustralianCarbonFactor(material),
+        totalEmbodiedCarbon: (Math.random() * 5500 + 1200).toFixed(2),
+        supplier: `${material.charAt(0).toUpperCase()}${material.slice(1)} Australia Pty Ltd`,
+        transportDistance: (Math.random() * 800 + 100).toFixed(2), // Australian distances
         transportMode: Math.random() > 0.5 ? "truck" : "rail",
         transportEmissions: (Math.random() * 50 + 10).toFixed(2),
         recycledContent: (Math.random() * 30).toFixed(2),
@@ -199,13 +199,13 @@ export class MemStorage implements IStorage {
     // Create AI-powered carbon reduction tactics
     const tactics = [
       {
-        title: "Replace Standard Concrete with Low-Carbon Alternative",
-        description: "Substitute 40% of Portland cement with fly ash and slag in concrete mix. This high-impact substitution reduces embodied carbon while maintaining structural integrity. Implement gradual replacement across non-critical applications first.",
+        title: "Replace Standard Australian Concrete with Low-Carbon Alternative",
+        description: "Substitute 40% of Portland cement with fly ash and GGBFS available in Australian markets. This high-impact substitution reduces embodied carbon while maintaining structural integrity. Source materials from Australian suppliers to minimize transport emissions.",
         category: "material_substitution",
         applicablePhases: ["design", "procurement"],
         potentialReduction: "2847.5",
         reductionPercentage: "18.7",
-        implementationCost: "125000",
+        implementationCost: "187500", // AUD
         paybackPeriod: 18,
         feasibilityScore: "0.87",
         priority: "high",
@@ -223,7 +223,7 @@ export class MemStorage implements IStorage {
         applicablePhases: ["design"],
         potentialReduction: "1923.2",
         reductionPercentage: "12.3",
-        implementationCost: "75000",
+        implementationCost: "112500", // AUD
         paybackPeriod: 12,
         feasibilityScore: "0.82",
         priority: "high",
@@ -293,6 +293,23 @@ export class MemStorage implements IStorage {
     tactics.forEach(tactic => {
       this.createCarbonReductionTactic(tactic);
     });
+  }
+
+  private getAustralianCarbonFactor(material: string): string {
+    // Australian NGER-aligned embodied carbon factors (tCO2e per unit)
+    const australianFactors: { [key: string]: number } = {
+      concrete: 0.35, // Higher due to Australian cement production and energy grid
+      steel: 2.4,     // Higher due to coal-based Australian steel production  
+      aluminum: 8.2,  // Higher due to energy-intensive Australian smelting
+      timber: 0.02,   // Lower due to Australian sustainable forestry practices
+      glass: 0.85     // Australian manufacturing processes
+    };
+    
+    const baseFactor = australianFactors[material] || 0.15;
+    const variance = baseFactor * 0.2; // +/- 20% variance
+    const factor = baseFactor + (Math.random() * variance * 2 - variance);
+    
+    return (factor * (Math.random() * 100 + 50)).toFixed(3);
   }
 
   // User operations

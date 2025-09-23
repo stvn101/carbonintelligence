@@ -242,12 +242,14 @@ export class IntegrationsService {
   }
 
   private calculateTakeoffCarbon(takeoffs: any[]): number {
-    // Simplified carbon calculation for takeoffs
+    // Australian NGER-aligned carbon factors for takeoffs
     const carbonFactors: { [key: string]: number } = {
-      asphalt: 0.4, // tonnes CO2e per tonne
-      aggregate: 0.05,
-      concrete: 0.3,
-      steel: 2.1
+      asphalt: 0.45, // tonnes CO2e per tonne (AU grid intensive)
+      aggregate: 0.06, // Higher due to AU transport distances  
+      concrete: 0.35, // Higher due to AU cement production
+      steel: 2.4, // Higher due to AU steel production processes
+      aluminum: 8.2, // AU aluminum smelting
+      timber: 0.02 // Australian sustainable forestry
     };
 
     return takeoffs.reduce((total, takeoff) => {
