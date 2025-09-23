@@ -36,11 +36,11 @@ export default function Investments() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
         <KPICard
           title="Total Invested"
-          value={`$${(investmentMetrics?.totalInvested || 24500000)/1000000}M`}
-          change="↑ $3.2M"
+          value={`A$${(investmentMetrics?.totalInvested || 37000000)/1000000}M`}
+          change="↑ A$4.8M"
           changeType="positive"
           icon="dollar-sign"
-          subtitle="Climate investments to date"
+          subtitle="Australian climate investments to date"
         />
         <KPICard
           title="Current ROI"
@@ -53,11 +53,11 @@ export default function Investments() {
         />
         <KPICard
           title="Projected Savings"
-          value={`$${(investmentMetrics?.projectedSavings || 8200000)/1000000}M`}
+          value={`A$${(investmentMetrics?.projectedSavings || 12300000)/1000000}M`}
           change="Next 5 years"
           changeType="positive"
           icon="dollar-sign"
-          subtitle="Expected cost savings"
+          subtitle="Expected cost savings (AUD)"
         />
         <KPICard
           title="Active Projects"

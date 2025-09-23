@@ -52,16 +52,16 @@ export default function Dashboard() {
               changeType="positive"
               icon="leaf"
               progress={75}
-              subtitle="75% of industry average"
+              subtitle="75% of Australian industry average"
             />
             <KPICard
               title="Savings Opportunity"
-              value={overview?.savingsOpportunity || "$0"}
+              value={overview?.savingsOpportunity || "A$0"}
               change="↑ 18%"
               changeType="positive"
               icon="dollar-sign"
               progress={60}
-              subtitle="60% identified opportunities"
+              subtitle="60% identified opportunities (AUD)"
             />
             <KPICard
               title="Regulatory Alerts"
@@ -69,7 +69,7 @@ export default function Dashboard() {
               change="3 Active"
               changeType="warning"
               icon="exclamation-triangle"
-              subtitle="EU Taxonomy updates • CSRD reporting changes"
+              subtitle="NCC updates • NGER reporting • Green Star changes"
             />
             <KPICard
               title="Net Zero Progress"

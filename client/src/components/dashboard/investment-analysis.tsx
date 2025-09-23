@@ -98,8 +98,8 @@ export function InvestmentAnalysis() {
             <>
               <div className="flex items-center justify-between p-3 bg-gradient-to-r from-green-50 to-blue-50 rounded-lg">
                 <div>
-                  <div className="font-medium text-neutral-900">Sustainable Material Supply Chain</div>
-                  <div className="text-sm text-neutral-600">Investment: $2.4M • Reduction: 15% portfolio emissions</div>
+                  <div className="font-medium text-neutral-900">Australian Sustainable Material Supply Chain</div>
+                  <div className="text-sm text-neutral-600">Investment: A$3.6M • Reduction: 15% portfolio emissions</div>
                 </div>
                 <div className="text-right">
                   <div className="font-bold text-secondary-600">28 months</div>
@@ -109,8 +109,8 @@ export function InvestmentAnalysis() {
 
               <div className="flex items-center justify-between p-3 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg">
                 <div>
-                  <div className="font-medium text-neutral-900">Renewable Energy Infrastructure</div>
-                  <div className="text-sm text-neutral-600">Investment: $1.8M • Reduction: 12% operational emissions</div>
+                  <div className="font-medium text-neutral-900">Australian Renewable Energy Infrastructure</div>
+                  <div className="text-sm text-neutral-600">Investment: A$2.7M • Reduction: 12% operational emissions</div>
                 </div>
                 <div className="text-right">
                   <div className="font-bold text-primary-600">36 months</div>
@@ -121,7 +121,7 @@ export function InvestmentAnalysis() {
               <div className="flex items-center justify-between p-3 bg-gradient-to-r from-purple-50 to-pink-50 rounded-lg">
                 <div>
                   <div className="font-medium text-neutral-900">Carbon Capture Technology</div>
-                  <div className="text-sm text-neutral-600">Investment: $3.2M • Reduction: 20% direct emissions</div>
+                  <div className="text-sm text-neutral-600">Investment: A$4.8M • Reduction: 20% direct emissions</div>
                 </div>
                 <div className="text-right">
                   <div className="font-bold text-purple-600">42 months</div>
