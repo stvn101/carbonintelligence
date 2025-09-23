@@ -11,6 +11,7 @@ import { AIChatModal } from "@/components/dashboard/ai-chat-modal";
 import { MLInsights } from "@/components/dashboard/ml-insights";
 import { PlatformIntegrations } from "@/components/dashboard/platform-integrations";
 import { LiveCarbonFeed } from "@/components/dashboard/live-carbon-feed";
+import { AustralianRatingsKPIs } from "@/components/dashboard/australian-ratings-kpis";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 
@@ -85,6 +86,11 @@ export default function Dashboard() {
           {/* Live Carbon Feed - Featured Section */}
           <div className="grid grid-cols-1 gap-6 mb-6">
             <LiveCarbonFeed />
+          </div>
+
+          {/* Australian Rating Systems KPIs */}
+          <div className="mb-6">
+            <AustralianRatingsKPIs />
           </div>
 
           {/* Charts and Analysis Row */}
