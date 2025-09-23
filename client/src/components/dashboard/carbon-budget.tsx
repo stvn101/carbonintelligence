@@ -49,10 +49,10 @@ export function CarbonBudget() {
   const progressPercent = allocated > 0 ? (consumed / allocated * 100) : 0;
 
   const categories = [
-    { name: "Materials", amount: "1.4M tCO₂e", percentage: "50%", color: "bg-blue-500" },
-    { name: "Transportation", amount: "0.7M tCO₂e", percentage: "25%", color: "bg-green-500" },
-    { name: "Energy", amount: "0.5M tCO₂e", percentage: "18%", color: "bg-purple-500" },
-    { name: "Other", amount: "0.2M tCO₂e", percentage: "7%", color: "bg-orange-500" }
+    { name: "Materials (AU)", amount: "1.6M tCO₂e", percentage: "52%", color: "bg-blue-500" },
+    { name: "Transport (AU)", amount: "0.8M tCO₂e", percentage: "27%", color: "bg-green-500" },
+    { name: "Energy (AU Grid)", amount: "0.4M tCO₂e", percentage: "15%", color: "bg-purple-500" },
+    { name: "Other", amount: "0.2M tCO₂e", percentage: "6%", color: "bg-orange-500" }
   ];
 
   const formatNumber = (num: number) => {
@@ -64,7 +64,7 @@ export function CarbonBudget() {
   return (
     <div className="bg-white rounded-lg shadow-sm border border-neutral-200 p-6">
       <div className="flex items-center justify-between mb-6">
-        <h3 className="text-lg font-semibold text-neutral-900">Carbon Budget Planning</h3>
+        <h3 className="text-lg font-semibold text-neutral-900">Carbon Budget Planning (AU NGER)</h3>
         <select className="text-sm border border-neutral-300 rounded px-3 py-1">
           <option>FY {currentYear}</option>
           <option>FY {currentYear + 1}</option>
@@ -128,7 +128,7 @@ export function CarbonBudget() {
           </div>
           <p className="text-sm text-blue-800">
             {forecast?.recommendations?.[0] || 
-             "At current trajectory, you'll exceed budget by 180k tCO₂e. Implementing suggested optimizations could reduce overrun to 45k tCO₂e."}
+             "Using Australian NGER methodology: current trajectory shows 195k tCO₂e overrun. Green Star certified optimizations could reduce this to 38k tCO₂e."}
           </p>
         </div>
       </div>

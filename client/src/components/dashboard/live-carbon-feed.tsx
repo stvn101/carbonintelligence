@@ -139,7 +139,7 @@ export function LiveCarbonFeed() {
                 Live Carbon Embodied Feed
               </h3>
               <p className="text-sm text-neutral-600 dark:text-gray-400">
-                Real-time carbon tracking with AI-powered reduction strategies
+                Real-time carbon tracking with AI-powered reduction strategies (NGER aligned)
               </p>
             </div>
           </div>
@@ -244,7 +244,7 @@ export function LiveCarbonFeed() {
           <div>
             <h4 className="text-md font-semibold text-neutral-900 dark:text-white mb-4 flex items-center">
               <Factory className="w-4 h-4 mr-2" />
-              Embodied Carbon by Material
+              Embodied Carbon by Material (AU Supply Chain)
             </h4>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
@@ -332,7 +332,7 @@ export function LiveCarbonFeed() {
                   {tactic.implementationCost && (
                     <div className="text-center p-2 bg-white dark:bg-gray-800 rounded">
                       <div className="text-lg font-bold text-orange-600 dark:text-orange-400">
-                        ${parseFloat(tactic.implementationCost).toLocaleString()}
+                        A$${(parseFloat(tactic.implementationCost) * 1.5).toLocaleString()}
                       </div>
                       <div className="text-xs text-neutral-600 dark:text-gray-400">Cost</div>
                     </div>
