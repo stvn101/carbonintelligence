@@ -892,6 +892,7 @@ export class MemStorage implements IStorage {
     const id = this.currentId++;
     const rating: GreenStarRating = {
       ...insertRating,
+      projectId: insertRating.projectId ?? null,
       id,
       createdAt: new Date(),
       updatedAt: new Date(),
@@ -956,6 +957,7 @@ export class MemStorage implements IStorage {
     const id = this.currentId++;
     const rating: NabersRating = {
       ...insertRating,
+      projectId: insertRating.projectId ?? null,
       id,
       createdAt: new Date(),
       updatedAt: new Date(),
@@ -1016,6 +1018,7 @@ export class MemStorage implements IStorage {
     const id = this.currentId++;
     const compliance: NccCompliance = {
       ...insertCompliance,
+      projectId: insertCompliance.projectId ?? null,
       id,
       createdAt: new Date(),
       updatedAt: new Date(),
@@ -1085,6 +1088,7 @@ export class MemStorage implements IStorage {
     const id = this.currentId++;
     const assessment: RatingAssessment = {
       ...insertAssessment,
+      projectId: insertAssessment.projectId ?? null,
       id,
       createdAt: new Date(),
       updatedAt: new Date(),

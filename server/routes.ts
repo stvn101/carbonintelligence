@@ -8,7 +8,8 @@ import { mlService } from "./services/mlService";
 import { integrationsService } from "./services/integrations";
 import { 
   insertProjectSchema, insertEmissionSchema, insertRegulatoryAlertSchema, insertInvestmentSchema,
-  insertLiveCarbonMetricsSchema, insertMlModelSchema, insertIntegrationSchema 
+  insertLiveCarbonMetricsSchema, insertMlModelSchema, insertIntegrationSchema,
+  insertGreenStarRatingSchema, insertNabersRatingSchema, insertNccComplianceSchema, insertRatingAssessmentSchema
 } from "@shared/schema";
 import { z } from "zod";
 
@@ -518,6 +519,266 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ error: "Invalid request data", details: error.errors });
       }
       res.status(500).json({ error: "Failed to configure integration" });
+    }
+  });
+
+  // Australian Rating Systems API Routes
+
+  // Green Star rating system routes
+  app.get("/api/ratings/green-star", async (req, res) => {
+    try {
+      const projectId = req.query.projectId ? parseInt(req.query.projectId as string) : undefined;
+      const ratings = await storage.getGreenStarRatings(projectId);
+      res.json({ ratings });
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch Green Star ratings" });
+    }
+  });
+
+  app.get("/api/ratings/green-star/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const rating = await storage.getGreenStarRating(id);
+      if (!rating) {
+        return res.status(404).json({ error: "Green Star rating not found" });
+      }
+      res.json(rating);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch Green Star rating" });
+    }
+  });
+
+  app.post("/api/ratings/green-star", async (req, res) => {
+    try {
+      const validatedData = insertGreenStarRatingSchema.parse(req.body);
+      const rating = await storage.createGreenStarRating(validatedData);
+      res.status(201).json(rating);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ error: "Invalid request data", details: error.errors });
+      }
+      res.status(500).json({ error: "Failed to create Green Star rating" });
+    }
+  });
+
+  app.put("/api/ratings/green-star/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const validatedData = insertGreenStarRatingSchema.partial().parse(req.body);
+      const rating = await storage.updateGreenStarRating(id, validatedData);
+      res.json(rating);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ error: "Invalid request data", details: error.errors });
+      }
+      res.status(500).json({ error: "Failed to update Green Star rating" });
+    }
+  });
+
+  app.delete("/api/ratings/green-star/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      await storage.deleteGreenStarRating(id);
+      res.status(204).send();
+    } catch (error) {
+      res.status(500).json({ error: "Failed to delete Green Star rating" });
+    }
+  });
+
+  // NABERS rating system routes
+  app.get("/api/ratings/nabers", async (req, res) => {
+    try {
+      const projectId = req.query.projectId ? parseInt(req.query.projectId as string) : undefined;
+      const ratingType = req.query.ratingType as string;
+      
+      let ratings;
+      if (ratingType) {
+        ratings = await storage.getNabersRatingsByType(ratingType);
+      } else {
+        ratings = await storage.getNabersRatings(projectId);
+      }
+      res.json({ ratings });
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch NABERS ratings" });
+    }
+  });
+
+  app.get("/api/ratings/nabers/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const rating = await storage.getNabersRating(id);
+      if (!rating) {
+        return res.status(404).json({ error: "NABERS rating not found" });
+      }
+      res.json(rating);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch NABERS rating" });
+    }
+  });
+
+  app.post("/api/ratings/nabers", async (req, res) => {
+    try {
+      const validatedData = insertNabersRatingSchema.parse(req.body);
+      const rating = await storage.createNabersRating(validatedData);
+      res.status(201).json(rating);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ error: "Invalid request data", details: error.errors });
+      }
+      res.status(500).json({ error: "Failed to create NABERS rating" });
+    }
+  });
+
+  app.put("/api/ratings/nabers/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const validatedData = insertNabersRatingSchema.partial().parse(req.body);
+      const rating = await storage.updateNabersRating(id, validatedData);
+      res.json(rating);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ error: "Invalid request data", details: error.errors });
+      }
+      res.status(500).json({ error: "Failed to update NABERS rating" });
+    }
+  });
+
+  app.delete("/api/ratings/nabers/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      await storage.deleteNabersRating(id);
+      res.status(204).send();
+    } catch (error) {
+      res.status(500).json({ error: "Failed to delete NABERS rating" });
+    }
+  });
+
+  // NCC compliance routes
+  app.get("/api/compliance/ncc", async (req, res) => {
+    try {
+      const projectId = req.query.projectId ? parseInt(req.query.projectId as string) : undefined;
+      const compliance = await storage.getNccCompliance(projectId);
+      res.json({ compliance });
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch NCC compliance data" });
+    }
+  });
+
+  app.get("/api/compliance/ncc/project/:projectId", async (req, res) => {
+    try {
+      const projectId = parseInt(req.params.projectId);
+      const compliance = await storage.getNccComplianceByProject(projectId);
+      if (!compliance) {
+        return res.status(404).json({ error: "NCC compliance not found for project" });
+      }
+      res.json(compliance);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch NCC compliance for project" });
+    }
+  });
+
+  app.post("/api/compliance/ncc", async (req, res) => {
+    try {
+      const validatedData = insertNccComplianceSchema.parse(req.body);
+      const compliance = await storage.createNccCompliance(validatedData);
+      res.status(201).json(compliance);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ error: "Invalid request data", details: error.errors });
+      }
+      res.status(500).json({ error: "Failed to create NCC compliance record" });
+    }
+  });
+
+  app.put("/api/compliance/ncc/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const validatedData = insertNccComplianceSchema.partial().parse(req.body);
+      const compliance = await storage.updateNccCompliance(id, validatedData);
+      res.json(compliance);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ error: "Invalid request data", details: error.errors });
+      }
+      res.status(500).json({ error: "Failed to update NCC compliance" });
+    }
+  });
+
+  app.delete("/api/compliance/ncc/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      await storage.deleteNccCompliance(id);
+      res.status(204).send();
+    } catch (error) {
+      res.status(500).json({ error: "Failed to delete NCC compliance record" });
+    }
+  });
+
+  // Rating assessment routes
+  app.get("/api/assessments", async (req, res) => {
+    try {
+      const projectId = req.query.projectId ? parseInt(req.query.projectId as string) : undefined;
+      const assessmentType = req.query.assessmentType as string;
+      
+      let assessments;
+      if (assessmentType) {
+        assessments = await storage.getRatingAssessmentsByType(assessmentType);
+      } else {
+        assessments = await storage.getRatingAssessments(projectId);
+      }
+      res.json({ assessments });
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch rating assessments" });
+    }
+  });
+
+  app.get("/api/assessments/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const assessment = await storage.getRatingAssessment(id);
+      if (!assessment) {
+        return res.status(404).json({ error: "Rating assessment not found" });
+      }
+      res.json(assessment);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch rating assessment" });
+    }
+  });
+
+  app.post("/api/assessments", async (req, res) => {
+    try {
+      const validatedData = insertRatingAssessmentSchema.parse(req.body);
+      const assessment = await storage.createRatingAssessment(validatedData);
+      res.status(201).json(assessment);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ error: "Invalid request data", details: error.errors });
+      }
+      res.status(500).json({ error: "Failed to create rating assessment" });
+    }
+  });
+
+  app.put("/api/assessments/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const validatedData = insertRatingAssessmentSchema.partial().parse(req.body);
+      const assessment = await storage.updateRatingAssessment(id, validatedData);
+      res.json(assessment);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ error: "Invalid request data", details: error.errors });
+      }
+      res.status(500).json({ error: "Failed to update rating assessment" });
+    }
+  });
+
+  app.delete("/api/assessments/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      await storage.deleteRatingAssessment(id);
+      res.status(204).send();
+    } catch (error) {
+      res.status(500).json({ error: "Failed to delete rating assessment" });
     }
   });
 
