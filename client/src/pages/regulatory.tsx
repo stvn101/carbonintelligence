@@ -112,8 +112,8 @@ export default function Regulatory() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
         <KPICard
           title="Active Alerts"
-          value={complianceData?.activeAlerts?.toString() || "7"}
-          change="2 New"
+          value={filteredAlerts.length.toString()}
+          change={`${filteredAlerts.filter(a => a.priority === 'high').length} High Priority`}
           changeType="warning"
           icon="exclamation-triangle"
           subtitle="Require immediate attention"
@@ -148,7 +148,87 @@ export default function Regulatory() {
       {/* Regulatory Intelligence Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
         <div className="lg:col-span-2">
-          <RegulatoryIntelligence />
+          {/* High Priority Alerts Summary */}
+          <div className="bg-white dark:bg-neutral-900 rounded-lg shadow-sm border border-neutral-200 dark:border-neutral-700 p-6">
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center space-x-2">
+                <Shield className="w-5 h-5 text-primary-600 dark:text-primary-400" />
+                <h3 className="text-lg font-semibold text-neutral-900 dark:text-white">Australian Regulatory Intelligence</h3>
+              </div>
+              <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" data-testid="indicator-monitoring"></div>
+            </div>
+            
+            {/* Overall Compliance Score */}
+            <div className={`rounded-lg p-4 mb-6 ${(complianceData?.complianceScore || 0) >= 80 ? 'bg-green-100 dark:bg-green-900/20' : (complianceData?.complianceScore || 0) >= 60 ? 'bg-amber-100 dark:bg-amber-900/20' : 'bg-red-100 dark:bg-red-900/20'}`} data-testid="card-compliance-score">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h4 className="text-sm font-medium text-neutral-700 dark:text-neutral-300">Overall Compliance Score</h4>
+                  <div className={`text-2xl font-bold ${(complianceData?.complianceScore || 0) >= 80 ? 'text-green-600 dark:text-green-400' : (complianceData?.complianceScore || 0) >= 60 ? 'text-amber-600 dark:text-amber-400' : 'text-red-600 dark:text-red-400'}`} data-testid="text-compliance-score">
+                    {complianceData?.complianceScore || 0}%
+                  </div>
+                </div>
+                <Globe className={`w-8 h-8 ${(complianceData?.complianceScore || 0) >= 80 ? 'text-green-600 dark:text-green-400' : (complianceData?.complianceScore || 0) >= 60 ? 'text-amber-600 dark:text-amber-400' : 'text-red-600 dark:text-red-400'}`} />
+              </div>
+            </div>
+            
+            {/* High Priority Alerts */}
+            <div className="mb-6">
+              <h4 className="text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-3">High Priority Alerts</h4>
+              <div className="space-y-3">
+                {filteredAlerts
+                  .filter(alert => alert.priority === "high")
+                  .slice(0, 2)
+                  .map((alert: any, index: number) => (
+                  <div key={alert.id} className="border-l-4 border-red-500 pl-4" data-testid={`alert-${index}`}>
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="text-sm font-medium text-neutral-900 dark:text-white">{alert.title}</span>
+                      <span className="text-xs px-2 py-1 rounded bg-red-100 dark:bg-red-900/20 text-red-700 dark:text-red-300">
+                        High Priority
+                      </span>
+                    </div>
+                    <p className="text-xs text-neutral-600 dark:text-neutral-400 mb-2">{alert.description}</p>
+                    <p className="text-xs text-neutral-500 dark:text-neutral-500">
+                      {alert.region?.toUpperCase()} • {alert.impact || 'Compliance Impact'}
+                    </p>
+                  </div>
+                ))}
+                
+                {filteredAlerts.filter(alert => alert.priority === "high").length === 0 && (
+                  <div className="text-center py-4">
+                    <CheckCircle className="w-8 h-8 text-green-500 mx-auto mb-2" />
+                    <p className="text-sm text-green-600 dark:text-green-400">No high priority alerts</p>
+                  </div>
+                )}
+              </div>
+            </div>
+            
+            {/* Recommendations */}
+            <div className="mb-6">
+              <h4 className="text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-3">Recommendations</h4>
+              <div className="space-y-2">
+                {[
+                  "Consider implementing additional Green Star initiatives to improve compliance score",
+                  "Review NGER reporting processes to ensure timely compliance",
+                  "Evaluate Safeguard Mechanism baseline and implement reduction strategies"
+                ].map((rec: string, index: number) => (
+                  <div key={index} className="flex items-start space-x-2">
+                    <div className="w-1.5 h-1.5 bg-green-500 rounded-full mt-1.5 flex-shrink-0"></div>
+                    <p className="text-xs text-neutral-600 dark:text-neutral-400">{rec}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+            
+            {/* Action Buttons */}
+            <div className="flex space-x-3">
+              <button className="flex-1 bg-primary-600 hover:bg-primary-700 text-white py-2 px-4 rounded-lg text-sm transition-colors">
+                View All Alerts
+              </button>
+              <button className="flex-1 bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded-lg text-sm transition-colors">
+                Generate Report
+              </button>
+            </div>
+          </div>
         </div>
         
         {/* Compliance Dashboard */}
