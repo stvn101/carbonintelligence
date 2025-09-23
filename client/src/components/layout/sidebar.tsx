@@ -1,6 +1,7 @@
-import { Leaf, ChartLine, ChartGantt, ShieldHalf, File, Calculator, ChartBar, Bot, Settings, Brain, Zap } from "lucide-react";
+import { Leaf, ChartLine, ChartGantt, ShieldHalf, File, Calculator, ChartBar, Bot, Settings, Brain, Zap, Menu, X } from "lucide-react";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { Link, useLocation } from "wouter";
+import { useState, useEffect } from "react";
 
 interface SidebarProps {
   onAiChatOpen: () => void;
@@ -8,6 +9,7 @@ interface SidebarProps {
 
 export function Sidebar({ onAiChatOpen }: SidebarProps) {
   const [location] = useLocation();
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   // Helper function to determine if a route is active
   const isActive = (path: string) => {
@@ -24,8 +26,61 @@ export function Sidebar({ onAiChatOpen }: SidebarProps) {
       : "text-neutral-700 dark:text-neutral-200 hover:bg-green-50 dark:hover:bg-green-900/10 hover:text-green-700 dark:hover:text-green-300 rounded-xl px-4 py-4 flex items-center space-x-3 cursor-pointer transition-all duration-200";
   };
 
+  // Close mobile menu on route change
+  useEffect(() => {
+    setIsMobileMenuOpen(false);
+  }, [location]);
+
+  // Close mobile menu on escape key
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setIsMobileMenuOpen(false);
+      }
+    };
+
+    if (isMobileMenuOpen) {
+      document.addEventListener('keydown', handleEscape);
+      return () => document.removeEventListener('keydown', handleEscape);
+    }
+  }, [isMobileMenuOpen]);
+
   return (
-    <div className="w-80 min-w-80 max-w-96 bg-white dark:bg-gray-900 shadow-lg border-r border-neutral-200 dark:border-gray-700 flex flex-col">
+    <>
+      {/* Mobile Menu Button */}
+      <button
+        className="lg:hidden fixed top-4 left-4 z-50 p-2 bg-white dark:bg-gray-900 rounded-lg shadow-lg border border-neutral-200 dark:border-gray-700"
+        onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+        data-testid="mobile-menu-toggle"
+      >
+        {isMobileMenuOpen ? (
+          <X className="w-6 h-6 text-neutral-700 dark:text-neutral-200" />
+        ) : (
+          <Menu className="w-6 h-6 text-neutral-700 dark:text-neutral-200" />
+        )}
+      </button>
+
+      {/* Mobile Overlay */}
+      {isMobileMenuOpen && (
+        <div 
+          className="lg:hidden fixed inset-0 bg-black bg-opacity-50 z-40"
+          onClick={() => setIsMobileMenuOpen(false)}
+          data-testid="mobile-menu-overlay"
+        />
+      )}
+
+      {/* Sidebar */}
+      <div 
+        className={`
+          fixed lg:static inset-y-0 left-0 z-50 
+          w-80 min-w-80 max-w-96 
+          bg-white dark:bg-gray-900 shadow-lg border-r border-neutral-200 dark:border-gray-700 
+          flex flex-col
+          transform transition-transform duration-300 ease-in-out
+          ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
+        `}
+        data-testid="sidebar"
+      >
       {/* Logo Section */}
       <div className="p-6 border-b border-neutral-200 dark:border-gray-700">
         <div className="flex items-center justify-between">
@@ -145,6 +200,7 @@ export function Sidebar({ onAiChatOpen }: SidebarProps) {
           <Settings className="text-neutral-500 dark:text-neutral-400 cursor-pointer hover:text-green-600 dark:hover:text-green-400 w-5 h-5 transition-colors flex-shrink-0" />
         </div>
       </div>
-    </div>
+      </div>
+    </>
   );
 }
