@@ -1,11 +1,13 @@
 import {
   users, projects, emissions, regulatoryAlerts, carbonBudgets, investments, aiInsights,
-  carbonEmbodiedData, liveCarbonMetrics, carbonReductionTactics,
+  carbonEmbodiedData, liveCarbonMetrics, carbonReductionTactics, mlModels, integrations, carbonPatterns,
   type User, type InsertUser, type Project, type InsertProject,
   type Emission, type InsertEmission, type RegulatoryAlert, type InsertRegulatoryAlert,
   type CarbonBudget, type InsertCarbonBudget, type Investment, type InsertInvestment,
   type AiInsight, type InsertAiInsight, type CarbonEmbodiedData, type InsertCarbonEmbodiedData,
-  type LiveCarbonMetrics, type InsertLiveCarbonMetrics, type CarbonReductionTactics, type InsertCarbonReductionTactics
+  type LiveCarbonMetrics, type InsertLiveCarbonMetrics, type CarbonReductionTactics, type InsertCarbonReductionTactics,
+  type MlModel, type InsertMlModel, type Integration, type InsertIntegration,
+  type CarbonPattern, type InsertCarbonPattern
 } from "@shared/schema";
 
 export interface IStorage {
@@ -57,6 +59,30 @@ export interface IStorage {
   // Carbon reduction tactics operations
   getCarbonReductionTactics(priority?: string): Promise<CarbonReductionTactics[]>;
   createCarbonReductionTactic(tactic: InsertCarbonReductionTactics): Promise<CarbonReductionTactics>;
+  
+  // ML Models operations
+  getAllMlModels(): Promise<MlModel[]>;
+  getMlModel(id: number): Promise<MlModel | undefined>;
+  getMlModelsByType(type: string): Promise<MlModel[]>;
+  createMlModel(model: InsertMlModel): Promise<MlModel>;
+  updateMlModel(id: number, updates: Partial<InsertMlModel>): Promise<MlModel>;
+  deleteMlModel(id: number): Promise<void>;
+  
+  // Integrations operations
+  getAllIntegrations(): Promise<Integration[]>;
+  getIntegration(id: number): Promise<Integration | undefined>;
+  getIntegrationByPlatform(platform: string): Promise<Integration | undefined>;
+  createIntegration(integration: InsertIntegration): Promise<Integration>;
+  updateIntegration(id: number, updates: Partial<InsertIntegration>): Promise<Integration>;
+  deleteIntegration(id: number): Promise<void>;
+  
+  // Carbon Patterns operations
+  getAllCarbonPatterns(): Promise<CarbonPattern[]>;
+  getCarbonPattern(id: number): Promise<CarbonPattern | undefined>;
+  getCarbonPatternsByType(patternType: string): Promise<CarbonPattern[]>;
+  createCarbonPattern(pattern: InsertCarbonPattern): Promise<CarbonPattern>;
+  updateCarbonPattern(id: number, updates: Partial<InsertCarbonPattern>): Promise<CarbonPattern>;
+  deleteCarbonPattern(id: number): Promise<void>;
 }
 
 export class MemStorage implements IStorage {
@@ -70,6 +96,9 @@ export class MemStorage implements IStorage {
   private carbonEmbodiedData: Map<number, CarbonEmbodiedData>;
   private liveCarbonMetrics: Map<number, LiveCarbonMetrics>;
   private carbonReductionTactics: Map<number, CarbonReductionTactics>;
+  private mlModels: Map<number, MlModel>;
+  private integrations: Map<number, Integration>;
+  private carbonPatterns: Map<number, CarbonPattern>;
   private currentId: number;
 
   constructor() {
@@ -83,6 +112,9 @@ export class MemStorage implements IStorage {
     this.carbonEmbodiedData = new Map();
     this.liveCarbonMetrics = new Map();
     this.carbonReductionTactics = new Map();
+    this.mlModels = new Map();
+    this.integrations = new Map();
+    this.carbonPatterns = new Map();
     this.currentId = 1;
 
     this.initializeSampleData();
@@ -531,6 +563,137 @@ export class MemStorage implements IStorage {
     };
     this.carbonReductionTactics.set(id, tactic);
     return tactic;
+  }
+
+  // ML Models operations
+  async getAllMlModels(): Promise<MlModel[]> {
+    return Array.from(this.mlModels.values());
+  }
+
+  async getMlModel(id: number): Promise<MlModel | undefined> {
+    return this.mlModels.get(id);
+  }
+
+  async getMlModelsByType(type: string): Promise<MlModel[]> {
+    return Array.from(this.mlModels.values()).filter(model => model.type === type);
+  }
+
+  async createMlModel(insertModel: InsertMlModel): Promise<MlModel> {
+    const id = this.currentId++;
+    const model: MlModel = {
+      ...insertModel,
+      id,
+      createdAt: new Date(),
+      accuracy: insertModel.accuracy || null,
+      trainingData: insertModel.trainingData || null,
+      hyperparameters: insertModel.hyperparameters || null,
+      status: insertModel.status || "active",
+      companySpecific: insertModel.companySpecific ?? false,
+      lastTrained: insertModel.lastTrained || null
+    };
+    this.mlModels.set(id, model);
+    return model;
+  }
+
+  async updateMlModel(id: number, updates: Partial<InsertMlModel>): Promise<MlModel> {
+    const model = this.mlModels.get(id);
+    if (!model) throw new Error('ML Model not found');
+    
+    const updatedModel = { ...model, ...updates };
+    this.mlModels.set(id, updatedModel);
+    return updatedModel;
+  }
+
+  async deleteMlModel(id: number): Promise<void> {
+    if (!this.mlModels.has(id)) throw new Error('ML Model not found');
+    this.mlModels.delete(id);
+  }
+
+  // Integrations operations
+  async getAllIntegrations(): Promise<Integration[]> {
+    return Array.from(this.integrations.values());
+  }
+
+  async getIntegration(id: number): Promise<Integration | undefined> {
+    return this.integrations.get(id);
+  }
+
+  async getIntegrationByPlatform(platform: string): Promise<Integration | undefined> {
+    return Array.from(this.integrations.values()).find(integration => integration.platform === platform);
+  }
+
+  async createIntegration(insertIntegration: InsertIntegration): Promise<Integration> {
+    const id = this.currentId++;
+    const integration: Integration = {
+      ...insertIntegration,
+      id,
+      createdAt: new Date(),
+      status: insertIntegration.status || "connected",
+      apiKey: insertIntegration.apiKey || null,
+      lastSync: insertIntegration.lastSync || null,
+      syncFrequency: insertIntegration.syncFrequency || "daily",
+      dataTypes: insertIntegration.dataTypes || null,
+      configuration: insertIntegration.configuration || null
+    };
+    this.integrations.set(id, integration);
+    return integration;
+  }
+
+  async updateIntegration(id: number, updates: Partial<InsertIntegration>): Promise<Integration> {
+    const integration = this.integrations.get(id);
+    if (!integration) throw new Error('Integration not found');
+    
+    const updatedIntegration = { ...integration, ...updates };
+    this.integrations.set(id, updatedIntegration);
+    return updatedIntegration;
+  }
+
+  async deleteIntegration(id: number): Promise<void> {
+    if (!this.integrations.has(id)) throw new Error('Integration not found');
+    this.integrations.delete(id);
+  }
+
+  // Carbon Patterns operations
+  async getAllCarbonPatterns(): Promise<CarbonPattern[]> {
+    return Array.from(this.carbonPatterns.values());
+  }
+
+  async getCarbonPattern(id: number): Promise<CarbonPattern | undefined> {
+    return this.carbonPatterns.get(id);
+  }
+
+  async getCarbonPatternsByType(patternType: string): Promise<CarbonPattern[]> {
+    return Array.from(this.carbonPatterns.values()).filter(pattern => pattern.patternType === patternType);
+  }
+
+  async createCarbonPattern(insertPattern: InsertCarbonPattern): Promise<CarbonPattern> {
+    const id = this.currentId++;
+    const pattern: CarbonPattern = {
+      ...insertPattern,
+      id,
+      createdAt: new Date(),
+      confidence: insertPattern.confidence || null,
+      frequency: insertPattern.frequency || null,
+      factors: insertPattern.factors || null,
+      recommendations: insertPattern.recommendations || null,
+      companyId: insertPattern.companyId || null
+    };
+    this.carbonPatterns.set(id, pattern);
+    return pattern;
+  }
+
+  async updateCarbonPattern(id: number, updates: Partial<InsertCarbonPattern>): Promise<CarbonPattern> {
+    const pattern = this.carbonPatterns.get(id);
+    if (!pattern) throw new Error('Carbon Pattern not found');
+    
+    const updatedPattern = { ...pattern, ...updates };
+    this.carbonPatterns.set(id, updatedPattern);
+    return updatedPattern;
+  }
+
+  async deleteCarbonPattern(id: number): Promise<void> {
+    if (!this.carbonPatterns.has(id)) throw new Error('Carbon Pattern not found');
+    this.carbonPatterns.delete(id);
   }
 }
 
