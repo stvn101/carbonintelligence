@@ -9,7 +9,8 @@ import { integrationsService } from "./services/integrations";
 import { 
   insertProjectSchema, insertEmissionSchema, insertRegulatoryAlertSchema, insertInvestmentSchema,
   insertLiveCarbonMetricsSchema, insertMlModelSchema, insertIntegrationSchema,
-  insertGreenStarRatingSchema, insertNabersRatingSchema, insertNccComplianceSchema, insertRatingAssessmentSchema
+  insertGreenStarRatingSchema, insertNabersRatingSchema, insertNccComplianceSchema, insertRatingAssessmentSchema,
+  insertStateBuildingRegulationSchema, insertFederalComplianceTrackingSchema
 } from "@shared/schema";
 import { z } from "zod";
 
@@ -152,6 +153,197 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json({ alerts: allAlerts });
     } catch (error) {
       res.status(500).json({ error: "Failed to fetch regulatory alerts" });
+    }
+  });
+
+  // Australian Regulatory Framework
+  
+  // State Building Regulations
+  app.get("/api/regulatory/state-regulations", async (req, res) => {
+    try {
+      const state = req.query.state as string;
+      const regulations = await storage.getStateBuildingRegulations(state);
+      res.json({ regulations });
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch state building regulations" });
+    }
+  });
+
+  app.get("/api/regulatory/state-regulations/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const regulation = await storage.getStateBuildingRegulation(id);
+      
+      if (!regulation) {
+        return res.status(404).json({ error: "State building regulation not found" });
+      }
+      
+      res.json({ regulation });
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch state building regulation" });
+    }
+  });
+
+  app.post("/api/regulatory/state-regulations", async (req, res) => {
+    try {
+      const validatedData = insertStateBuildingRegulationSchema.parse(req.body);
+      const regulation = await storage.createStateBuildingRegulation(validatedData);
+      res.status(201).json({ regulation });
+    } catch (error) {
+      res.status(400).json({ error: "Failed to create state building regulation" });
+    }
+  });
+
+  app.put("/api/regulatory/state-regulations/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const validatedData = insertStateBuildingRegulationSchema.partial().parse(req.body);
+      const regulation = await storage.updateStateBuildingRegulation(id, validatedData);
+      res.json({ regulation });
+    } catch (error) {
+      res.status(400).json({ error: "Failed to update state building regulation" });
+    }
+  });
+
+  // Federal Compliance Tracking (NGER & Safeguard)
+  app.get("/api/regulatory/federal-compliance", async (req, res) => {
+    try {
+      const projectId = req.query.projectId ? parseInt(req.query.projectId as string) : undefined;
+      const compliance = await storage.getFederalComplianceTracking(projectId);
+      res.json({ compliance });
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch federal compliance tracking" });
+    }
+  });
+
+  app.get("/api/regulatory/federal-compliance/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const compliance = await storage.getFederalComplianceTrackingById(id);
+      
+      if (!compliance) {
+        return res.status(404).json({ error: "Federal compliance tracking not found" });
+      }
+      
+      res.json({ compliance });
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch federal compliance tracking" });
+    }
+  });
+
+  app.get("/api/regulatory/federal-compliance/project/:projectId", async (req, res) => {
+    try {
+      const projectId = parseInt(req.params.projectId);
+      const compliance = await storage.getFederalComplianceByProject(projectId);
+      
+      if (!compliance) {
+        return res.status(404).json({ error: "Federal compliance tracking not found for project" });
+      }
+      
+      res.json({ compliance });
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch federal compliance for project" });
+    }
+  });
+
+  app.post("/api/regulatory/federal-compliance", async (req, res) => {
+    try {
+      const validatedData = insertFederalComplianceTrackingSchema.parse(req.body);
+      const compliance = await storage.createFederalComplianceTracking(validatedData);
+      res.status(201).json({ compliance });
+    } catch (error) {
+      res.status(400).json({ error: "Failed to create federal compliance tracking" });
+    }
+  });
+
+  app.put("/api/regulatory/federal-compliance/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const validatedData = insertFederalComplianceTrackingSchema.partial().parse(req.body);
+      const compliance = await storage.updateFederalComplianceTracking(id, validatedData);
+      res.json({ compliance });
+    } catch (error) {
+      res.status(400).json({ error: "Failed to update federal compliance tracking" });
+    }
+  });
+
+  // Australian Regulatory Intelligence Monitoring
+  app.get("/api/regulatory/compliance-score", async (req, res) => {
+    try {
+      const projectId = req.query.projectId ? parseInt(req.query.projectId as string) : undefined;
+      
+      // Get federal compliance data
+      const federalCompliance = projectId 
+        ? await storage.getFederalComplianceByProject(projectId)
+        : (await storage.getFederalComplianceTracking())[0];
+      
+      // Get rating system data
+      const greenStarRatings = await storage.getGreenStarRatings(projectId);
+      const nabersRatings = await storage.getNabersRatings(projectId);
+      const nccCompliance = await storage.getNccCompliance(projectId);
+      
+      // Calculate overall compliance score
+      let overallScore = 0;
+      let factors = [];
+
+      if (federalCompliance) {
+        const ngerScore = federalCompliance.ngerComplianceStatus === "compliant" ? 100 : 
+                         federalCompliance.ngerComplianceStatus === "at_risk" ? 70 : 40;
+        const safeguardScore = federalCompliance.safeguardThresholdStatus === "below_threshold" ? 100 :
+                              federalCompliance.safeguardThresholdStatus === "compliant" ? 85 : 50;
+        factors.push(
+          { category: "NGER Compliance", score: ngerScore, weight: 0.3 },
+          { category: "Safeguard Mechanism", score: safeguardScore, weight: 0.3 }
+        );
+        overallScore += (ngerScore * 0.3) + (safeguardScore * 0.3);
+      }
+
+      if (greenStarRatings.length > 0) {
+        const avgGreenStar = greenStarRatings.reduce((sum, r) => sum + (r.targetRating || 4), 0) / greenStarRatings.length;
+        const greenStarScore = (avgGreenStar / 6) * 100; // 6 is max Green Star rating
+        factors.push({ category: "Green Star Rating", score: greenStarScore, weight: 0.2 });
+        overallScore += greenStarScore * 0.2;
+      }
+
+      if (nabersRatings.length > 0) {
+        const avgNabers = nabersRatings.reduce((sum, r) => sum + (r.targetRating || 3), 0) / nabersRatings.length;
+        const nabersScore = (avgNabers / 6) * 100; // 6 is max NABERS rating
+        factors.push({ category: "NABERS Rating", score: nabersScore, weight: 0.1 });
+        overallScore += nabersScore * 0.1;
+      }
+
+      if (nccCompliance.length > 0) {
+        const nccScore = nccCompliance.some(c => c.complianceStatus === "compliant") ? 100 : 75;
+        factors.push({ category: "NCC Compliance", score: nccScore, weight: 0.1 });
+        overallScore += nccScore * 0.1;
+      }
+
+      // Normalize if we don't have all factors
+      const totalWeight = factors.reduce((sum, f) => sum + f.weight, 0);
+      if (totalWeight > 0) {
+        overallScore = overallScore / totalWeight * 100;
+      }
+
+      res.json({
+        overallScore: Math.round(overallScore),
+        factors,
+        federalCompliance,
+        ratingSystemsIntegration: {
+          greenStarRatings: greenStarRatings.length,
+          nabersRatings: nabersRatings.length,
+          nccCompliance: nccCompliance.length
+        },
+        recommendations: overallScore < 70 ? [
+          "Consider implementing additional Green Star initiatives to improve compliance score",
+          "Review NGER reporting processes to ensure timely compliance",
+          "Evaluate Safeguard Mechanism baseline and implement reduction strategies"
+        ] : [
+          "Maintain current compliance standards and monitor regulatory updates",
+          "Consider pursuing higher Green Star or NABERS ratings for enhanced sustainability"
+        ]
+      });
+    } catch (error) {
+      res.status(500).json({ error: "Failed to calculate compliance score" });
     }
   });
 

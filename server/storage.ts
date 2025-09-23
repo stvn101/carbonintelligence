@@ -2,6 +2,7 @@ import {
   users, projects, emissions, regulatoryAlerts, carbonBudgets, investments, aiInsights,
   carbonEmbodiedData, liveCarbonMetrics, carbonReductionTactics, mlModels, integrations, carbonPatterns,
   greenStarRatings, nabersRatings, nccCompliance, ratingAssessments,
+  stateBuildingRegulations, federalComplianceTracking,
   type User, type InsertUser, type Project, type InsertProject,
   type Emission, type InsertEmission, type RegulatoryAlert, type InsertRegulatoryAlert,
   type CarbonBudget, type InsertCarbonBudget, type Investment, type InsertInvestment,
@@ -10,7 +11,9 @@ import {
   type MlModel, type InsertMlModel, type Integration, type InsertIntegration,
   type CarbonPattern, type InsertCarbonPattern,
   type GreenStarRating, type InsertGreenStarRating, type NabersRating, type InsertNabersRating,
-  type NccCompliance, type InsertNccCompliance, type RatingAssessment, type InsertRatingAssessment
+  type NccCompliance, type InsertNccCompliance, type RatingAssessment, type InsertRatingAssessment,
+  type StateBuildingRegulation, type InsertStateBuildingRegulation,
+  type FederalComplianceTracking, type InsertFederalComplianceTracking
 } from "@shared/schema";
 
 export interface IStorage {
@@ -134,6 +137,24 @@ export interface IStorage {
   createRatingAssessment(assessment: InsertRatingAssessment): Promise<RatingAssessment>;
   updateRatingAssessment(id: number, updates: Partial<InsertRatingAssessment>): Promise<RatingAssessment>;
   deleteRatingAssessment(id: number): Promise<void>;
+
+  // Australian regulatory framework operations
+  
+  // State Building Regulations operations
+  getStateBuildingRegulations(state?: string): Promise<StateBuildingRegulation[]>;
+  getStateBuildingRegulation(id: number): Promise<StateBuildingRegulation | undefined>;
+  getStateBuildingRegulationsByType(regulationType: string): Promise<StateBuildingRegulation[]>;
+  createStateBuildingRegulation(regulation: InsertStateBuildingRegulation): Promise<StateBuildingRegulation>;
+  updateStateBuildingRegulation(id: number, updates: Partial<InsertStateBuildingRegulation>): Promise<StateBuildingRegulation>;
+  deleteStateBuildingRegulation(id: number): Promise<void>;
+  
+  // Federal Compliance Tracking operations (NGER & Safeguard)
+  getFederalComplianceTracking(projectId?: number): Promise<FederalComplianceTracking[]>;
+  getFederalComplianceTrackingById(id: number): Promise<FederalComplianceTracking | undefined>;
+  getFederalComplianceByProject(projectId: number): Promise<FederalComplianceTracking | undefined>;
+  createFederalComplianceTracking(compliance: InsertFederalComplianceTracking): Promise<FederalComplianceTracking>;
+  updateFederalComplianceTracking(id: number, updates: Partial<InsertFederalComplianceTracking>): Promise<FederalComplianceTracking>;
+  deleteFederalComplianceTracking(id: number): Promise<void>;
 }
 
 export class MemStorage implements IStorage {
@@ -154,6 +175,8 @@ export class MemStorage implements IStorage {
   private nabersRatings: Map<number, NabersRating>;
   private nccCompliance: Map<number, NccCompliance>;
   private ratingAssessments: Map<number, RatingAssessment>;
+  private stateBuildingRegulations: Map<number, StateBuildingRegulation>;
+  private federalComplianceTracking: Map<number, FederalComplianceTracking>;
   private currentId: number;
 
   constructor() {
@@ -174,6 +197,8 @@ export class MemStorage implements IStorage {
     this.nabersRatings = new Map();
     this.nccCompliance = new Map();
     this.ratingAssessments = new Map();
+    this.stateBuildingRegulations = new Map();
+    this.federalComplianceTracking = new Map();
     this.currentId = 1;
 
     this.initializeSampleData();
@@ -1130,6 +1155,129 @@ export class MemStorage implements IStorage {
   async deleteRatingAssessment(id: number): Promise<void> {
     if (!this.ratingAssessments.has(id)) throw new Error('Rating assessment not found');
     this.ratingAssessments.delete(id);
+  }
+
+  // Australian regulatory framework operations
+
+  // State Building Regulations operations
+  async getStateBuildingRegulations(state?: string): Promise<StateBuildingRegulation[]> {
+    const regulations = Array.from(this.stateBuildingRegulations.values());
+    return state ? regulations.filter(r => r.state === state) : regulations;
+  }
+
+  async getStateBuildingRegulation(id: number): Promise<StateBuildingRegulation | undefined> {
+    return this.stateBuildingRegulations.get(id);
+  }
+
+  async getStateBuildingRegulationsByType(regulationType: string): Promise<StateBuildingRegulation[]> {
+    return Array.from(this.stateBuildingRegulations.values()).filter(r => r.regulationType === regulationType);
+  }
+
+  async createStateBuildingRegulation(insertRegulation: InsertStateBuildingRegulation): Promise<StateBuildingRegulation> {
+    const id = this.currentId++;
+    const regulation: StateBuildingRegulation = {
+      ...insertRegulation,
+      id,
+      createdAt: new Date(),
+      lastUpdated: new Date(),
+      nextReview: insertRegulation.nextReview || null,
+      keyProvisions: insertRegulation.keyProvisions || null,
+      buildingClasses: insertRegulation.buildingClasses || null,
+      energyEfficiencyStandards: insertRegulation.energyEfficiencyStandards || null,
+      accessibilityRequirements: insertRegulation.accessibilityRequirements || null,
+      transitionPeriod: insertRegulation.transitionPeriod || null,
+      exemptions: insertRegulation.exemptions || null,
+      complianceAuthority: insertRegulation.complianceAuthority || null,
+      inspectionRequirements: insertRegulation.inspectionRequirements || null,
+      penaltyStructure: insertRegulation.penaltyStructure || null,
+      greenStarAlignment: insertRegulation.greenStarAlignment || null,
+      nabersRequirements: insertRegulation.nabersRequirements || null,
+      nccIntegration: insertRegulation.nccIntegration || null
+    };
+    this.stateBuildingRegulations.set(id, regulation);
+    return regulation;
+  }
+
+  async updateStateBuildingRegulation(id: number, updates: Partial<InsertStateBuildingRegulation>): Promise<StateBuildingRegulation> {
+    const regulation = this.stateBuildingRegulations.get(id);
+    if (!regulation) throw new Error('State building regulation not found');
+    
+    const updatedRegulation = { 
+      ...regulation, 
+      ...updates, 
+      lastUpdated: new Date() 
+    };
+    this.stateBuildingRegulations.set(id, updatedRegulation);
+    return updatedRegulation;
+  }
+
+  async deleteStateBuildingRegulation(id: number): Promise<void> {
+    if (!this.stateBuildingRegulations.has(id)) throw new Error('State building regulation not found');
+    this.stateBuildingRegulations.delete(id);
+  }
+
+  // Federal Compliance Tracking operations (NGER & Safeguard)
+  async getFederalComplianceTracking(projectId?: number): Promise<FederalComplianceTracking[]> {
+    const compliance = Array.from(this.federalComplianceTracking.values());
+    return projectId ? compliance.filter(c => c.projectId === projectId) : compliance;
+  }
+
+  async getFederalComplianceTrackingById(id: number): Promise<FederalComplianceTracking | undefined> {
+    return this.federalComplianceTracking.get(id);
+  }
+
+  async getFederalComplianceByProject(projectId: number): Promise<FederalComplianceTracking | undefined> {
+    return Array.from(this.federalComplianceTracking.values()).find(c => c.projectId === projectId);
+  }
+
+  async createFederalComplianceTracking(insertCompliance: InsertFederalComplianceTracking): Promise<FederalComplianceTracking> {
+    const id = this.currentId++;
+    const compliance: FederalComplianceTracking = {
+      ...insertCompliance,
+      projectId: insertCompliance.projectId ?? null,
+      id,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      lastAssessment: new Date(),
+      facilityId: insertCompliance.facilityId || null,
+      ngerThresholdStatus: insertCompliance.ngerThresholdStatus || null,
+      estimatedAnnualEmissions: insertCompliance.estimatedAnnualEmissions || null,
+      estimatedEnergyConsumption: insertCompliance.estimatedEnergyConsumption || null,
+      ngerReportingDue: insertCompliance.ngerReportingDue || null,
+      ngerComplianceStatus: insertCompliance.ngerComplianceStatus || "pending",
+      safeguardThresholdStatus: insertCompliance.safeguardThresholdStatus || null,
+      safeguardBaseline: insertCompliance.safeguardBaseline || null,
+      currentEmissionsLevel: insertCompliance.currentEmissionsLevel || null,
+      emissionsReductionRequired: insertCompliance.emissionsReductionRequired || null,
+      acucBalance: insertCompliance.acucBalance || null,
+      safeguardCredits: insertCompliance.safeguardCredits || null,
+      overallComplianceScore: insertCompliance.overallComplianceScore || null,
+      greenStarContribution: insertCompliance.greenStarContribution || null,
+      nabersContribution: insertCompliance.nabersContribution || null,
+      nccContribution: insertCompliance.nccContribution || null,
+      nextReviewDue: insertCompliance.nextReviewDue || null
+    };
+    this.federalComplianceTracking.set(id, compliance);
+    return compliance;
+  }
+
+  async updateFederalComplianceTracking(id: number, updates: Partial<InsertFederalComplianceTracking>): Promise<FederalComplianceTracking> {
+    const compliance = this.federalComplianceTracking.get(id);
+    if (!compliance) throw new Error('Federal compliance tracking not found');
+    
+    const updatedCompliance = { 
+      ...compliance, 
+      ...updates, 
+      updatedAt: new Date(),
+      lastAssessment: new Date()
+    };
+    this.federalComplianceTracking.set(id, updatedCompliance);
+    return updatedCompliance;
+  }
+
+  async deleteFederalComplianceTracking(id: number): Promise<void> {
+    if (!this.federalComplianceTracking.has(id)) throw new Error('Federal compliance tracking not found');
+    this.federalComplianceTracking.delete(id);
   }
 }
 

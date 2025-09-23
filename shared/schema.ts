@@ -52,7 +52,91 @@ export const regulatoryAlerts = pgTable("regulatory_alerts", {
   status: text("status").notNull().default("active"), // active, resolved, dismissed
   source: text("source"), // regulation source
   impact: text("impact"), // compliance requirements, cost impact, etc.
+  
+  // Australian regulatory framework fields
+  regulatoryFramework: text("regulatory_framework"), // NGER, Safeguard, StateBuilding, NCC
+  jurisdiction: text("jurisdiction"), // Federal, NSW, VIC, QLD, WA, SA, TAS, NT, ACT
+  legislativeInstrument: text("legislative_instrument"), // Act, Regulation, Standard, Code
+  complianceThresholds: jsonb("compliance_thresholds"), // emission thresholds, building class requirements
+  reportingRequirements: jsonb("reporting_requirements"), // NGER submission dates, safeguard baseline requirements
+  penaltyFramework: jsonb("penalty_framework"), // penalty units, financial penalties
+  
+  // Compliance scoring reference to Australian rating systems  
+  relatedGreenStarCategories: jsonb("related_green_star_categories"), // which Green Star categories affected
+  relatedNabersMetrics: jsonb("related_nabers_metrics"), // which NABERS metrics affected
+  relatedNccSections: jsonb("related_ncc_sections"), // which NCC sections affected
+  complianceScore: decimal("compliance_score", { precision: 3, scale: 2 }), // 0-1 score based on Australian frameworks
+  
   createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+// Australian state-based building regulations monitoring
+export const stateBuildingRegulations = pgTable("state_building_regulations", {
+  id: serial("id").primaryKey(),
+  state: text("state").notNull(), // NSW, VIC, QLD, WA, SA, TAS, NT, ACT
+  regulationTitle: text("regulation_title").notNull(),
+  regulationType: text("regulation_type").notNull(), // Building Code, Energy Efficiency, Accessibility, Safety
+  legislativeReference: text("legislative_reference").notNull(), // Act and regulation reference
+  currentVersion: text("current_version").notNull(),
+  
+  // Key provisions
+  keyProvisions: jsonb("key_provisions"), // major requirements and changes
+  buildingClasses: jsonb("building_classes"), // which building classes affected (Class 1a, 2, 3, 5, etc.)
+  energyEfficiencyStandards: jsonb("energy_efficiency_standards"), // star ratings, performance requirements
+  accessibilityRequirements: jsonb("accessibility_requirements"), // liveable housing, DDA compliance
+  
+  // Implementation details
+  effectiveDate: timestamp("effective_date").notNull(),
+  transitionPeriod: text("transition_period"), // grace periods, phased implementation
+  exemptions: jsonb("exemptions"), // building types or circumstances exempt
+  
+  // Compliance and monitoring
+  complianceAuthority: text("compliance_authority"), // state authority responsible
+  inspectionRequirements: jsonb("inspection_requirements"), // mandatory inspections, certifications
+  penaltyStructure: jsonb("penalty_structure"), // fines, penalties for non-compliance
+  
+  // Integration with rating systems
+  greenStarAlignment: jsonb("green_star_alignment"), // how regulations align with Green Star
+  nabersRequirements: jsonb("nabers_requirements"), // mandatory NABERS ratings by building class
+  nccIntegration: jsonb("ncc_integration"), // state variations to NCC
+  
+  lastUpdated: timestamp("last_updated").defaultNow(),
+  nextReview: timestamp("next_review"), // scheduled regulatory review dates
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+// NGER and Safeguard Mechanism compliance tracking
+export const federalComplianceTracking = pgTable("federal_compliance_tracking", {
+  id: serial("id").primaryKey(),
+  projectId: integer("project_id").references(() => projects.id),
+  facilityId: text("facility_id"), // government assigned facility ID
+  
+  // NGER compliance
+  ngerThresholdStatus: text("nger_threshold_status"), // below_threshold, facility_level, corporate_level
+  estimatedAnnualEmissions: decimal("estimated_annual_emissions", { precision: 10, scale: 2 }), // tonnes CO2e
+  estimatedEnergyConsumption: decimal("estimated_energy_consumption", { precision: 10, scale: 2 }), // TJ
+  ngerReportingDue: timestamp("nger_reporting_due"), // October 31 annually
+  ngerComplianceStatus: text("nger_compliance_status").default("pending"), // compliant, non_compliant, pending
+  
+  // Safeguard Mechanism compliance  
+  safeguardThresholdStatus: text("safeguard_threshold_status"), // below_threshold, covered_facility
+  safeguardBaseline: decimal("safeguard_baseline", { precision: 10, scale: 2 }), // tonnes CO2e baseline
+  currentEmissionsLevel: decimal("current_emissions_level", { precision: 10, scale: 2 }),
+  emissionsReductionRequired: decimal("emissions_reduction_required", { precision: 10, scale: 2 }),
+  acucBalance: decimal("acuc_balance", { precision: 10, scale: 2 }), // Australian Carbon Credit Units
+  safeguardCredits: decimal("safeguard_credits", { precision: 10, scale: 2 }),
+  
+  // Compliance scoring based on Australian frameworks
+  overallComplianceScore: decimal("overall_compliance_score", { precision: 3, scale: 2 }), // 0-1
+  greenStarContribution: decimal("green_star_contribution", { precision: 3, scale: 2 }), // weight in scoring
+  nabersContribution: decimal("nabers_contribution", { precision: 3, scale: 2 }),
+  nccContribution: decimal("ncc_contribution", { precision: 3, scale: 2 }),
+  
+  lastAssessment: timestamp("last_assessment").defaultNow(),
+  nextReviewDue: timestamp("next_review_due"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
 });
 
 export const carbonBudgets = pgTable("carbon_budgets", {
@@ -378,6 +462,10 @@ export const insertNabersRatingSchema = createInsertSchema(nabersRatings).omit({
 export const insertNccComplianceSchema = createInsertSchema(nccCompliance).omit({ id: true, createdAt: true, updatedAt: true });
 export const insertRatingAssessmentSchema = createInsertSchema(ratingAssessments).omit({ id: true, createdAt: true, updatedAt: true });
 
+// Australian regulatory framework insert schemas
+export const insertStateBuildingRegulationSchema = createInsertSchema(stateBuildingRegulations).omit({ id: true, createdAt: true, lastUpdated: true });
+export const insertFederalComplianceTrackingSchema = createInsertSchema(federalComplianceTracking).omit({ id: true, createdAt: true, updatedAt: true, lastAssessment: true });
+
 // Types
 export type User = typeof users.$inferSelect;
 export type InsertUser = z.infer<typeof insertUserSchema>;
@@ -415,3 +503,9 @@ export type NccCompliance = typeof nccCompliance.$inferSelect;
 export type InsertNccCompliance = z.infer<typeof insertNccComplianceSchema>;
 export type RatingAssessment = typeof ratingAssessments.$inferSelect;
 export type InsertRatingAssessment = z.infer<typeof insertRatingAssessmentSchema>;
+
+// Australian regulatory framework types
+export type StateBuildingRegulation = typeof stateBuildingRegulations.$inferSelect;
+export type InsertStateBuildingRegulation = z.infer<typeof insertStateBuildingRegulationSchema>;
+export type FederalComplianceTracking = typeof federalComplianceTracking.$inferSelect;
+export type InsertFederalComplianceTracking = z.infer<typeof insertFederalComplianceTrackingSchema>;
