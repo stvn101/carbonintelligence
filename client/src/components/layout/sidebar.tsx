@@ -1,11 +1,29 @@
 import { Leaf, ChartLine, ChartGantt, ShieldHalf, File, Calculator, ChartBar, Bot, Settings, Brain, Zap } from "lucide-react";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
+import { Link, useLocation } from "wouter";
 
 interface SidebarProps {
   onAiChatOpen: () => void;
 }
 
 export function Sidebar({ onAiChatOpen }: SidebarProps) {
+  const [location] = useLocation();
+
+  // Helper function to determine if a route is active
+  const isActive = (path: string) => {
+    if (path === "/dashboard") {
+      return location === "/" || location === "/dashboard";
+    }
+    return location === path;
+  };
+
+  // Helper function to get navigation item classes
+  const getNavItemClasses = (path: string) => {
+    return isActive(path)
+      ? "bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-300 rounded-xl px-4 py-4 flex items-center space-x-3 cursor-pointer border border-green-200 dark:border-green-700 shadow-sm transition-all duration-200"
+      : "text-neutral-700 dark:text-neutral-200 hover:bg-green-50 dark:hover:bg-green-900/10 hover:text-green-700 dark:hover:text-green-300 rounded-xl px-4 py-4 flex items-center space-x-3 cursor-pointer transition-all duration-200";
+  };
+
   return (
     <div className="w-80 min-w-80 max-w-96 bg-white dark:bg-gray-900 shadow-lg border-r border-neutral-200 dark:border-gray-700 flex flex-col">
       {/* Logo Section */}
@@ -31,46 +49,69 @@ export function Sidebar({ onAiChatOpen }: SidebarProps) {
       {/* Navigation Menu */}
       <nav className="flex-1 py-6 overflow-y-auto">
         <div className="px-4 space-y-3">
-          {/* Strategic Dashboard - Active State */}
-          <div className="bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-300 rounded-xl px-4 py-4 flex items-center space-x-3 cursor-pointer border border-green-200 dark:border-green-700 shadow-sm">
-            <ChartLine className="w-5 h-5 flex-shrink-0" />
-            <span className="font-semibold text-sm">Strategic Dashboard</span>
-          </div>
+          {/* Strategic Dashboard */}
+          <Link href="/dashboard" data-testid="nav-dashboard">
+            <div className={getNavItemClasses("/dashboard")}>
+              <ChartLine className="w-5 h-5 flex-shrink-0" />
+              <span className={`text-sm ${isActive("/dashboard") ? "font-semibold" : "font-medium"}`}>Strategic Dashboard</span>
+            </div>
+          </Link>
           
-          <div className="text-neutral-700 dark:text-neutral-200 hover:bg-green-50 dark:hover:bg-green-900/10 hover:text-green-700 dark:hover:text-green-300 rounded-xl px-4 py-4 flex items-center space-x-3 cursor-pointer transition-all duration-200">
-            <ChartGantt className="w-5 h-5 flex-shrink-0" />
-            <span className="font-medium text-sm">Portfolio Optimization</span>
-          </div>
+          {/* Portfolio Optimization */}
+          <Link href="/portfolio" data-testid="nav-portfolio">
+            <div className={getNavItemClasses("/portfolio")}>
+              <ChartGantt className="w-5 h-5 flex-shrink-0" />
+              <span className={`text-sm ${isActive("/portfolio") ? "font-semibold" : "font-medium"}`}>Portfolio Optimization</span>
+            </div>
+          </Link>
           
-          <div className="text-neutral-700 dark:text-neutral-200 hover:bg-green-50 dark:hover:bg-green-900/10 hover:text-green-700 dark:hover:text-green-300 rounded-xl px-4 py-4 flex items-center space-x-3 cursor-pointer transition-all duration-200">
-            <ShieldHalf className="w-5 h-5 flex-shrink-0" />
-            <span className="font-medium text-sm">Regulatory Intelligence</span>
-          </div>
+          {/* Regulatory Intelligence */}
+          <Link href="/regulatory" data-testid="nav-regulatory">
+            <div className={getNavItemClasses("/regulatory")}>
+              <ShieldHalf className="w-5 h-5 flex-shrink-0" />
+              <span className={`text-sm ${isActive("/regulatory") ? "font-semibold" : "font-medium"}`}>Regulatory Intelligence</span>
+            </div>
+          </Link>
           
-          <div className="text-neutral-700 dark:text-neutral-200 hover:bg-green-50 dark:hover:bg-green-900/10 hover:text-green-700 dark:hover:text-green-300 rounded-xl px-4 py-4 flex items-center space-x-3 cursor-pointer transition-all duration-200">
-            <File className="w-5 h-5 flex-shrink-0" />
-            <span className="font-medium text-sm">Compliance Reports</span>
-          </div>
+          {/* Compliance Reports */}
+          <Link href="/reports" data-testid="nav-reports">
+            <div className={getNavItemClasses("/reports")}>
+              <File className="w-5 h-5 flex-shrink-0" />
+              <span className={`text-sm ${isActive("/reports") ? "font-semibold" : "font-medium"}`}>Compliance Reports</span>
+            </div>
+          </Link>
           
-          <div className="text-neutral-700 dark:text-neutral-200 hover:bg-green-50 dark:hover:bg-green-900/10 hover:text-green-700 dark:hover:text-green-300 rounded-xl px-4 py-4 flex items-center space-x-3 cursor-pointer transition-all duration-200">
-            <Calculator className="w-5 h-5 flex-shrink-0" />
-            <span className="font-medium text-sm">Carbon Budget Planning</span>
-          </div>
+          {/* Carbon Budget Planning */}
+          <Link href="/budget" data-testid="nav-budget">
+            <div className={getNavItemClasses("/budget")}>
+              <Calculator className="w-5 h-5 flex-shrink-0" />
+              <span className={`text-sm ${isActive("/budget") ? "font-semibold" : "font-medium"}`}>Carbon Budget Planning</span>
+            </div>
+          </Link>
           
-          <div className="text-neutral-700 dark:text-neutral-200 hover:bg-green-50 dark:hover:bg-green-900/10 hover:text-green-700 dark:hover:text-green-300 rounded-xl px-4 py-4 flex items-center space-x-3 cursor-pointer transition-all duration-200">
-            <ChartBar className="w-5 h-5 flex-shrink-0" />
-            <span className="font-medium text-sm">Investment Analysis</span>
-          </div>
+          {/* Investment Analysis */}
+          <Link href="/investments" data-testid="nav-investments">
+            <div className={getNavItemClasses("/investments")}>
+              <ChartBar className="w-5 h-5 flex-shrink-0" />
+              <span className={`text-sm ${isActive("/investments") ? "font-semibold" : "font-medium"}`}>Investment Analysis</span>
+            </div>
+          </Link>
           
-          <div className="text-neutral-700 dark:text-neutral-200 hover:bg-green-50 dark:hover:bg-green-900/10 hover:text-green-700 dark:hover:text-green-300 rounded-xl px-4 py-4 flex items-center space-x-3 cursor-pointer transition-all duration-200">
-            <Brain className="w-5 h-5 flex-shrink-0" />
-            <span className="font-medium text-sm">ML Models & Forecasting</span>
-          </div>
+          {/* ML Models & Forecasting */}
+          <Link href="/ml" data-testid="nav-ml">
+            <div className={getNavItemClasses("/ml")}>
+              <Brain className="w-5 h-5 flex-shrink-0" />
+              <span className={`text-sm ${isActive("/ml") ? "font-semibold" : "font-medium"}`}>ML Models & Forecasting</span>
+            </div>
+          </Link>
           
-          <div className="text-neutral-700 dark:text-neutral-200 hover:bg-green-50 dark:hover:bg-green-900/10 hover:text-green-700 dark:hover:text-green-300 rounded-xl px-4 py-4 flex items-center space-x-3 cursor-pointer transition-all duration-200">
-            <Zap className="w-5 h-5 flex-shrink-0" />
-            <span className="font-medium text-sm">Platform Integrations</span>
-          </div>
+          {/* Platform Integrations */}
+          <Link href="/integrations" data-testid="nav-integrations">
+            <div className={getNavItemClasses("/integrations")}>
+              <Zap className="w-5 h-5 flex-shrink-0" />
+              <span className={`text-sm ${isActive("/integrations") ? "font-semibold" : "font-medium"}`}>Platform Integrations</span>
+            </div>
+          </Link>
         </div>
 
         {/* AI Assistant Section */}
