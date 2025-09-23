@@ -159,6 +159,28 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ error: "Failed to fetch regulatory alerts" });
     }
   });
+  
+  // Dismiss regulatory alert
+  app.patch("/api/regulatory/alerts/:id/dismiss", async (req, res) => {
+    try {
+      const alertId = parseInt(req.params.id);
+      const updatedAlert = await storage.updateRegulatoryAlert(alertId, { status: "dismissed" });
+      res.json({ alert: updatedAlert, message: "Alert dismissed successfully" });
+    } catch (error) {
+      res.status(500).json({ error: "Failed to dismiss alert" });
+    }
+  });
+  
+  // Resolve regulatory alert
+  app.patch("/api/regulatory/alerts/:id/resolve", async (req, res) => {
+    try {
+      const alertId = parseInt(req.params.id);
+      const updatedAlert = await storage.updateRegulatoryAlert(alertId, { status: "resolved" });
+      res.json({ alert: updatedAlert, message: "Alert resolved successfully" });
+    } catch (error) {
+      res.status(500).json({ error: "Failed to resolve alert" });
+    }
+  });
 
   // Australian Regulatory Framework
   
