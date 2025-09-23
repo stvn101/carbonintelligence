@@ -1,7 +1,19 @@
 import { useQuery } from "@tanstack/react-query";
 
+interface RegulatoryAlert {
+  title: string;
+  description: string;
+  priority: "high" | "medium" | "low";
+  region: string;
+  impact: string;
+}
+
+interface RegulatoryAlertsResponse {
+  alerts: RegulatoryAlert[];
+}
+
 export function RegulatoryIntelligence() {
-  const { data: alerts, isLoading, isError } = useQuery({
+  const { data: alerts, isLoading, isError } = useQuery<RegulatoryAlertsResponse>({
     queryKey: ["/api/regulatory/alerts"],
   });
 
@@ -46,7 +58,7 @@ export function RegulatoryIntelligence() {
       </div>
 
       <div className="space-y-4">
-        {regulatoryAlerts.length > 0 ? regulatoryAlerts.slice(0, 3).map((alert, index) => (
+        {regulatoryAlerts.length > 0 ? regulatoryAlerts.slice(0, 3).map((alert: RegulatoryAlert, index: number) => (
           <div key={index} className={`border-l-4 pl-4 ${getBorderColor(alert.priority)}`}>
             <div className="flex items-center justify-between mb-1">
               <span className="text-sm font-medium text-neutral-900">{alert.title}</span>
