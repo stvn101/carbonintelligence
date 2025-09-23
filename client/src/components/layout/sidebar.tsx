@@ -76,7 +76,7 @@ export function Sidebar({ onAiChatOpen }: SidebarProps) {
           w-80 min-w-80 max-w-96 
           bg-white dark:bg-gray-900 shadow-lg border-r border-neutral-200 dark:border-gray-700 
           flex flex-col
-          transform transition-transform duration-300 ease-in-out
+          transform transition-transform duration-300 ease-in-out lg:transform-none
           ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
         `}
         data-testid="sidebar"

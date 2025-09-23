@@ -39,7 +39,7 @@ export default function Dashboard() {
     <div className="flex h-screen overflow-hidden bg-neutral-50 dark:bg-gray-950">
       <Sidebar onAiChatOpen={() => setAiChatOpen(true)} />
       
-      <div className="flex-1 flex flex-col overflow-hidden">
+      <div className="flex-1 flex flex-col overflow-hidden lg:ml-0">
         <Header onAiChatOpen={() => setAiChatOpen(true)} />
         
         <div className="flex-1 overflow-y-auto p-6">
