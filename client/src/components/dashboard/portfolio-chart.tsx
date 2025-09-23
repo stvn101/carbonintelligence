@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Download } from "lucide-react";
 
 export function PortfolioChart() {
-  const { data: analysis, isLoading } = useQuery({
+  const { data: analysis, isLoading, isError } = useQuery({
     queryKey: ["/api/portfolio/analysis"],
   });
 

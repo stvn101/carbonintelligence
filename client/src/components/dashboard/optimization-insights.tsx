@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Lightbulb, Route, Bolt } from "lucide-react";
 
 export function OptimizationInsights() {
-  const { data: recommendations, isLoading } = useQuery({
+  const { data: recommendations, isLoading, isError } = useQuery({
     queryKey: ["/api/optimization/recommendations"],
   });
 

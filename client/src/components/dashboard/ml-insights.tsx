@@ -9,11 +9,11 @@ export function MLInsights() {
   const [selectedModel, setSelectedModel] = useState("advanced_forecasting");
   const { toast } = useToast();
 
-  const { data: mlData, isLoading } = useQuery({
+  const { data: mlData, isLoading, isError } = useQuery({
     queryKey: ["/api/ml/insights"],
   });
 
-  const { data: patterns } = useQuery({
+  const { data: patterns, isError: patternsError } = useQuery({
     queryKey: ["/api/ml/patterns"],
   });
 
