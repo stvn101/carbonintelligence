@@ -299,14 +299,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       if (greenStarRatings.length > 0) {
-        const avgGreenStar = greenStarRatings.reduce((sum, r) => sum + (r.targetRating || 4), 0) / greenStarRatings.length;
+        const avgGreenStar = greenStarRatings.reduce((sum, r) => sum + (Number(r.targetRating) || 4), 0) / greenStarRatings.length;
         const greenStarScore = (avgGreenStar / 6) * 100; // 6 is max Green Star rating
         factors.push({ category: "Green Star Rating", score: greenStarScore, weight: 0.2 });
         overallScore += greenStarScore * 0.2;
       }
 
       if (nabersRatings.length > 0) {
-        const avgNabers = nabersRatings.reduce((sum, r) => sum + (r.targetRating || 3), 0) / nabersRatings.length;
+        const avgNabers = nabersRatings.reduce((sum, r) => sum + (Number(r.targetRating) || 3), 0) / nabersRatings.length;
         const nabersScore = (avgNabers / 6) * 100; // 6 is max NABERS rating
         factors.push({ category: "NABERS Rating", score: nabersScore, weight: 0.1 });
         overallScore += nabersScore * 0.1;
