@@ -21,13 +21,7 @@ export default function Integrations() {
     queryKey: ["/api/integrations/metrics"],
   });
 
-  if (isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-neutral-50 dark:bg-gray-950">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary-600"></div>
-      </div>
-    );
-  }
+  // Remove page-level loading gate to allow KPI cards to render with fallback data
 
   return (
     <PageShell

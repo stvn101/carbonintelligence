@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 
 export function RegulatoryIntelligence() {
-  const { data: alerts, isLoading } = useQuery({
+  const { data: alerts, isLoading, isError } = useQuery({
     queryKey: ["/api/regulatory/alerts"],
   });
 

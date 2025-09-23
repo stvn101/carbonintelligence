@@ -29,7 +29,7 @@ export function PlatformIntegrations() {
   const [selectedPlatform, setSelectedPlatform] = useState("all");
   const { toast } = useToast();
 
-  const { data: integrations, isLoading } = useQuery<{ platforms: Platform[] }>({
+  const { data: integrations, isLoading, isError } = useQuery<{ platforms: Platform[] }>({
     queryKey: ["/api/integrations/status"],
   });
 

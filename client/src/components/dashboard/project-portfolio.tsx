@@ -6,7 +6,7 @@ interface ProjectsResponse {
 }
 
 export function ProjectPortfolio() {
-  const { data: projects, isLoading } = useQuery<ProjectsResponse>({
+  const { data: projects, isLoading, isError } = useQuery<ProjectsResponse>({
     queryKey: ["/api/projects"],
   });
 

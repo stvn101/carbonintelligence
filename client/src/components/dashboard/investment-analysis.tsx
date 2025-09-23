@@ -14,7 +14,7 @@ interface InvestmentAnalysisResponse {
 }
 
 export function InvestmentAnalysis() {
-  const { data: analysis, isLoading } = useQuery<InvestmentAnalysisResponse>({
+  const { data: analysis, isLoading, isError } = useQuery<InvestmentAnalysisResponse>({
     queryKey: ["/api/investments/analysis"],
   });
 

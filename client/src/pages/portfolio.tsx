@@ -7,14 +7,14 @@ import { useQuery } from "@tanstack/react-query";
 
 export default function Portfolio() {
   // Fetch portfolio analysis data
-  const { data: portfolioData, isLoading } = useQuery<{
+  const { data: portfolioData, isLoading, isError } = useQuery<{
     analysis?: any;
   }>({
     queryKey: ["/api/portfolio/analysis"],
   });
 
   // Fetch portfolio KPIs
-  const { data: kpiData } = useQuery<{
+  const { data: kpiData, isError: kpiError } = useQuery<{
     totalProjects?: number;
     totalEmissions?: string;
     averageScore?: number;
@@ -23,13 +23,7 @@ export default function Portfolio() {
     queryKey: ["/api/portfolio/kpis"],
   });
 
-  if (isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-neutral-50 dark:bg-gray-950">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary-600"></div>
-      </div>
-    );
-  }
+  // Remove page-level loading gate to allow KPI cards to render with fallback data
 
   return (
     <PageShell
@@ -42,40 +36,48 @@ export default function Portfolio() {
     >
       {/* Portfolio KPIs */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
-        <KPICard
-          title="Total Projects"
-          value={kpiData?.totalProjects?.toString() || "24"}
-          change="↑ 3 new"
-          changeType="positive"
-          icon="target"
-          subtitle="Active projects in portfolio"
-        />
-        <KPICard
-          title="Portfolio Emissions"
-          value={kpiData?.totalEmissions || "42.8k tCO₂e"}
-          change="↓ 8%"
-          changeType="positive"
-          icon="leaf"
-          progress={72}
-          subtitle="72% below industry average"
-        />
-        <KPICard
-          title="Avg Performance Score"
-          value={`${kpiData?.averageScore || 87}/100`}
-          change="↑ 4 pts"
-          changeType="positive"
-          icon="target"
-          progress={87}
-          subtitle="Portfolio sustainability rating"
-        />
-        <KPICard
-          title="Top Performer"
-          value={kpiData?.topPerformer || "Green Tower"}
-          change="95% Score"
-          changeType="positive"
-          icon="target"
-          subtitle="Highest scoring project"
-        />
+        <div data-testid="card-kpi-total-projects">
+          <KPICard
+            title="Total Projects"
+            value={kpiData?.totalProjects?.toString() || "24"}
+            change="↑ 3 new"
+            changeType="positive"
+            icon="target"
+            subtitle="Active projects in portfolio"
+          />
+        </div>
+        <div data-testid="card-kpi-portfolio-emissions">
+          <KPICard
+            title="Portfolio Emissions"
+            value={kpiData?.totalEmissions || "42.8k tCO₂e"}
+            change="↓ 8%"
+            changeType="positive"
+            icon="leaf"
+            progress={72}
+            subtitle="72% below industry average"
+          />
+        </div>
+        <div data-testid="card-kpi-avg-performance-score">
+          <KPICard
+            title="Avg Performance Score"
+            value={`${kpiData?.averageScore || 87}/100`}
+            change="↑ 4 pts"
+            changeType="positive"
+            icon="target"
+            progress={87}
+            subtitle="Portfolio sustainability rating"
+          />
+        </div>
+        <div data-testid="card-kpi-top-performer">
+          <KPICard
+            title="Top Performer"
+            value={kpiData?.topPerformer || "Green Tower"}
+            change="95% Score"
+            changeType="positive"
+            icon="target"
+            subtitle="Highest scoring project"
+          />
+        </div>
       </div>
 
       {/* Portfolio Overview */}

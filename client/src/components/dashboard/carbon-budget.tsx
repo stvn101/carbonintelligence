@@ -14,7 +14,7 @@ interface CarbonBudgetResponse {
 export function CarbonBudget() {
   const currentYear = new Date().getFullYear();
   
-  const { data: budgetData, isLoading } = useQuery<CarbonBudgetResponse>({
+  const { data: budgetData, isLoading, isError } = useQuery<CarbonBudgetResponse>({
     queryKey: [`/api/carbon-budget/${currentYear}`],
   });
 

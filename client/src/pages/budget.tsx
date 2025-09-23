@@ -23,13 +23,7 @@ export default function Budget() {
     queryKey: ["/api/budget/metrics"],
   });
 
-  if (isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-neutral-50 dark:bg-gray-950">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary-600"></div>
-      </div>
-    );
-  }
+  // Remove page-level loading gate to allow KPI cards to render with fallback data
 
   return (
     <PageShell
@@ -41,7 +35,7 @@ export default function Budget() {
       testId="page-title-budget"
     >
       {/* Budget KPIs */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6" data-testid="budget-kpis-grid">
         <KPICard
           title="Total Budget"
           value={`${(budgetMetrics?.totalBudget || 2800)/1000}k tCO₂e`}
