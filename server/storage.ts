@@ -15,50 +15,66 @@ export interface IStorage {
   getUser(id: number): Promise<User | undefined>;
   getUserByUsername(username: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
+  updateUser(id: number, updates: Partial<InsertUser>): Promise<User>;
+  deleteUser(id: number): Promise<void>;
 
   // Project operations
   getAllProjects(): Promise<Project[]>;
   getProject(id: number): Promise<Project | undefined>;
   createProject(project: InsertProject): Promise<Project>;
   updateProject(id: number, updates: Partial<InsertProject>): Promise<Project>;
+  deleteProject(id: number): Promise<void>;
 
   // Emission operations
   getEmissionsByProject(projectId: number): Promise<Emission[]>;
   getAllEmissions(): Promise<Emission[]>;
   createEmission(emission: InsertEmission): Promise<Emission>;
+  updateEmission(id: number, updates: Partial<InsertEmission>): Promise<Emission>;
+  deleteEmission(id: number): Promise<void>;
 
   // Regulatory operations
   getAllRegulatoryAlerts(): Promise<RegulatoryAlert[]>;
   getActiveRegulatoryAlerts(): Promise<RegulatoryAlert[]>;
   createRegulatoryAlert(alert: InsertRegulatoryAlert): Promise<RegulatoryAlert>;
   updateRegulatoryAlert(id: number, updates: Partial<InsertRegulatoryAlert>): Promise<RegulatoryAlert>;
+  deleteRegulatoryAlert(id: number): Promise<void>;
 
   // Carbon budget operations
   getCarbonBudget(year: number): Promise<CarbonBudget | undefined>;
   createCarbonBudget(budget: InsertCarbonBudget): Promise<CarbonBudget>;
   updateCarbonBudget(id: number, updates: Partial<InsertCarbonBudget>): Promise<CarbonBudget>;
+  deleteCarbonBudget(id: number): Promise<void>;
 
   // Investment operations
   getAllInvestments(): Promise<Investment[]>;
   createInvestment(investment: InsertInvestment): Promise<Investment>;
   updateInvestment(id: number, updates: Partial<InsertInvestment>): Promise<Investment>;
+  deleteInvestment(id: number): Promise<void>;
 
   // AI insights operations
   getAllAiInsights(): Promise<AiInsight[]>;
   getActiveAiInsights(): Promise<AiInsight[]>;
   createAiInsight(insight: InsertAiInsight): Promise<AiInsight>;
+  updateAiInsight(id: number, updates: Partial<InsertAiInsight>): Promise<AiInsight>;
+  deleteAiInsight(id: number): Promise<void>;
 
   // Live carbon metrics operations
   getLiveCarbonMetrics(category?: string): Promise<LiveCarbonMetrics[]>;
   createLiveCarbonMetric(metric: InsertLiveCarbonMetrics): Promise<LiveCarbonMetrics>;
+  updateLiveCarbonMetric(id: number, updates: Partial<InsertLiveCarbonMetrics>): Promise<LiveCarbonMetrics>;
+  deleteLiveCarbonMetric(id: number): Promise<void>;
   
   // Carbon embodied data operations
   getCarbonEmbodiedData(projectId?: number): Promise<CarbonEmbodiedData[]>;
   createCarbonEmbodiedData(data: InsertCarbonEmbodiedData): Promise<CarbonEmbodiedData>;
+  updateCarbonEmbodiedData(id: number, updates: Partial<InsertCarbonEmbodiedData>): Promise<CarbonEmbodiedData>;
+  deleteCarbonEmbodiedData(id: number): Promise<void>;
   
   // Carbon reduction tactics operations
   getCarbonReductionTactics(priority?: string): Promise<CarbonReductionTactics[]>;
   createCarbonReductionTactic(tactic: InsertCarbonReductionTactics): Promise<CarbonReductionTactics>;
+  updateCarbonReductionTactic(id: number, updates: Partial<InsertCarbonReductionTactics>): Promise<CarbonReductionTactics>;
+  deleteCarbonReductionTactic(id: number): Promise<void>;
   
   // ML Models operations
   getAllMlModels(): Promise<MlModel[]>;
@@ -299,6 +315,20 @@ export class MemStorage implements IStorage {
     return user;
   }
 
+  async updateUser(id: number, updates: Partial<InsertUser>): Promise<User> {
+    const user = this.users.get(id);
+    if (!user) throw new Error('User not found');
+    
+    const updatedUser = { ...user, ...updates };
+    this.users.set(id, updatedUser);
+    return updatedUser;
+  }
+
+  async deleteUser(id: number): Promise<void> {
+    if (!this.users.has(id)) throw new Error('User not found');
+    this.users.delete(id);
+  }
+
   // Project operations
   async getAllProjects(): Promise<Project[]> {
     return Array.from(this.projects.values());
@@ -334,6 +364,11 @@ export class MemStorage implements IStorage {
     return updatedProject;
   }
 
+  async deleteProject(id: number): Promise<void> {
+    if (!this.projects.has(id)) throw new Error('Project not found');
+    this.projects.delete(id);
+  }
+
   // Emission operations
   async getEmissionsByProject(projectId: number): Promise<Emission[]> {
     return Array.from(this.emissions.values()).filter(e => e.projectId === projectId);
@@ -355,6 +390,20 @@ export class MemStorage implements IStorage {
     };
     this.emissions.set(id, emission);
     return emission;
+  }
+
+  async updateEmission(id: number, updates: Partial<InsertEmission>): Promise<Emission> {
+    const emission = this.emissions.get(id);
+    if (!emission) throw new Error('Emission not found');
+    
+    const updatedEmission = { ...emission, ...updates };
+    this.emissions.set(id, updatedEmission);
+    return updatedEmission;
+  }
+
+  async deleteEmission(id: number): Promise<void> {
+    if (!this.emissions.has(id)) throw new Error('Emission not found');
+    this.emissions.delete(id);
   }
 
   // Regulatory operations
@@ -392,6 +441,11 @@ export class MemStorage implements IStorage {
     return updatedAlert;
   }
 
+  async deleteRegulatoryAlert(id: number): Promise<void> {
+    if (!this.regulatoryAlerts.has(id)) throw new Error('Regulatory alert not found');
+    this.regulatoryAlerts.delete(id);
+  }
+
   // Carbon budget operations
   async getCarbonBudget(year: number): Promise<CarbonBudget | undefined> {
     return Array.from(this.carbonBudgets.values()).find(budget => budget.year === year);
@@ -417,6 +471,11 @@ export class MemStorage implements IStorage {
     const updatedBudget = { ...budget, ...updates };
     this.carbonBudgets.set(id, updatedBudget);
     return updatedBudget;
+  }
+
+  async deleteCarbonBudget(id: number): Promise<void> {
+    if (!this.carbonBudgets.has(id)) throw new Error('Carbon budget not found');
+    this.carbonBudgets.delete(id);
   }
 
   // Investment operations
@@ -448,6 +507,11 @@ export class MemStorage implements IStorage {
     return updatedInvestment;
   }
 
+  async deleteInvestment(id: number): Promise<void> {
+    if (!this.investments.has(id)) throw new Error('Investment not found');
+    this.investments.delete(id);
+  }
+
   // AI insights operations
   async getAllAiInsights(): Promise<AiInsight[]> {
     return Array.from(this.aiInsights.values());
@@ -474,6 +538,20 @@ export class MemStorage implements IStorage {
     return insight;
   }
 
+  async updateAiInsight(id: number, updates: Partial<InsertAiInsight>): Promise<AiInsight> {
+    const insight = this.aiInsights.get(id);
+    if (!insight) throw new Error('AI Insight not found');
+    
+    const updatedInsight = { ...insight, ...updates };
+    this.aiInsights.set(id, updatedInsight);
+    return updatedInsight;
+  }
+
+  async deleteAiInsight(id: number): Promise<void> {
+    if (!this.aiInsights.has(id)) throw new Error('AI Insight not found');
+    this.aiInsights.delete(id);
+  }
+
   // Live carbon metrics operations
   async getLiveCarbonMetrics(category?: string): Promise<LiveCarbonMetrics[]> {
     const metrics = Array.from(this.liveCarbonMetrics.values());
@@ -498,6 +576,20 @@ export class MemStorage implements IStorage {
     };
     this.liveCarbonMetrics.set(id, metric);
     return metric;
+  }
+
+  async updateLiveCarbonMetric(id: number, updates: Partial<InsertLiveCarbonMetrics>): Promise<LiveCarbonMetrics> {
+    const metric = this.liveCarbonMetrics.get(id);
+    if (!metric) throw new Error('Live carbon metric not found');
+    
+    const updatedMetric = { ...metric, ...updates };
+    this.liveCarbonMetrics.set(id, updatedMetric);
+    return updatedMetric;
+  }
+
+  async deleteLiveCarbonMetric(id: number): Promise<void> {
+    if (!this.liveCarbonMetrics.has(id)) throw new Error('Live carbon metric not found');
+    this.liveCarbonMetrics.delete(id);
   }
 
   // Carbon embodied data operations
@@ -528,6 +620,20 @@ export class MemStorage implements IStorage {
     };
     this.carbonEmbodiedData.set(id, data);
     return data;
+  }
+
+  async updateCarbonEmbodiedData(id: number, updates: Partial<InsertCarbonEmbodiedData>): Promise<CarbonEmbodiedData> {
+    const data = this.carbonEmbodiedData.get(id);
+    if (!data) throw new Error('Carbon embodied data not found');
+    
+    const updatedData = { ...data, ...updates, updatedAt: new Date() };
+    this.carbonEmbodiedData.set(id, updatedData);
+    return updatedData;
+  }
+
+  async deleteCarbonEmbodiedData(id: number): Promise<void> {
+    if (!this.carbonEmbodiedData.has(id)) throw new Error('Carbon embodied data not found');
+    this.carbonEmbodiedData.delete(id);
   }
 
   // Carbon reduction tactics operations
@@ -563,6 +669,20 @@ export class MemStorage implements IStorage {
     };
     this.carbonReductionTactics.set(id, tactic);
     return tactic;
+  }
+
+  async updateCarbonReductionTactic(id: number, updates: Partial<InsertCarbonReductionTactics>): Promise<CarbonReductionTactics> {
+    const tactic = this.carbonReductionTactics.get(id);
+    if (!tactic) throw new Error('Carbon reduction tactic not found');
+    
+    const updatedTactic = { ...tactic, ...updates, updatedAt: new Date() };
+    this.carbonReductionTactics.set(id, updatedTactic);
+    return updatedTactic;
+  }
+
+  async deleteCarbonReductionTactic(id: number): Promise<void> {
+    if (!this.carbonReductionTactics.has(id)) throw new Error('Carbon reduction tactic not found');
+    this.carbonReductionTactics.delete(id);
   }
 
   // ML Models operations
