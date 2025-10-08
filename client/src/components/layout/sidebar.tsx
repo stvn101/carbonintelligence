@@ -93,8 +93,8 @@ export function Sidebar({ onAiChatOpen }: SidebarProps) {
               />
             </div>
             <div className="min-w-0 flex-1">
-              <h1 className="text-base font-bold text-neutral-900 dark:text-white truncate">CarbonConstruct Tech</h1>
-              <p className="text-sm text-green-600 dark:text-green-400 font-medium">AI Agentic Platform V1</p>
+              <h1 className="text-base font-bold text-neutral-900 dark:text-white truncate">CarbonIntelligence</h1>
+              <p className="text-sm text-green-600 dark:text-green-400 font-medium">AI Carbon Management</p>
             </div>
           </div>
           <ThemeToggle />

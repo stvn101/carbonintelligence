@@ -26,10 +26,10 @@ export default function Integrations() {
   return (
     <PageShell
       title="Platform Integrations"
-      description="Platform Integrations - CarbonConstruct AI"
+      description="Platform Integrations - CarbonIntelligence"
       pageTitle="Platform Integrations"
       pageSubtitle="Connect and sync data from your construction platforms and tools"
-      metaDescription="Connect construction platforms and tools to CarbonConstruct AI. Sync data automatically, monitor integration health, and streamline carbon tracking workflows."
+      metaDescription="Connect construction platforms and tools to CarbonIntelligence. Sync data automatically, monitor integration health, and streamline carbon tracking workflows."
       testId="page-title-integrations"
     >
       {/* Integration KPIs */}

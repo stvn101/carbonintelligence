@@ -1,8 +1,17 @@
 import { useQuery } from "@tanstack/react-query";
 import { Download } from "lucide-react";
 
+interface TrendData {
+  month: string;
+  emissions: number;
+}
+
+interface AnalysisData {
+  trends?: TrendData[];
+}
+
 export function PortfolioChart() {
-  const { data: analysis, isLoading, isError } = useQuery({
+  const { data: analysis, isLoading, isError } = useQuery<AnalysisData>({
     queryKey: ["/api/portfolio/analysis"],
   });
 
@@ -17,7 +26,7 @@ export function PortfolioChart() {
     );
   }
 
-  const mockTrends = analysis?.trends || [
+  const mockTrends: TrendData[] = analysis?.trends || [
     { month: "Jan", emissions: 240 },
     { month: "Feb", emissions: 280 },
     { month: "Mar", emissions: 220 },
@@ -26,7 +35,7 @@ export function PortfolioChart() {
     { month: "Jun", emissions: 150 }
   ];
 
-  const maxEmissions = Math.max(...mockTrends.map(t => t.emissions));
+  const maxEmissions = Math.max(...mockTrends.map((t: TrendData) => t.emissions));
 
   return (
     <div className="bg-white dark:bg-gray-900 rounded-lg shadow-sm border border-neutral-200 dark:border-gray-700 p-6 transition-colors">
@@ -46,7 +55,7 @@ export function PortfolioChart() {
       
       <div className="chart-container relative h-64">
         <div className="absolute inset-0 flex items-end justify-between px-4 pb-4">
-          {mockTrends.map((trend, index) => (
+          {mockTrends.map((trend: TrendData, index: number) => (
             <div key={trend.month} className="flex flex-col items-center space-y-2">
               <div 
                 className={`rounded-t transition-all duration-700 ${

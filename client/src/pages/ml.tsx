@@ -27,7 +27,7 @@ export default function ML() {
   return (
     <PageShell
       title="ML Models & Forecasting"
-      description="ML Models & Forecasting - CarbonConstruct AI"
+      description="ML Models & Forecasting - CarbonIntelligence"
       pageTitle="ML Models & Forecasting"
       pageSubtitle="Advanced machine learning insights and carbon forecasting models"
       metaDescription="Leverage advanced machine learning for carbon forecasting, pattern recognition, and predictive analytics. Train custom models and access AI-powered insights."

@@ -256,7 +256,7 @@ Provide a comprehensive, strategic response focused on actionable insights and r
         messages: [
           {
             role: "system",
-            content: "You are CarbonConstruct AI, a strategic carbon management assistant for construction executives. Provide clear, actionable insights and recommendations based on the data available."
+            content: "You are CarbonIntelligence, a strategic carbon management assistant for construction executives. Provide clear, actionable insights and recommendations based on the data available."
           },
           {
             role: "user",

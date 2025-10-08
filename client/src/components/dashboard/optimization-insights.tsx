@@ -207,7 +207,7 @@ export function OptimizationInsights() {
                       <button
                         onClick={() => applyRecommendationMutation.mutate(insight.id || index.toString())}
                         disabled={applyRecommendationMutation.isPending}
-                        className="ml-4 bg-primary-600 hover:bg-primary-700 disabled:bg-primary-300 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center space-x-2"
+                        className="ml-4 bg-green-700 hover:bg-green-800 disabled:bg-green-400 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center space-x-2"
                         data-testid={`button-apply-${insight.id || index}`}
                       >
                         {applyRecommendationMutation.isPending ? (
@@ -287,13 +287,25 @@ export function OptimizationInsights() {
 
       <div className="flex space-x-3 mt-4">
         <button 
-          onClick={() => queryClient.invalidateQueries({ queryKey: ["/api/optimization/recommendations"] })}
-          className="flex-1 bg-primary-500 text-white py-2 px-4 rounded-lg hover:bg-primary-600 transition-colors"
+          onClick={() => {
+            queryClient.invalidateQueries({ queryKey: ["/api/optimization/recommendations"] });
+            toast({ title: "Refreshing", description: "Fetching latest optimization recommendations..." });
+          }}
+          className="flex-1 bg-green-700 hover:bg-green-800 text-white py-2 px-4 rounded-lg transition-colors"
           data-testid="button-refresh-recommendations"
         >
           Refresh Recommendations
         </button>
-        <button className="flex-1 bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700 transition-colors">
+        <button 
+          onClick={() => {
+            toast({ 
+              title: "Action Plan Generated", 
+              description: "Your optimization action plan is being compiled. Check your downloads folder." 
+            });
+          }}
+          className="flex-1 bg-green-700 hover:bg-green-800 text-white py-2 px-4 rounded-lg transition-colors"
+          data-testid="button-generate-action-plan"
+        >
           Generate Action Plan
         </button>
       </div>

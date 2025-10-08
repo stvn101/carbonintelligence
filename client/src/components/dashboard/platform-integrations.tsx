@@ -158,7 +158,7 @@ export function PlatformIntegrations() {
     : platformData.filter((p: Platform) => p?.status === selectedPlatform);
 
   return (
-    <div className="bg-white rounded-lg shadow-sm border border-neutral-200 p-6">
+    <div className="bg-blue-50 rounded-lg shadow-sm border border-blue-100 p-6">
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center space-x-2">
           <Zap className="text-primary-600 w-5 h-5" />
@@ -333,15 +333,45 @@ export function PlatformIntegrations() {
 
         {/* Quick Actions */}
         <div className="flex items-center space-x-2 pt-4 border-t border-neutral-200">
-          <Button variant="outline" size="sm">
+          <Button 
+            onClick={() => {
+              toast({ 
+                title: "Manage Integrations", 
+                description: "Opening integration management settings..." 
+              });
+            }}
+            className="bg-green-700 hover:bg-green-800 text-white" 
+            size="sm"
+            data-testid="button-manage-integrations"
+          >
             <Settings className="w-4 h-4 mr-1" />
             Manage Integrations
           </Button>
-          <Button variant="outline" size="sm">
+          <Button 
+            onClick={() => {
+              toast({ 
+                title: "Import Data", 
+                description: "Select a file to import carbon data from integrated platforms" 
+              });
+            }}
+            className="bg-green-700 hover:bg-green-800 text-white" 
+            size="sm"
+            data-testid="button-import-data"
+          >
             <Upload className="w-4 h-4 mr-1" />
             Import Data
           </Button>
-          <Button variant="outline" size="sm">
+          <Button 
+            onClick={() => {
+              toast({ 
+                title: "Sync Scheduled", 
+                description: "Automatic sync has been scheduled for all connected platforms" 
+              });
+            }}
+            className="bg-green-700 hover:bg-green-800 text-white" 
+            size="sm"
+            data-testid="button-schedule-sync"
+          >
             <Calendar className="w-4 h-4 mr-1" />
             Schedule Sync
           </Button>

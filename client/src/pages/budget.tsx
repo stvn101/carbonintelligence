@@ -28,7 +28,7 @@ export default function Budget() {
   return (
     <PageShell
       title="Carbon Budget Planning"
-      description="Carbon Budget Planning - CarbonConstruct AI"
+      description="Carbon Budget Planning - CarbonIntelligence"
       pageTitle="Carbon Budget Planning"
       pageSubtitle="Plan and track carbon budgets across your construction portfolio"
       metaDescription="Plan, track, and optimize carbon budgets across your construction portfolio. Monitor allocations, forecast emissions, and ensure sustainable project delivery."

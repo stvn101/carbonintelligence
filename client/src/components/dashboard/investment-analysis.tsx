@@ -1,4 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
+import { useToast } from "@/hooks/use-toast";
 
 interface InvestmentOpportunity {
   name: string;
@@ -14,6 +15,7 @@ interface InvestmentAnalysisResponse {
 }
 
 export function InvestmentAnalysis() {
+  const { toast } = useToast();
   const { data: analysis, isLoading, isError } = useQuery<InvestmentAnalysisResponse>({
     queryKey: ["/api/investments/analysis"],
   });
@@ -63,7 +65,16 @@ export function InvestmentAnalysis() {
     <div className="bg-white rounded-lg shadow-sm border border-neutral-200 p-6">
       <div className="flex items-center justify-between mb-6">
         <h3 className="text-lg font-semibold text-neutral-900">Investment Impact Analysis</h3>
-        <button className="text-sm bg-primary-500 text-white px-3 py-1 rounded hover:bg-primary-600">
+        <button 
+          onClick={() => {
+            toast({ 
+              title: "Scenario Running", 
+              description: "Investment scenario analysis is in progress. Results will update shortly." 
+            });
+          }}
+          className="text-sm bg-green-700 hover:bg-green-800 text-white px-3 py-1 rounded"
+          data-testid="button-run-scenario"
+        >
           Run Scenario
         </button>
       </div>

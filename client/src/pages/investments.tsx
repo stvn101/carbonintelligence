@@ -26,7 +26,7 @@ export default function Investments() {
   return (
     <PageShell
       title="Investment Analysis"
-      description="Investment Analysis - CarbonConstruct AI"
+      description="Investment Analysis - CarbonIntelligence"
       pageTitle="Investment Analysis"
       pageSubtitle="Analyze carbon reduction investments and ROI opportunities"
       metaDescription="Analyze carbon reduction investments, track ROI performance, and identify new opportunities. Optimize capital allocation for maximum environmental impact."

@@ -91,7 +91,7 @@ export function AIChatModal({ isOpen, onClose }: AIChatModalProps) {
         <DialogHeader>
           <DialogTitle className="flex items-center space-x-2">
             <Bot className="w-5 h-5 text-primary-600" />
-            <span>CarbonConstruct AI Assistant</span>
+            <span>CarbonIntelligence Assistant</span>
           </DialogTitle>
         </DialogHeader>
         

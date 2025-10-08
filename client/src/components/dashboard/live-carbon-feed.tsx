@@ -86,12 +86,13 @@ const getTimelineIcon = (timeline: string) => {
 
 export function LiveCarbonFeed() {
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
-  const [autoRefresh, setAutoRefresh] = useState(true);
+  const [autoRefresh, setAutoRefresh] = useState(false); // Disabled by default to prevent flickering
 
   // Fetch live carbon metrics
-  const { data: liveMetrics, isLoading: metricsLoading } = useQuery<LiveMetric[]>({
+  const { data: liveMetrics, isLoading: metricsLoading, isFetching: metricsFetching } = useQuery<LiveMetric[]>({
     queryKey: ["/api/carbon/live-metrics", selectedCategory],
-    refetchInterval: autoRefresh ? 5000 : false, // 5 second refresh
+    refetchInterval: autoRefresh ? 30000 : false, // 30 second refresh when enabled (reduced from 5s)
+    placeholderData: (previousData) => previousData, // Keep previous data while fetching new data
   });
 
   // Fetch carbon reduction tactics
@@ -106,7 +107,10 @@ export function LiveCarbonFeed() {
 
   const categories = ["all", "materials", "energy", "transport", "waste"];
 
-  if (metricsLoading || tacticsLoading || embodiedLoading) {
+  // Only show loading skeleton on initial load, not when switching tabs
+  const isInitialLoading = metricsLoading && !liveMetrics;
+  
+  if (isInitialLoading || (tacticsLoading && !reductionTactics) || (embodiedLoading && !embodiedBreakdown)) {
     return (
       <div className="bg-white dark:bg-gray-900 rounded-lg shadow-sm border border-neutral-200 dark:border-gray-700 p-6">
         <div className="animate-pulse space-y-4">

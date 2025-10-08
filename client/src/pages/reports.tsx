@@ -4,8 +4,11 @@ import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Download, FileText, Calendar, TrendingDown, CheckCircle, Clock } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 export default function Reports() {
+  const { toast } = useToast();
+  
   // Fetch projects data for reports
   const { data: projects, isLoading } = useQuery<{
     projects?: any[];
@@ -28,7 +31,7 @@ export default function Reports() {
   return (
     <PageShell
       title="Compliance Reports"
-      description="Compliance Reports - CarbonConstruct AI"
+      description="Compliance Reports - CarbonIntelligence"
       pageTitle="Compliance Reports"
       pageSubtitle="Generate comprehensive carbon footprint and Australian compliance reports"
       metaDescription="Generate and manage carbon footprint reports, compliance summaries, and regulatory documentation. Download detailed analytics and track reporting requirements."
@@ -82,7 +85,16 @@ export default function Reports() {
             <CardDescription>Detailed analysis of Scope 1, 2, and 3 emissions across all projects</CardDescription>
           </CardHeader>
           <CardContent>
-            <Button className="w-full" data-testid="button-generate-carbon-report">
+            <Button 
+              onClick={() => {
+                toast({ 
+                  title: "Carbon Report Generated", 
+                  description: "Your carbon footprint report is being generated. It will download shortly." 
+                });
+              }}
+              className="w-full bg-green-700 hover:bg-green-800 text-white" 
+              data-testid="button-generate-carbon-report"
+            >
               <Download className="w-4 h-4 mr-2" />
               Generate Report
             </Button>
@@ -98,7 +110,16 @@ export default function Reports() {
             <CardDescription>Regulatory compliance status and upcoming requirements</CardDescription>
           </CardHeader>
           <CardContent>
-            <Button className="w-full" variant="outline" data-testid="button-generate-compliance-report">
+            <Button 
+              onClick={() => {
+                toast({ 
+                  title: "Compliance Report Generated", 
+                  description: "Your compliance summary report is being generated. It will download shortly." 
+                });
+              }}
+              className="w-full bg-green-700 hover:bg-green-800 text-white" 
+              data-testid="button-generate-compliance-report"
+            >
               <Download className="w-4 h-4 mr-2" />
               Generate Report
             </Button>

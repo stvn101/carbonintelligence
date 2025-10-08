@@ -28,7 +28,7 @@ export default function Portfolio() {
   return (
     <PageShell
       title="Portfolio Optimization"
-      description="Portfolio Optimization - CarbonConstruct AI"
+      description="Portfolio Optimization - CarbonIntelligence"
       pageTitle="Portfolio Optimization"
       pageSubtitle="Optimize your construction portfolio for maximum carbon impact and cost efficiency"
       metaDescription="Optimize your construction portfolio with AI-powered insights. Track carbon performance, identify cost savings, and maximize environmental impact across all projects."

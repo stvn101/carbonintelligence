@@ -1,8 +1,8 @@
-# CarbonConstruct AI - Strategic Carbon Management Platform
+# CarbonIntelligence - Strategic Carbon Management Platform
 
 ## Overview
 
-CarbonConstruct AI is a comprehensive strategic carbon management platform designed for the construction industry. The application provides AI-powered insights for portfolio optimization, regulatory compliance monitoring, carbon budget planning, and investment analysis. Built as a full-stack TypeScript application with a React frontend and Express backend, it leverages modern technologies to deliver intelligent carbon management solutions.
+CarbonIntelligence (formerly CarbonConstruct AI) is a comprehensive strategic carbon management platform designed for the construction industry. The application provides AI-powered insights for portfolio optimization, regulatory compliance monitoring, carbon budget planning, and investment analysis. Built as a full-stack TypeScript application with a React frontend and Express backend, it leverages modern technologies to deliver intelligent carbon management solutions.
 
 ## User Preferences
 

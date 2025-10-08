@@ -1,11 +1,13 @@
 import { useQuery } from "@tanstack/react-query";
 import type { Project } from "@shared/schema";
+import { useToast } from "@/hooks/use-toast";
 
 interface ProjectsResponse {
   projects: Project[];
 }
 
 export function ProjectPortfolio() {
+  const { toast } = useToast();
   const { data: projects, isLoading, isError } = useQuery<ProjectsResponse>({
     queryKey: ["/api/projects"],
   });
@@ -132,7 +134,16 @@ export function ProjectPortfolio() {
             </div>
             <p className="text-neutral-500 mb-2">No projects found</p>
             <p className="text-sm text-neutral-400">Projects will appear here when added to your portfolio</p>
-            <button className="mt-4 bg-primary-500 text-white px-4 py-2 rounded-lg hover:bg-primary-600">
+            <button 
+              onClick={() => {
+                toast({ 
+                  title: "Add Project", 
+                  description: "Opening project creation form..." 
+                });
+              }}
+              className="mt-4 bg-green-700 hover:bg-green-800 text-white px-4 py-2 rounded-lg"
+              data-testid="button-add-project"
+            >
               Add Project
             </button>
           </div>

@@ -26,7 +26,7 @@ export function PageShell({
 
   // Update document title and meta description
   useEffect(() => {
-    document.title = `${title} | CarbonConstruct AI`;
+    document.title = `${title} | CarbonIntelligence`;
     
     // Update meta description
     const metaDescriptionTag = document.querySelector('meta[name="description"]');
@@ -42,11 +42,11 @@ export function PageShell({
     // Update Open Graph title
     const ogTitleTag = document.querySelector('meta[property="og:title"]');
     if (ogTitleTag) {
-      ogTitleTag.setAttribute('content', `${title} | CarbonConstruct AI`);
+      ogTitleTag.setAttribute('content', `${title} | CarbonIntelligence`);
     } else {
       const ogTitle = document.createElement('meta');
       ogTitle.setAttribute('property', 'og:title');
-      ogTitle.content = `${title} | CarbonConstruct AI`;
+      ogTitle.content = `${title} | CarbonIntelligence`;
       document.head.appendChild(ogTitle);
     }
 
@@ -81,11 +81,11 @@ export function PageShell({
 
     const twitterTitleTag = document.querySelector('meta[name="twitter:title"]');
     if (twitterTitleTag) {
-      twitterTitleTag.setAttribute('content', `${title} | CarbonConstruct AI`);
+      twitterTitleTag.setAttribute('content', `${title} | CarbonIntelligence`);
     } else {
       const twitterTitle = document.createElement('meta');
       twitterTitle.name = 'twitter:title';
-      twitterTitle.content = `${title} | CarbonConstruct AI`;
+      twitterTitle.content = `${title} | CarbonIntelligence`;
       document.head.appendChild(twitterTitle);
     }
 
