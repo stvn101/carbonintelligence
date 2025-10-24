@@ -13,6 +13,7 @@ import Budget from "@/pages/budget";
 import Investments from "@/pages/investments";
 import ML from "@/pages/ml";
 import Integrations from "@/pages/integrations";
+import Settings from "@/pages/settings";
 
 function Router() {
   return (
@@ -26,6 +27,7 @@ function Router() {
       <Route path="/investments" component={Investments}/>
       <Route path="/ml" component={ML}/>
       <Route path="/integrations" component={Integrations}/>
+      <Route path="/settings" component={Settings}/>
       <Route component={NotFound} />
     </Switch>
   );

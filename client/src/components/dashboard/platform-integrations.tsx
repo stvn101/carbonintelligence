@@ -3,10 +3,11 @@ import { useQuery, useMutation } from "@tanstack/react-query";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { 
   Zap, CheckCircle, AlertCircle, XCircle, RefreshCw, 
-  Settings, Download, Upload, Calendar, Activity 
+  Settings, Download, Upload, Calendar, Activity, Info
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
 interface Platform {
   platform: string;
@@ -195,6 +196,20 @@ export function PlatformIntegrations() {
                 <div className="flex items-center space-x-2">
                   {getStatusIcon(platform.status)}
                   <h4 className="font-medium text-neutral-900">{platform.name}</h4>
+                  <Tooltip>
+                    <TooltipTrigger>
+                      <Info className="w-4 h-4 text-neutral-400 hover:text-neutral-600 cursor-help" />
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p className="text-sm">
+                        {platform.status === "connected" 
+                          ? `Syncing ${platform.dataTypes.join(", ")} data from ${platform.name}`
+                          : platform.status === "error"
+                          ? "Connection error - check API credentials in settings"
+                          : "Not connected - click Setup to configure integration"}
+                      </p>
+                    </TooltipContent>
+                  </Tooltip>
                 </div>
                 <Button 
                   size="sm"

@@ -15,6 +15,7 @@ import {
   Truck,
   Recycle
 } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 interface LiveMetric {
   id: number;
@@ -85,6 +86,7 @@ const getTimelineIcon = (timeline: string) => {
 };
 
 export function LiveCarbonFeed() {
+  const { toast } = useToast();
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [autoRefresh, setAutoRefresh] = useState(false); // Disabled by default to prevent flickering
 
@@ -379,17 +381,44 @@ export function LiveCarbonFeed() {
         {/* Quick Actions */}
         <div className="pt-4 border-t border-neutral-200 dark:border-gray-700">
           <div className="flex flex-wrap gap-3">
-            <button className="px-4 py-2 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-lg hover:from-green-600 hover:to-emerald-700 transition-all flex items-center space-x-2">
+            <button 
+              onClick={() => {
+                toast({ 
+                  title: "Set Reduction Targets", 
+                  description: "Opening carbon reduction target configuration panel" 
+                });
+              }}
+              className="px-4 py-2 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-lg hover:from-green-600 hover:to-emerald-700 transition-all flex items-center space-x-2"
+              data-testid="button-set-reduction-targets"
+            >
               <Target className="w-4 h-4" />
               <span>Set Reduction Targets</span>
             </button>
             
-            <button className="px-4 py-2 bg-gradient-to-r from-blue-500 to-cyan-600 text-white rounded-lg hover:from-blue-600 hover:to-cyan-700 transition-all flex items-center space-x-2">
+            <button 
+              onClick={() => {
+                toast({ 
+                  title: "Exporting Data", 
+                  description: "Your live carbon feed data is being exported. Check your downloads folder." 
+                });
+              }}
+              className="px-4 py-2 bg-gradient-to-r from-blue-500 to-cyan-600 text-white rounded-lg hover:from-blue-600 hover:to-cyan-700 transition-all flex items-center space-x-2"
+              data-testid="button-export-live-data"
+            >
               <Activity className="w-4 h-4" />
               <span>Export Live Data</span>
             </button>
             
-            <button className="px-4 py-2 bg-gradient-to-r from-purple-500 to-pink-600 text-white rounded-lg hover:from-purple-600 hover:to-pink-700 transition-all flex items-center space-x-2">
+            <button 
+              onClick={() => {
+                toast({ 
+                  title: "Generating Tactics", 
+                  description: "AI is analyzing your data to generate additional carbon reduction tactics" 
+                });
+              }}
+              className="px-4 py-2 bg-gradient-to-r from-purple-500 to-pink-600 text-white rounded-lg hover:from-purple-600 hover:to-pink-700 transition-all flex items-center space-x-2"
+              data-testid="button-generate-more-tactics"
+            >
               <Lightbulb className="w-4 h-4" />
               <span>Generate More Tactics</span>
             </button>

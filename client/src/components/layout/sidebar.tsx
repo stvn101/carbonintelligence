@@ -1,5 +1,6 @@
 import { Leaf, ChartLine, ChartGantt, ShieldHalf, File, Calculator, ChartBar, Bot, Settings, Brain, Zap, Menu, X } from "lucide-react";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
+import { Logo } from "@/components/ui/logo";
 import { Link, useLocation } from "wouter";
 import { useState, useEffect } from "react";
 
@@ -85,13 +86,7 @@ export function Sidebar({ onAiChatOpen }: SidebarProps) {
       <div className="p-6 border-b border-neutral-200 dark:border-gray-700">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
-            <div className="w-12 h-12 rounded-xl flex items-center justify-center overflow-hidden bg-gradient-to-br from-green-500 to-green-600">
-              <img 
-                src="/attached_assets/A77859E5-E5A0-423F-9B71-25DDB54D6537_1753020499508.png" 
-                alt="CarbonConstruct Logo" 
-                className="w-full h-full object-contain"
-              />
-            </div>
+            <Logo size="lg" />
             <div className="min-w-0 flex-1">
               <h1 className="text-base font-bold text-neutral-900 dark:text-white truncate">CarbonIntelligence</h1>
               <p className="text-sm text-green-600 dark:text-green-400 font-medium">AI Carbon Management</p>
@@ -197,7 +192,9 @@ export function Sidebar({ onAiChatOpen }: SidebarProps) {
             <p className="text-sm font-semibold text-neutral-900 dark:text-white truncate">John Doe</p>
             <p className="text-xs text-neutral-600 dark:text-neutral-400 truncate">Chief Sustainability Officer</p>
           </div>
-          <Settings className="text-neutral-500 dark:text-neutral-400 cursor-pointer hover:text-green-600 dark:hover:text-green-400 w-5 h-5 transition-colors flex-shrink-0" />
+          <Link href="/settings" data-testid="nav-settings">
+            <Settings className="text-neutral-500 dark:text-neutral-400 cursor-pointer hover:text-green-600 dark:hover:text-green-400 w-5 h-5 transition-colors flex-shrink-0" />
+          </Link>
         </div>
       </div>
       </div>
