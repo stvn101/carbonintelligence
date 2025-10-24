@@ -67,11 +67,11 @@ const getCategoryIcon = (category: string) => {
 
 const getPriorityColor = (priority: string) => {
   switch (priority) {
-    case "critical": return "text-red-600 bg-red-50 border-red-200";
-    case "high": return "text-orange-600 bg-orange-50 border-orange-200";
-    case "medium": return "text-yellow-600 bg-yellow-50 border-yellow-200";
-    case "low": return "text-green-600 bg-green-50 border-green-200";
-    default: return "text-gray-600 bg-gray-50 border-gray-200";
+    case "critical": return "text-red-700 bg-red-50 border-red-200";
+    case "high": return "text-orange-700 bg-orange-50 border-orange-200";
+    case "medium": return "text-yellow-700 bg-yellow-50 border-yellow-200";
+    case "low": return "text-green-700 bg-green-50 border-green-200";
+    default: return "text-gray-800 bg-gray-50 border-gray-200";
   }
 };
 
@@ -305,7 +305,7 @@ export function LiveCarbonFeed() {
                 <div className="flex items-start justify-between mb-3">
                   <div className="flex-1">
                     <div className="flex items-center space-x-2 mb-1">
-                      <h5 className="font-semibold text-neutral-900 dark:text-white">
+                      <h5 className="font-semibold text-neutral-900">
                         {tactic.title}
                       </h5>
                       <span className="text-lg">{getTimelineIcon(tactic.timeline)}</span>
@@ -314,7 +314,7 @@ export function LiveCarbonFeed() {
                       </span>
                     </div>
                     
-                    <p className="text-sm text-neutral-700 dark:text-gray-300 mb-3">
+                    <p className="text-sm text-neutral-800 mb-3">
                       {tactic.description}
                     </p>
                   </div>
@@ -325,14 +325,14 @@ export function LiveCarbonFeed() {
                     <div className="text-lg font-bold text-green-600 dark:text-green-400">
                       {parseFloat(tactic.potentialReduction).toLocaleString()}
                     </div>
-                    <div className="text-xs text-neutral-600 dark:text-gray-400">tCO₂e Reduction</div>
+                    <div className="text-xs text-neutral-800 dark:text-gray-400">tCO₂e Reduction</div>
                   </div>
                   
                   <div className="text-center p-2 bg-white dark:bg-gray-800 rounded">
                     <div className="text-lg font-bold text-blue-600 dark:text-blue-400">
                       {tactic.reductionPercentage}%
                     </div>
-                    <div className="text-xs text-neutral-600 dark:text-gray-400">% Reduction</div>
+                    <div className="text-xs text-neutral-800 dark:text-gray-400">% Reduction</div>
                   </div>
                   
                   {tactic.implementationCost && (
@@ -340,7 +340,7 @@ export function LiveCarbonFeed() {
                       <div className="text-lg font-bold text-orange-600 dark:text-orange-400">
                         A$${(parseFloat(tactic.implementationCost) * 1.5).toLocaleString()}
                       </div>
-                      <div className="text-xs text-neutral-600 dark:text-gray-400">Cost</div>
+                      <div className="text-xs text-neutral-800 dark:text-gray-400">Cost</div>
                     </div>
                   )}
                   
@@ -349,25 +349,25 @@ export function LiveCarbonFeed() {
                       <div className="text-lg font-bold text-purple-600 dark:text-purple-400">
                         {(parseFloat(tactic.feasibilityScore) * 100).toFixed(0)}%
                       </div>
-                      <div className="text-xs text-neutral-600 dark:text-gray-400">Feasibility</div>
+                      <div className="text-xs text-neutral-800 dark:text-gray-400">Feasibility</div>
                     </div>
                   )}
                 </div>
 
                 <div className="flex items-center justify-between text-xs">
                   <div className="flex items-center space-x-4">
-                    <span className="text-neutral-600 dark:text-gray-400">
+                    <span className="text-neutral-800">
                       Category: <span className="font-medium">{tactic.category.replace("_", " ")}</span>
                     </span>
-                    <span className="text-neutral-600 dark:text-gray-400">
+                    <span className="text-neutral-800">
                       Timeline: <span className="font-medium">{tactic.timeline.replace("_", " ")}</span>
                     </span>
                   </div>
                   
                   {tactic.aiConfidence && (
                     <div className="flex items-center space-x-1">
-                      <span className="text-neutral-500 dark:text-gray-500">AI Confidence:</span>
-                      <span className="font-medium text-neutral-700 dark:text-gray-300">
+                      <span className="text-neutral-700">AI Confidence:</span>
+                      <span className="font-medium text-neutral-900">
                         {(parseFloat(tactic.aiConfidence) * 100).toFixed(0)}%
                       </span>
                     </div>

@@ -110,7 +110,7 @@ export function AIChatModal({ isOpen, onClose }: AIChatModalProps) {
               
               <div className={`flex-1 p-3 rounded-lg ${
                 message.role === "assistant" 
-                  ? "bg-neutral-100" 
+                  ? "bg-neutral-100 text-neutral-900" 
                   : "bg-primary-500 text-white ml-auto max-w-xs"
               }`}>
                 <p className="text-sm whitespace-pre-wrap">{message.content}</p>
@@ -137,12 +137,12 @@ export function AIChatModal({ isOpen, onClose }: AIChatModalProps) {
         {/* Suggested Questions */}
         {messages.length <= 1 && (
           <div className="border-t pt-4">
-            <p className="text-sm text-neutral-600 mb-2">Try asking:</p>
+            <p className="text-sm text-neutral-700 mb-2">Try asking:</p>
             <div className="grid grid-cols-2 gap-2">
               {suggestedQuestions.map((question, index) => (
                 <button
                   key={index}
-                  className="text-left text-xs p-2 bg-neutral-50 hover:bg-neutral-100 rounded border"
+                  className="text-left text-xs p-2 bg-neutral-50 hover:bg-neutral-100 rounded border text-neutral-900"
                   onClick={() => setInputMessage(question)}
                   disabled={chatMutation.isPending}
                 >
