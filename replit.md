@@ -120,11 +120,28 @@ Comprehensive schema supporting:
 
 ### Storage Implementation
 - **SupabaseStorage class** (`server/supabase-storage.ts`): Implements IStorage interface for Supabase operations
-- **Hybrid export** (`server/storage.ts`): Composite storage object routing specific operations to either Supabase or MemStorage
+  - Includes `ensureConfigured()` guard on all methods to verify credentials
+  - Uses non-null assertion (`supabase!`) after configuration check
+  - Handles date conversions with `toISOString()` helper function
+- **Hybrid export** (`server/storage.ts`): Composite storage object with intelligent routing
+  - `withSupabaseFallback` wrapper function for graceful degradation
+  - Routes to Supabase when configured, falls back to MemStorage otherwise
+  - Try-catch error handling with console warnings for debugging
 - **Type-safe mappings**: Converts between Supabase snake_case and application camelCase naming
+  - Project fields: carbon_footprint ↔ carbonFootprint, target_emissions ↔ targetEmissions
+  - Material fields: material_type ↔ materialType, embodied_carbon ↔ embodiedCarbon
+  - Date fields: Converts ISO strings to Date objects and vice versa
+
+### Graceful Fallback Strategy
+- **Configuration Detection**: `isSupabaseConfigured()` checks for required environment variables
+- **Zero-Config Operation**: App runs fully functional without Supabase credentials using MemStorage
+- **Production Path**: When credentials provided, Supabase handles persistent data storage
+- **Error Resilience**: Network failures or Supabase errors automatically fallback to MemStorage
+- **Transparent Migration**: Same IStorage interface regardless of backend, enabling seamless transition
 
 ### Authentication & Security
 - Environment variables: SUPABASE_URL, SUPABASE_ANON_KEY
 - Row Level Security (RLS) policies enforced by Supabase
 - Write operations require authentication (handled by Supabase client)
 - Error handling with fallback mechanisms for unavailable data
+- Configuration checks prevent null pointer errors
