@@ -86,7 +86,7 @@ export function Header({ onAiChatOpen }: HeaderProps) {
       </div>
 
       {/* Mobile Header - Compact */}
-      <div className="lg:hidden bg-white dark:bg-gray-900 border-b border-neutral-200 dark:border-gray-700 px-4 py-3 transition-colors">
+      <div className="lg:hidden bg-white dark:bg-gray-900 border-b border-neutral-200 dark:border-gray-700 pl-16 pr-4 py-3 transition-colors">
         <div className="flex items-center justify-between">
           <div className="flex-1 min-w-0 pr-4">
             <h2 className="text-lg font-semibold text-neutral-900 dark:text-white truncate">Strategic Planning</h2>
