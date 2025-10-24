@@ -29,9 +29,10 @@ Preferred communication style: Simple, everyday language.
 
 ### Database Strategy
 - **ORM**: Drizzle ORM for type-safe database operations
-- **Database**: PostgreSQL (configured for Neon serverless)
+- **Primary Database**: Supabase PostgreSQL (project: carbonconstruct-ver1) for production data
+- **Hybrid Storage**: Composite storage pattern using both Supabase and in-memory storage
 - **Migrations**: Drizzle Kit for schema management
-- **Storage Pattern**: Interface-based storage abstraction with memory storage implementation for development
+- **Storage Pattern**: Interface-based storage abstraction enabling seamless switching between storage backends
 
 ## Key Components
 
@@ -76,7 +77,9 @@ Comprehensive schema supporting:
 ## External Dependencies
 
 ### Production Dependencies
-- **Database**: Neon PostgreSQL serverless platform
+- **Database**: Supabase PostgreSQL (project: carbonconstruct-ver1)
+  - Tables: carbon_projects, unified_materials, carbon_reports
+  - Secure connection via SUPABASE_URL and SUPABASE_ANON_KEY environment variables
 - **AI Services**: OpenAI API for GPT-4o model access
 - **Carbon Data**: CarbonConstruct API for industry-specific emission factors
 - **Regulatory Data**: Government API integrations for compliance monitoring
@@ -102,7 +105,26 @@ Comprehensive schema supporting:
 ### Key Architectural Decisions
 
 1. **Monorepo Structure**: Shared schema and utilities between client and server for type safety
-2. **Interface-Based Storage**: Abstracted storage layer enables easy switching between development (memory) and production (PostgreSQL) implementations
-3. **AI-First Design**: OpenAI integration throughout the application for intelligent insights and recommendations
-4. **Component Library**: shadcn/ui provides consistent, accessible UI components with Tailwind CSS
-5. **Real-time Data**: TanStack Query enables efficient data fetching and caching for responsive user experience
+2. **Hybrid Storage Architecture**: Composite storage pattern combining Supabase PostgreSQL for persistent data (projects, materials, reports) with in-memory storage for runtime caching and non-persistent data
+3. **Supabase Integration**: Direct database access for carbon_projects, unified_materials, and carbon_reports tables with authentication checks on write operations
+4. **AI-First Design**: OpenAI integration throughout the application for intelligent insights and recommendations
+5. **Component Library**: shadcn/ui provides consistent, accessible UI components with Tailwind CSS
+6. **Real-time Data**: TanStack Query enables efficient data fetching and caching for responsive user experience
+
+## Supabase Integration Details
+
+### Connected Tables
+1. **carbon_projects**: Main project data with carbon footprint tracking
+2. **unified_materials**: Material embodied carbon data with Australian emission factors
+3. **carbon_reports**: Analytics summaries and reporting data
+
+### Storage Implementation
+- **SupabaseStorage class** (`server/supabase-storage.ts`): Implements IStorage interface for Supabase operations
+- **Hybrid export** (`server/storage.ts`): Composite storage object routing specific operations to either Supabase or MemStorage
+- **Type-safe mappings**: Converts between Supabase snake_case and application camelCase naming
+
+### Authentication & Security
+- Environment variables: SUPABASE_URL, SUPABASE_ANON_KEY
+- Row Level Security (RLS) policies enforced by Supabase
+- Write operations require authentication (handled by Supabase client)
+- Error handling with fallback mechanisms for unavailable data

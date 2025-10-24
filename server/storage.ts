@@ -1281,4 +1281,176 @@ export class MemStorage implements IStorage {
   }
 }
 
-export const storage = new MemStorage();
+import { SupabaseStorage } from './supabase-storage';
+import { isSupabaseConfigured } from './supabase';
+
+// Create hybrid storage: use Supabase for supported tables, MemStorage for others
+const memStorage = new MemStorage();
+const supabaseStorage = new SupabaseStorage();
+
+// Helper to gracefully fallback to MemStorage when Supabase is not configured
+function withSupabaseFallback<T extends any[], R>(
+  supabaseMethod: (...args: T) => Promise<R>,
+  memStorageMethod: (...args: T) => Promise<R>
+): (...args: T) => Promise<R> {
+  return async (...args: T) => {
+    if (isSupabaseConfigured()) {
+      try {
+        return await supabaseMethod(...args);
+      } catch (error) {
+        console.warn('Supabase operation failed, falling back to MemStorage:', error);
+        return await memStorageMethod(...args);
+      }
+    }
+    return await memStorageMethod(...args);
+  };
+}
+
+// Export a composite storage that uses Supabase where available, with graceful fallback
+export const storage: IStorage = {
+  // Use Supabase for projects with fallback to MemStorage
+  getAllProjects: withSupabaseFallback(
+    () => supabaseStorage.getAllProjects(),
+    () => memStorage.getAllProjects()
+  ),
+  getProject: withSupabaseFallback(
+    (id: number) => supabaseStorage.getProject(id),
+    (id: number) => memStorage.getProject(id)
+  ),
+  createProject: withSupabaseFallback(
+    (project: InsertProject) => supabaseStorage.createProject(project),
+    (project: InsertProject) => memStorage.createProject(project)
+  ),
+  updateProject: withSupabaseFallback(
+    (id: number, updates: Partial<InsertProject>) => supabaseStorage.updateProject(id, updates),
+    (id: number, updates: Partial<InsertProject>) => memStorage.updateProject(id, updates)
+  ),
+  deleteProject: withSupabaseFallback(
+    (id: number) => supabaseStorage.deleteProject(id),
+    (id: number) => memStorage.deleteProject(id)
+  ),
+
+  // Use Supabase for carbon embodied data (unified_materials) with fallback
+  getCarbonEmbodiedData: withSupabaseFallback(
+    (projectId?: number) => supabaseStorage.getCarbonEmbodiedData(projectId),
+    (projectId?: number) => memStorage.getCarbonEmbodiedData(projectId)
+  ),
+  createCarbonEmbodiedData: withSupabaseFallback(
+    (data: InsertCarbonEmbodiedData) => supabaseStorage.createCarbonEmbodiedData(data),
+    (data: InsertCarbonEmbodiedData) => memStorage.createCarbonEmbodiedData(data)
+  ),
+  updateCarbonEmbodiedData: withSupabaseFallback(
+    (id: number, updates: Partial<InsertCarbonEmbodiedData>) => supabaseStorage.updateCarbonEmbodiedData(id, updates),
+    (id: number, updates: Partial<InsertCarbonEmbodiedData>) => memStorage.updateCarbonEmbodiedData(id, updates)
+  ),
+  deleteCarbonEmbodiedData: withSupabaseFallback(
+    (id: number) => supabaseStorage.deleteCarbonEmbodiedData(id),
+    (id: number) => memStorage.deleteCarbonEmbodiedData(id)
+  ),
+
+  // Use MemStorage for all other operations (fallback)
+  getUser: memStorage.getUser.bind(memStorage),
+  getUserByUsername: memStorage.getUserByUsername.bind(memStorage),
+  createUser: memStorage.createUser.bind(memStorage),
+  updateUser: memStorage.updateUser.bind(memStorage),
+  deleteUser: memStorage.deleteUser.bind(memStorage),
+
+  getEmissionsByProject: memStorage.getEmissionsByProject.bind(memStorage),
+  getAllEmissions: memStorage.getAllEmissions.bind(memStorage),
+  createEmission: memStorage.createEmission.bind(memStorage),
+  updateEmission: memStorage.updateEmission.bind(memStorage),
+  deleteEmission: memStorage.deleteEmission.bind(memStorage),
+
+  getAllRegulatoryAlerts: memStorage.getAllRegulatoryAlerts.bind(memStorage),
+  getActiveRegulatoryAlerts: memStorage.getActiveRegulatoryAlerts.bind(memStorage),
+  createRegulatoryAlert: memStorage.createRegulatoryAlert.bind(memStorage),
+  updateRegulatoryAlert: memStorage.updateRegulatoryAlert.bind(memStorage),
+  deleteRegulatoryAlert: memStorage.deleteRegulatoryAlert.bind(memStorage),
+
+  getCarbonBudget: memStorage.getCarbonBudget.bind(memStorage),
+  createCarbonBudget: memStorage.createCarbonBudget.bind(memStorage),
+  updateCarbonBudget: memStorage.updateCarbonBudget.bind(memStorage),
+  deleteCarbonBudget: memStorage.deleteCarbonBudget.bind(memStorage),
+
+  getAllInvestments: memStorage.getAllInvestments.bind(memStorage),
+  createInvestment: memStorage.createInvestment.bind(memStorage),
+  updateInvestment: memStorage.updateInvestment.bind(memStorage),
+  deleteInvestment: memStorage.deleteInvestment.bind(memStorage),
+
+  getAllAiInsights: memStorage.getAllAiInsights.bind(memStorage),
+  getActiveAiInsights: memStorage.getActiveAiInsights.bind(memStorage),
+  createAiInsight: memStorage.createAiInsight.bind(memStorage),
+  updateAiInsight: memStorage.updateAiInsight.bind(memStorage),
+  deleteAiInsight: memStorage.deleteAiInsight.bind(memStorage),
+
+  getLiveCarbonMetrics: memStorage.getLiveCarbonMetrics.bind(memStorage),
+  createLiveCarbonMetric: memStorage.createLiveCarbonMetric.bind(memStorage),
+  updateLiveCarbonMetric: memStorage.updateLiveCarbonMetric.bind(memStorage),
+  deleteLiveCarbonMetric: memStorage.deleteLiveCarbonMetric.bind(memStorage),
+
+  getCarbonReductionTactics: memStorage.getCarbonReductionTactics.bind(memStorage),
+  createCarbonReductionTactic: memStorage.createCarbonReductionTactic.bind(memStorage),
+  updateCarbonReductionTactic: memStorage.updateCarbonReductionTactic.bind(memStorage),
+  deleteCarbonReductionTactic: memStorage.deleteCarbonReductionTactic.bind(memStorage),
+
+  getAllMlModels: memStorage.getAllMlModels.bind(memStorage),
+  getMlModel: memStorage.getMlModel.bind(memStorage),
+  getMlModelsByType: memStorage.getMlModelsByType.bind(memStorage),
+  createMlModel: memStorage.createMlModel.bind(memStorage),
+  updateMlModel: memStorage.updateMlModel.bind(memStorage),
+  deleteMlModel: memStorage.deleteMlModel.bind(memStorage),
+
+  getAllIntegrations: memStorage.getAllIntegrations.bind(memStorage),
+  getIntegration: memStorage.getIntegration.bind(memStorage),
+  getIntegrationByPlatform: memStorage.getIntegrationByPlatform.bind(memStorage),
+  createIntegration: memStorage.createIntegration.bind(memStorage),
+  updateIntegration: memStorage.updateIntegration.bind(memStorage),
+  deleteIntegration: memStorage.deleteIntegration.bind(memStorage),
+
+  getAllCarbonPatterns: memStorage.getAllCarbonPatterns.bind(memStorage),
+  getCarbonPattern: memStorage.getCarbonPattern.bind(memStorage),
+  getCarbonPatternsByType: memStorage.getCarbonPatternsByType.bind(memStorage),
+  createCarbonPattern: memStorage.createCarbonPattern.bind(memStorage),
+  updateCarbonPattern: memStorage.updateCarbonPattern.bind(memStorage),
+  deleteCarbonPattern: memStorage.deleteCarbonPattern.bind(memStorage),
+
+  getGreenStarRatings: memStorage.getGreenStarRatings.bind(memStorage),
+  getGreenStarRating: memStorage.getGreenStarRating.bind(memStorage),
+  createGreenStarRating: memStorage.createGreenStarRating.bind(memStorage),
+  updateGreenStarRating: memStorage.updateGreenStarRating.bind(memStorage),
+  deleteGreenStarRating: memStorage.deleteGreenStarRating.bind(memStorage),
+
+  getNabersRatings: memStorage.getNabersRatings.bind(memStorage),
+  getNabersRating: memStorage.getNabersRating.bind(memStorage),
+  getNabersRatingsByType: memStorage.getNabersRatingsByType.bind(memStorage),
+  createNabersRating: memStorage.createNabersRating.bind(memStorage),
+  updateNabersRating: memStorage.updateNabersRating.bind(memStorage),
+  deleteNabersRating: memStorage.deleteNabersRating.bind(memStorage),
+
+  getNccCompliance: memStorage.getNccCompliance.bind(memStorage),
+  getNccComplianceByProject: memStorage.getNccComplianceByProject.bind(memStorage),
+  createNccCompliance: memStorage.createNccCompliance.bind(memStorage),
+  updateNccCompliance: memStorage.updateNccCompliance.bind(memStorage),
+  deleteNccCompliance: memStorage.deleteNccCompliance.bind(memStorage),
+
+  getRatingAssessments: memStorage.getRatingAssessments.bind(memStorage),
+  getRatingAssessment: memStorage.getRatingAssessment.bind(memStorage),
+  getRatingAssessmentsByType: memStorage.getRatingAssessmentsByType.bind(memStorage),
+  createRatingAssessment: memStorage.createRatingAssessment.bind(memStorage),
+  updateRatingAssessment: memStorage.updateRatingAssessment.bind(memStorage),
+  deleteRatingAssessment: memStorage.deleteRatingAssessment.bind(memStorage),
+
+  getStateBuildingRegulations: memStorage.getStateBuildingRegulations.bind(memStorage),
+  getStateBuildingRegulation: memStorage.getStateBuildingRegulation.bind(memStorage),
+  getStateBuildingRegulationsByType: memStorage.getStateBuildingRegulationsByType.bind(memStorage),
+  createStateBuildingRegulation: memStorage.createStateBuildingRegulation.bind(memStorage),
+  updateStateBuildingRegulation: memStorage.updateStateBuildingRegulation.bind(memStorage),
+  deleteStateBuildingRegulation: memStorage.deleteStateBuildingRegulation.bind(memStorage),
+
+  getFederalComplianceTracking: memStorage.getFederalComplianceTracking.bind(memStorage),
+  getFederalComplianceTrackingById: memStorage.getFederalComplianceTrackingById.bind(memStorage),
+  getFederalComplianceByProject: memStorage.getFederalComplianceByProject.bind(memStorage),
+  createFederalComplianceTracking: memStorage.createFederalComplianceTracking.bind(memStorage),
+  updateFederalComplianceTracking: memStorage.updateFederalComplianceTracking.bind(memStorage),
+  deleteFederalComplianceTracking: memStorage.deleteFederalComplianceTracking.bind(memStorage)
+};
