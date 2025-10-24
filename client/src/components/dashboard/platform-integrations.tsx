@@ -162,12 +162,12 @@ export function PlatformIntegrations() {
     <div className="bg-blue-50 dark:bg-gray-800 rounded-lg shadow-sm border border-blue-100 dark:border-gray-700 p-6">
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center space-x-2">
-          <Zap className="text-primary-600 w-5 h-5" />
-          <h3 className="text-lg font-semibold text-neutral-900">Platform Integrations</h3>
+          <Zap className="text-primary-600 dark:text-green-400 w-5 h-5" />
+          <h3 className="text-lg font-semibold text-neutral-900 dark:text-white">Platform Integrations</h3>
         </div>
         <div className="flex items-center space-x-2">
           <select 
-            className="text-sm border border-neutral-300 rounded px-3 py-1"
+            className="text-sm border border-neutral-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-neutral-900 dark:text-white rounded px-3 py-1"
             value={selectedPlatform}
             onChange={(e) => setSelectedPlatform(e.target.value)}
           >
@@ -191,11 +191,11 @@ export function PlatformIntegrations() {
         {/* Platform Status Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {filteredPlatforms.map((platform: Platform) => (
-            <div key={platform.platform} className={`border rounded-lg p-4 ${getStatusColor(platform.status)}`}>
+            <div key={platform.platform} className={`border rounded-lg p-4 ${getStatusColor(platform.status)} dark:bg-gray-800 dark:border-gray-600`}>
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center space-x-2">
                   {getStatusIcon(platform.status)}
-                  <h4 className="font-medium text-neutral-900">{platform.name}</h4>
+                  <h4 className="font-medium text-neutral-900 dark:text-white">{platform.name}</h4>
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <button className="inline-flex">
@@ -250,11 +250,11 @@ export function PlatformIntegrations() {
 
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
-                  <span className="text-neutral-600">Status:</span>
+                  <span className="text-neutral-600 dark:text-gray-400">Status:</span>
                   <span className={`font-medium ${
-                    platform?.status === 'connected' ? 'text-secondary-600' :
-                    platform?.status === 'error' ? 'text-red-600' :
-                    'text-neutral-500'
+                    platform?.status === 'connected' ? 'text-secondary-600 dark:text-green-400' :
+                    platform?.status === 'error' ? 'text-red-600 dark:text-red-400' :
+                    'text-neutral-500 dark:text-gray-400'
                   }`}>
                     {platform?.status ? 
                       platform.status.charAt(0).toUpperCase() + platform.status.slice(1) : 
@@ -263,25 +263,25 @@ export function PlatformIntegrations() {
                   </span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-neutral-600">Last Sync:</span>
-                  <span className="text-neutral-900">{platform.lastSync}</span>
+                  <span className="text-neutral-600 dark:text-gray-400">Last Sync:</span>
+                  <span className="text-neutral-900 dark:text-white">{platform.lastSync}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-neutral-600">Projects:</span>
-                  <span className="text-neutral-900">{platform.projectCount || 0}</span>
+                  <span className="text-neutral-600 dark:text-gray-400">Projects:</span>
+                  <span className="text-neutral-900 dark:text-white">{platform.projectCount || 0}</span>
                 </div>
                 {platform.carbonImpact > 0 && (
                   <div className="flex justify-between">
-                    <span className="text-neutral-600">Carbon Data:</span>
-                    <span className="text-neutral-900">{(platform.carbonImpact || 0).toLocaleString()} tCO₂e</span>
+                    <span className="text-neutral-600 dark:text-gray-400">Carbon Data:</span>
+                    <span className="text-neutral-900 dark:text-white">{(platform.carbonImpact || 0).toLocaleString()} tCO₂e</span>
                   </div>
                 )}
               </div>
 
-              <div className="mt-3 pt-3 border-t border-neutral-200">
+              <div className="mt-3 pt-3 border-t border-neutral-200 dark:border-gray-600">
                 <div className="flex flex-wrap gap-1">
                   {platform.dataTypes.map((type: string) => (
-                    <span key={type} className="bg-neutral-100 text-neutral-700 text-xs px-2 py-1 rounded">
+                    <span key={type} className="bg-neutral-100 dark:bg-gray-700 text-neutral-700 dark:text-gray-300 text-xs px-2 py-1 rounded">
                       {type}
                     </span>
                   ))}
@@ -293,8 +293,8 @@ export function PlatformIntegrations() {
 
         {/* Sync History */}
         <div>
-          <h4 className="font-medium text-neutral-900 mb-3 flex items-center">
-            <Activity className="w-4 h-4 mr-2 text-blue-600" />
+          <h4 className="font-medium text-neutral-900 dark:text-white mb-3 flex items-center">
+            <Activity className="w-4 h-4 mr-2 text-blue-600 dark:text-blue-400" />
             Recent Sync Activity
           </h4>
           <div className="space-y-2">
@@ -303,16 +303,16 @@ export function PlatformIntegrations() {
               { platform: "Autodesk", status: "success", timestamp: "4 hours ago", records: 189 },
               { platform: "Bluebeam", status: "error", timestamp: "3 days ago", records: 0 }
             ] as SyncHistory[]).map((sync: SyncHistory, index: number) => (
-              <div key={index} className="flex items-center justify-between py-2 px-3 bg-neutral-50 rounded">
+              <div key={index} className="flex items-center justify-between py-2 px-3 bg-neutral-50 dark:bg-gray-700 rounded">
                 <div className="flex items-center space-x-3">
                   {sync.status === "success" ? 
-                    <CheckCircle className="w-4 h-4 text-secondary-600" /> :
-                    <AlertCircle className="w-4 h-4 text-red-600" />
+                    <CheckCircle className="w-4 h-4 text-secondary-600 dark:text-green-400" /> :
+                    <AlertCircle className="w-4 h-4 text-red-600 dark:text-red-400" />
                   }
-                  <span className="font-medium text-neutral-900">{sync.platform}</span>
-                  <span className="text-sm text-neutral-600">{sync.timestamp}</span>
+                  <span className="font-medium text-neutral-900 dark:text-white">{sync.platform}</span>
+                  <span className="text-sm text-neutral-600 dark:text-gray-300">{sync.timestamp}</span>
                 </div>
-                <div className="text-sm text-neutral-500">
+                <div className="text-sm text-neutral-500 dark:text-gray-400">
                   {sync.records > 0 ? `${sync.records} records` : "Failed"}
                 </div>
               </div>
@@ -321,35 +321,35 @@ export function PlatformIntegrations() {
         </div>
 
         {/* Carbon Impact Summary */}
-        <div className="bg-gradient-to-r from-primary-50 to-secondary-50 rounded-lg p-4">
-          <h4 className="font-medium text-neutral-900 mb-2 flex items-center">
-            <Download className="w-4 h-4 mr-2 text-primary-600" />
+        <div className="bg-gradient-to-r from-primary-50 to-secondary-50 dark:from-gray-700 dark:to-gray-600 rounded-lg p-4">
+          <h4 className="font-medium text-neutral-900 dark:text-white mb-2 flex items-center">
+            <Download className="w-4 h-4 mr-2 text-primary-600 dark:text-green-400" />
             Integration Carbon Impact
           </h4>
           <div className="grid grid-cols-3 gap-4 text-center">
             <div>
-              <div className="text-lg font-bold text-primary-600">
+              <div className="text-lg font-bold text-primary-600 dark:text-green-400">
                 {platformData.reduce((sum: number, p: Platform) => sum + (p.carbonImpact || 0), 0).toLocaleString()}
               </div>
-              <div className="text-xs text-neutral-600">Total tCO₂e Tracked</div>
+              <div className="text-xs text-neutral-600 dark:text-gray-300">Total tCO₂e Tracked</div>
             </div>
             <div>
-              <div className="text-lg font-bold text-secondary-600">
+              <div className="text-lg font-bold text-secondary-600 dark:text-blue-400">
                 {platformData.reduce((sum: number, p: Platform) => sum + (p.projectCount || 0), 0)}
               </div>
-              <div className="text-xs text-neutral-600">Projects Synced</div>
+              <div className="text-xs text-neutral-600 dark:text-gray-300">Projects Synced</div>
             </div>
             <div>
-              <div className="text-lg font-bold text-neutral-900">
+              <div className="text-lg font-bold text-neutral-900 dark:text-white">
                 {platformData.filter((p: Platform) => p.status === "connected").length}
               </div>
-              <div className="text-xs text-neutral-600">Active Integrations</div>
+              <div className="text-xs text-neutral-600 dark:text-gray-300">Active Integrations</div>
             </div>
           </div>
         </div>
 
         {/* Quick Actions */}
-        <div className="flex items-center space-x-2 pt-4 border-t border-neutral-200">
+        <div className="flex flex-col sm:flex-row sm:items-center gap-2 pt-4 border-t border-neutral-200 dark:border-gray-700">
           <Button 
             onClick={() => {
               toast({ 
@@ -357,7 +357,7 @@ export function PlatformIntegrations() {
                 description: "Opening integration management settings..." 
               });
             }}
-            className="bg-green-700 hover:bg-green-800 text-white" 
+            className="bg-green-700 hover:bg-green-800 text-white w-full sm:w-auto" 
             size="sm"
             data-testid="button-manage-integrations"
           >
@@ -371,7 +371,7 @@ export function PlatformIntegrations() {
                 description: "Select a file to import carbon data from integrated platforms" 
               });
             }}
-            className="bg-green-700 hover:bg-green-800 text-white" 
+            className="bg-green-700 hover:bg-green-800 text-white w-full sm:w-auto" 
             size="sm"
             data-testid="button-import-data"
           >
@@ -385,7 +385,7 @@ export function PlatformIntegrations() {
                 description: "Automatic sync has been scheduled for all connected platforms" 
               });
             }}
-            className="bg-green-700 hover:bg-green-800 text-white" 
+            className="bg-green-700 hover:bg-green-800 text-white w-full sm:w-auto" 
             size="sm"
             data-testid="button-schedule-sync"
           >
