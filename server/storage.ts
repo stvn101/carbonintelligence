@@ -3,7 +3,7 @@ import {
   carbonEmbodiedData, liveCarbonMetrics, carbonReductionTactics, mlModels, integrations, carbonPatterns,
   greenStarRatings, nabersRatings, nccCompliance, ratingAssessments,
   stateBuildingRegulations, federalComplianceTracking,
-  type User, type InsertUser, type Project, type InsertProject,
+  type User, type InsertUser, type UpsertUser, type Project, type InsertProject,
   type Emission, type InsertEmission, type RegulatoryAlert, type InsertRegulatoryAlert,
   type CarbonBudget, type InsertCarbonBudget, type Investment, type InsertInvestment,
   type AiInsight, type InsertAiInsight, type CarbonEmbodiedData, type InsertCarbonEmbodiedData,
@@ -17,12 +17,12 @@ import {
 } from "@shared/schema";
 
 export interface IStorage {
-  // User operations
-  getUser(id: number): Promise<User | undefined>;
-  getUserByUsername(username: string): Promise<User | undefined>;
+  // User operations (Replit Auth compatible)
+  getUser(id: string): Promise<User | undefined>;
+  upsertUser(user: UpsertUser): Promise<User>;
   createUser(user: InsertUser): Promise<User>;
-  updateUser(id: number, updates: Partial<InsertUser>): Promise<User>;
-  deleteUser(id: number): Promise<void>;
+  updateUser(id: string, updates: Partial<InsertUser>): Promise<User>;
+  deleteUser(id: string): Promise<void>;
 
   // Project operations
   getAllProjects(): Promise<Project[]>;
@@ -158,7 +158,7 @@ export interface IStorage {
 }
 
 export class MemStorage implements IStorage {
-  private users: Map<number, User>;
+  private users: Map<string, User>;
   private projects: Map<number, Project>;
   private emissions: Map<number, Emission>;
   private regulatoryAlerts: Map<number, RegulatoryAlert>;
@@ -380,36 +380,47 @@ export class MemStorage implements IStorage {
     return (factor * (Math.random() * 100 + 50)).toFixed(3);
   }
 
-  // User operations
-  async getUser(id: number): Promise<User | undefined> {
+  // User operations (Replit Auth compatible)
+  async getUser(id: string): Promise<User | undefined> {
     return this.users.get(id);
   }
 
-  async getUserByUsername(username: string): Promise<User | undefined> {
-    return Array.from(this.users.values()).find(user => user.username === username);
+  async upsertUser(userData: UpsertUser): Promise<User> {
+    const existing = userData.id ? this.users.get(userData.id) : undefined;
+    const user: User = existing
+      ? { ...existing, ...userData, updatedAt: new Date() }
+      : { 
+          ...userData, 
+          id: userData.id || `user_${this.currentId++}`,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        };
+    this.users.set(user.id, user);
+    return user;
   }
 
   async createUser(insertUser: InsertUser): Promise<User> {
-    const id = this.currentId++;
+    const id = `user_${this.currentId++}`;
     const user: User = { 
       ...insertUser, 
-      id, 
-      role: insertUser.role || "user" 
+      id,
+      createdAt: new Date(),
+      updatedAt: new Date(),
     };
     this.users.set(id, user);
     return user;
   }
 
-  async updateUser(id: number, updates: Partial<InsertUser>): Promise<User> {
+  async updateUser(id: string, updates: Partial<InsertUser>): Promise<User> {
     const user = this.users.get(id);
     if (!user) throw new Error('User not found');
     
-    const updatedUser = { ...user, ...updates };
+    const updatedUser = { ...user, ...updates, updatedAt: new Date() };
     this.users.set(id, updatedUser);
     return updatedUser;
   }
 
-  async deleteUser(id: number): Promise<void> {
+  async deleteUser(id: string): Promise<void> {
     if (!this.users.has(id)) throw new Error('User not found');
     this.users.delete(id);
   }
@@ -1350,7 +1361,7 @@ export const storage: IStorage = {
 
   // Use MemStorage for all other operations (fallback)
   getUser: memStorage.getUser.bind(memStorage),
-  getUserByUsername: memStorage.getUserByUsername.bind(memStorage),
+  upsertUser: memStorage.upsertUser.bind(memStorage),
   createUser: memStorage.createUser.bind(memStorage),
   updateUser: memStorage.updateUser.bind(memStorage),
   deleteUser: memStorage.deleteUser.bind(memStorage),
