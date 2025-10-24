@@ -1,4 +1,5 @@
-import { Leaf } from "lucide-react";
+import logoLight from "@assets/IMG_1374_1761339152880.png";
+import logoDark from "@assets/IMG_1375_1761339152880.png";
 
 interface LogoProps {
   className?: string;
@@ -12,15 +13,18 @@ export function Logo({ className = "", size = "md" }: LogoProps) {
     lg: "w-12 h-12"
   };
 
-  const iconSizes = {
-    sm: "w-4 h-4",
-    md: "w-5 h-5",
-    lg: "w-7 h-7"
-  };
-
   return (
-    <div className={`${sizeClasses[size]} rounded-lg bg-white dark:bg-blue-600 flex items-center justify-center transition-colors ${className}`}>
-      <Leaf className={`${iconSizes[size]} text-green-600 dark:text-white`} />
+    <div className={`${sizeClasses[size]} flex-shrink-0 ${className}`}>
+      <img 
+        src={logoLight} 
+        alt="CarbonIntelligence Logo" 
+        className="w-full h-full object-contain dark:hidden"
+      />
+      <img 
+        src={logoDark} 
+        alt="CarbonIntelligence Logo" 
+        className="w-full h-full object-contain hidden dark:block"
+      />
     </div>
   );
 }
