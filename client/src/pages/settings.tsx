@@ -7,6 +7,7 @@ import { useToast } from "@/hooks/use-toast";
 
 export default function Settings() {
   const { toast } = useToast();
+  const [activeSection, setActiveSection] = useState<string>("profile");
   const [emailNotifications, setEmailNotifications] = useState(true);
   const [alertNotifications, setAlertNotifications] = useState(true);
   const [weeklyReports, setWeeklyReports] = useState(false);
@@ -17,6 +18,15 @@ export default function Settings() {
       description: "Your preferences have been updated successfully"
     });
   };
+
+  const sections = [
+    { id: "profile", name: "Profile", icon: User },
+    { id: "notifications", name: "Notifications", icon: Bell },
+    { id: "privacy", name: "Privacy & Security", icon: Shield },
+    { id: "appearance", name: "Appearance", icon: Palette },
+    { id: "data", name: "Data & Storage", icon: Database },
+    { id: "api", name: "API Keys", icon: Key }
+  ];
 
   return (
     <PageShell
@@ -32,30 +42,25 @@ export default function Settings() {
         <div className="lg:col-span-1">
           <div className="bg-white dark:bg-gray-900 rounded-lg shadow-sm border border-neutral-200 dark:border-gray-700 p-4">
             <nav className="space-y-1">
-              <button className="w-full flex items-center space-x-3 px-4 py-3 bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-300 rounded-lg border border-green-200 dark:border-green-700">
-                <User className="w-5 h-5" />
-                <span className="font-medium">Profile</span>
-              </button>
-              <button className="w-full flex items-center space-x-3 px-4 py-3 text-neutral-700 dark:text-neutral-200 hover:bg-green-50 dark:hover:bg-green-900/10 rounded-lg transition-colors">
-                <Bell className="w-5 h-5" />
-                <span className="font-medium">Notifications</span>
-              </button>
-              <button className="w-full flex items-center space-x-3 px-4 py-3 text-neutral-700 dark:text-neutral-200 hover:bg-green-50 dark:hover:bg-green-900/10 rounded-lg transition-colors">
-                <Shield className="w-5 h-5" />
-                <span className="font-medium">Privacy & Security</span>
-              </button>
-              <button className="w-full flex items-center space-x-3 px-4 py-3 text-neutral-700 dark:text-neutral-200 hover:bg-green-50 dark:hover:bg-green-900/10 rounded-lg transition-colors">
-                <Palette className="w-5 h-5" />
-                <span className="font-medium">Appearance</span>
-              </button>
-              <button className="w-full flex items-center space-x-3 px-4 py-3 text-neutral-700 dark:text-neutral-200 hover:bg-green-50 dark:hover:bg-green-900/10 rounded-lg transition-colors">
-                <Database className="w-5 h-5" />
-                <span className="font-medium">Data & Storage</span>
-              </button>
-              <button className="w-full flex items-center space-x-3 px-4 py-3 text-neutral-700 dark:text-neutral-200 hover:bg-green-50 dark:hover:bg-green-900/10 rounded-lg transition-colors">
-                <Key className="w-5 h-5" />
-                <span className="font-medium">API Keys</span>
-              </button>
+              {sections.map((section) => {
+                const Icon = section.icon;
+                const isActive = activeSection === section.id;
+                return (
+                  <button
+                    key={section.id}
+                    onClick={() => setActiveSection(section.id)}
+                    className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors ${
+                      isActive
+                        ? "bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-300 border border-green-200 dark:border-green-700"
+                        : "text-neutral-700 dark:text-neutral-200 hover:bg-green-50 dark:hover:bg-green-900/10"
+                    }`}
+                    data-testid={`nav-${section.id}`}
+                  >
+                    <Icon className="w-5 h-5" />
+                    <span className="font-medium">{section.name}</span>
+                  </button>
+                );
+              })}
             </nav>
           </div>
         </div>
@@ -63,6 +68,7 @@ export default function Settings() {
         {/* Settings Content */}
         <div className="lg:col-span-2 space-y-6">
           {/* Profile Settings */}
+          {activeSection === "profile" && (
           <div className="bg-white dark:bg-gray-900 rounded-lg shadow-sm border border-neutral-200 dark:border-gray-700 p-6">
             <h3 className="text-lg font-semibold text-neutral-900 dark:text-white mb-4">Profile Information</h3>
             <div className="space-y-4">
@@ -104,8 +110,10 @@ export default function Settings() {
               </div>
             </div>
           </div>
+          )}
 
           {/* Notification Settings */}
+          {activeSection === "notifications" && (
           <div className="bg-white dark:bg-gray-900 rounded-lg shadow-sm border border-neutral-200 dark:border-gray-700 p-6">
             <h3 className="text-lg font-semibold text-neutral-900 dark:text-white mb-4">Notification Preferences</h3>
             <div className="space-y-4">
@@ -144,8 +152,22 @@ export default function Settings() {
               </div>
             </div>
           </div>
+          )}
+
+          {/* Other Sections - Placeholder */}
+          {activeSection !== "profile" && activeSection !== "notifications" && (
+          <div className="bg-white dark:bg-gray-900 rounded-lg shadow-sm border border-neutral-200 dark:border-gray-700 p-6">
+            <h3 className="text-lg font-semibold text-neutral-900 dark:text-white mb-4">
+              {sections.find(s => s.id === activeSection)?.name}
+            </h3>
+            <p className="text-neutral-600 dark:text-neutral-400">
+              Settings for this section are coming soon.
+            </p>
+          </div>
+          )}
 
           {/* Save Button */}
+          {(activeSection === "profile" || activeSection === "notifications") && (
           <div className="flex justify-end">
             <Button 
               onClick={handleSaveSettings}
@@ -155,6 +177,7 @@ export default function Settings() {
               Save Changes
             </Button>
           </div>
+          )}
         </div>
       </div>
     </PageShell>

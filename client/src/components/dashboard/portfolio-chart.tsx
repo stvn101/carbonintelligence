@@ -37,9 +37,11 @@ export function PortfolioChart() {
     { month: "Jun", emissions: 150 }
   ];
 
-  const maxEmissions = Math.max(...mockTrends.map((t: TrendData) => t.emissions));
-  const minEmissions = Math.min(...mockTrends.map((t: TrendData) => t.emissions));
-  const reductionPercentage = ((mockTrends[0].emissions - mockTrends[mockTrends.length - 1].emissions) / mockTrends[0].emissions * 100).toFixed(1);
+  const maxEmissions = mockTrends.length > 0 ? Math.max(...mockTrends.map((t: TrendData) => t.emissions)) : 1;
+  const minEmissions = mockTrends.length > 0 ? Math.min(...mockTrends.map((t: TrendData) => t.emissions)) : 0;
+  const reductionPercentage = mockTrends.length >= 2 && mockTrends[0].emissions > 0
+    ? ((mockTrends[0].emissions - mockTrends[mockTrends.length - 1].emissions) / mockTrends[0].emissions * 100).toFixed(1)
+    : "0.0";
 
   return (
     <div className="bg-white dark:bg-gray-900 rounded-lg shadow-sm border border-neutral-200 dark:border-gray-700 p-6 transition-colors">

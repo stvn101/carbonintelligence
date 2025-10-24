@@ -159,7 +159,7 @@ export function PlatformIntegrations() {
     : platformData.filter((p: Platform) => p?.status === selectedPlatform);
 
   return (
-    <div className="bg-blue-50 rounded-lg shadow-sm border border-blue-100 p-6">
+    <div className="bg-blue-50 dark:bg-gray-800 rounded-lg shadow-sm border border-blue-100 dark:border-gray-700 p-6">
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center space-x-2">
           <Zap className="text-primary-600 w-5 h-5" />
@@ -197,8 +197,10 @@ export function PlatformIntegrations() {
                   {getStatusIcon(platform.status)}
                   <h4 className="font-medium text-neutral-900">{platform.name}</h4>
                   <Tooltip>
-                    <TooltipTrigger>
-                      <Info className="w-4 h-4 text-neutral-400 hover:text-neutral-600 cursor-help" />
+                    <TooltipTrigger asChild>
+                      <button className="inline-flex">
+                        <Info className="w-4 h-4 text-neutral-400 dark:text-neutral-500 hover:text-neutral-600 dark:hover:text-neutral-300 cursor-help" />
+                      </button>
                     </TooltipTrigger>
                     <TooltipContent>
                       <p className="text-sm">
