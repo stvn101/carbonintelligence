@@ -107,7 +107,7 @@ export function PageShell({
       <div className="flex-1 flex flex-col overflow-hidden">
         <Header onAiChatOpen={() => setAiChatOpen(true)} />
         
-        <div className="flex-1 overflow-y-auto p-4 lg:p-6 pb-24 lg:pb-6">
+        <div className="flex-1 overflow-y-auto p-4 lg:p-6 pb-32 lg:pb-6">
           {/* Page Header */}
           <div className="mb-4 lg:mb-6">
             <h1 className="text-2xl lg:text-3xl font-bold text-neutral-900 dark:text-white" data-testid={testId}>
