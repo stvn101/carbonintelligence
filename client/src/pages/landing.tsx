@@ -5,7 +5,7 @@ import { Logo } from "@/components/ui/logo";
 
 export default function Landing() {
   const handleLogin = () => {
-    window.location.href = `/login?redirect=/`;
+    window.location.href = `/api/login?redirect=/`;
   };
 
   return (

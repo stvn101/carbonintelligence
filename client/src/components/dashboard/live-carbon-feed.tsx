@@ -258,7 +258,7 @@ export function LiveCarbonFeed() {
                 <div key={index} className="p-4 bg-gradient-to-r from-blue-50 to-cyan-50 dark:from-blue-900 dark:to-cyan-900 rounded-lg border border-blue-200 dark:border-blue-700">
                   <div className="flex items-center justify-between mb-2">
                     <h5 className="font-medium text-neutral-900 dark:text-white capitalize">
-                      {material.materialType.replace("_", " ")}
+                      {material.materialType?.replace("_", " ") || "Unknown Material"}
                     </h5>
                     <div className="flex items-center space-x-1">
                       {material.trend === "up" && <TrendingUp className="w-3 h-3 text-red-500" />}

@@ -16,7 +16,8 @@ Preferred communication style: Simple, everyday language.
 - **Framework**: React 18 with TypeScript
 - **Styling**: Tailwind CSS with shadcn/ui component library
 - **State Management**: TanStack Query (React Query) for server state
-- **Routing**: Wouter for client-side routing
+- **Authentication**: useAuth hook for session management and protected routes
+- **Routing**: Wouter for client-side routing with authentication guards
 - **Build Tool**: Vite for development and production builds
 - **UI Components**: Extensive use of Radix UI primitives for accessibility
 
@@ -24,6 +25,8 @@ Preferred communication style: Simple, everyday language.
 - **Runtime**: Node.js with Express framework
 - **Language**: TypeScript with ES modules
 - **API Design**: RESTful endpoints with structured JSON responses
+- **Authentication**: Replit Auth with OpenID Connect (supports Google, GitHub, X, Apple, email/password)
+- **Session Management**: PostgreSQL-backed sessions with connect-pg-simple
 - **Error Handling**: Centralized error middleware with structured error responses
 - **Development**: Hot reload with Vite integration in development mode
 
@@ -107,9 +110,10 @@ Comprehensive schema supporting:
 1. **Monorepo Structure**: Shared schema and utilities between client and server for type safety
 2. **Hybrid Storage Architecture**: Composite storage pattern combining Supabase PostgreSQL for persistent data (projects, materials, reports) with in-memory storage for runtime caching and non-persistent data
 3. **Supabase Integration**: Direct database access for carbon_projects, unified_materials, and carbon_reports tables with authentication checks on write operations
-4. **AI-First Design**: OpenAI integration throughout the application for intelligent insights and recommendations
-5. **Component Library**: shadcn/ui provides consistent, accessible UI components with Tailwind CSS
-6. **Real-time Data**: TanStack Query enables efficient data fetching and caching for responsive user experience
+4. **Replit Auth Integration**: OpenID Connect authentication with PostgreSQL session storage, supporting multiple OAuth providers and email/password login
+5. **AI-First Design**: OpenAI integration throughout the application for intelligent insights and recommendations
+6. **Component Library**: shadcn/ui provides consistent, accessible UI components with Tailwind CSS
+7. **Real-time Data**: TanStack Query enables efficient data fetching and caching for responsive user experience
 
 ## Supabase Integration Details
 
@@ -140,8 +144,15 @@ Comprehensive schema supporting:
 - **Transparent Migration**: Same IStorage interface regardless of backend, enabling seamless transition
 
 ### Authentication & Security
-- Environment variables: SUPABASE_URL, SUPABASE_ANON_KEY
-- Row Level Security (RLS) policies enforced by Supabase
-- Write operations require authentication (handled by Supabase client)
-- Error handling with fallback mechanisms for unavailable data
-- Configuration checks prevent null pointer errors
+- **Replit Auth**: OpenID Connect authentication with session management
+  - Environment variables: DATABASE_URL, SESSION_SECRET (auto-configured by Replit)
+  - Sessions stored in PostgreSQL using connect-pg-simple
+  - Middleware: `isAuthenticated` protects API routes requiring authentication
+  - User identity: OAuth sub claim (string ID) used as primary key
+  - Supported providers: Google, GitHub, X (Twitter), Apple, email/password
+- **Supabase**: Database access control
+  - Environment variables: SUPABASE_URL, SUPABASE_ANON_KEY
+  - Row Level Security (RLS) policies enforced by Supabase
+  - Write operations require authentication (handled by Supabase client)
+  - Error handling with fallback mechanisms for unavailable data
+  - Configuration checks prevent null pointer errors

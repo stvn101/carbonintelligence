@@ -1,13 +1,13 @@
 export function getLoginUrl() {
-  return `/login?redirect=${window.location.pathname}`;
+  return `/api/login?redirect=${window.location.pathname}`;
 }
 
 export function getSignupUrl() {
-  return `/signup?redirect=${window.location.pathname}`;
+  return `/api/signup?redirect=${window.location.pathname}`;
 }
 
 export function getLogoutUrl() {
-  return `/logout`;
+  return `/api/logout`;
 }
 
 export function handleAuthError(error: unknown): string {
