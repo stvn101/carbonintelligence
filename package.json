@@ -44,10 +44,12 @@
     "@supabase/supabase-js": "^2.76.1",
     "@tanstack/react-query": "^5.60.5",
     "@types/memoizee": "^0.4.12",
+    "chart.js": "^4.5.1",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cmdk": "^1.1.1",
     "connect-pg-simple": "^10.0.0",
+    "d3": "^7.9.0",
     "date-fns": "^3.6.0",
     "drizzle-orm": "^0.39.1",
     "drizzle-zod": "^0.7.0",
@@ -106,5 +108,17 @@
   },
   "optionalDependencies": {
     "bufferutil": "^4.0.8"
-  }
+  },
+  "description": "",
+  "main": "postcss.config.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/stvn101/carbonintelligence.git"
+  },
+  "keywords": [],
+  "author": "",
+  "bugs": {
+    "url": "https://github.com/stvn101/carbonintelligence/issues"
+  },
+  "homepage": "https://github.com/stvn101/carbonintelligence#readme"
 }
