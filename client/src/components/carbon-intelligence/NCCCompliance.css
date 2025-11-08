@@ -1,0 +1,217 @@
+/* NCCCompliance.css */
+
+/* Animations for expanding sections */
+.section-content-enter {
+  max-height: 0;
+  opacity: 0;
+  transition: max-height 0.3s ease, opacity 0.3s ease;
+}
+
+.section-content-enter-active {
+  max-height: 1000px;
+  opacity: 1;
+  transition: max-height 0.5s ease, opacity 0.3s ease 0.1s;
+}
+
+.section-content-exit {
+  max-height: 1000px;
+  opacity: 1;
+  transition: max-height 0.5s ease, opacity 0.3s ease;
+}
+
+.section-content-exit-active {
+  max-height: 0;
+  opacity: 0;
+  transition: max-height 0.3s ease 0.1s, opacity 0.3s ease;
+}
+
+/* Custom scrollbar for tables */
+.ncc-table-container::-webkit-scrollbar {
+  height: 8px;
+}
+
+.ncc-table-container::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.ncc-table-container::-webkit-scrollbar-thumb {
+  background: #cbd5e0;
+  border-radius: 4px;
+}
+
+.ncc-table-container::-webkit-scrollbar-thumb:hover {
+  background: #a0aec0;
+}
+
+/* Compliance status indicators */
+.status-pass {
+  color: #38a169;
+}
+
+.status-warn {
+  color: #dd6b20;
+}
+
+.status-fail {
+  color: #e53e3e;
+}
+
+/* Progress bars */
+.progress-bar-bg {
+  height: 8px;
+  background-color: #edf2f7;
+  border-radius: 9999px;
+  overflow: hidden;
+}
+
+.progress-bar {
+  height: 100%;
+  border-radius: 9999px;
+  transition: width 0.5s ease;
+}
+
+.progress-bar-pass {
+  background-color: #48bb78;
+}
+
+.progress-bar-warn {
+  background-color: #ed8936;
+}
+
+.progress-bar-fail {
+  background-color: #f56565;
+}
+
+/* Tooltip styles */
+.tooltip {
+  position: relative;
+  display: inline-block;
+}
+
+.tooltip .tooltip-text {
+  visibility: hidden;
+  width: 200px;
+  background-color: #2d3748;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 8px;
+  position: absolute;
+  z-index: 1;
+  bottom: 125%;
+  left: 50%;
+  margin-left: -100px;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.tooltip .tooltip-text::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: #2d3748 transparent transparent transparent;
+}
+
+.tooltip:hover .tooltip-text {
+  visibility: visible;
+  opacity: 1;
+}
+
+/* Climate zone specific styling */
+.climate-zone-1 { background-color: #feebcb; border-color: #f6ad55; }
+.climate-zone-2 { background-color: #fed7aa; border-color: #f97316; }
+.climate-zone-3 { background-color: #fecaca; border-color: #ef4444; }
+.climate-zone-4 { background-color: #ffedd5; border-color: #ea580c; }
+.climate-zone-5 { background-color: #d9f99d; border-color: #84cc16; }
+.climate-zone-6 { background-color: #bae6fd; border-color: #0ea5e9; }
+.climate-zone-7 { background-color: #c7d2fe; border-color: #6366f1; }
+.climate-zone-8 { background-color: #ddd6fe; border-color: #8b5cf6; }
+
+/* Building class indicators */
+.class-indicator {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  font-size: 12px;
+  font-weight: bold;
+  margin-right: 8px;
+}
+
+.class-2 { background-color: #c6f6d5; color: #22543d; }
+.class-3 { background-color: #bee3f8; color: #2c5282; }
+.class-5 { background-color: #e9d8fd; color: #553c9a; }
+.class-6 { background-color: #fed7d7; color: #822727; }
+.class-7 { background-color: #feebc8; color: #744210; }
+.class-8 { background-color: #c6f7e2; color: #22543d; }
+.class-9 { background-color: #e2e8f0; color: #2d3748; }
+
+/* NCC Section icons */
+.section-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  margin-right: 12px;
+}
+
+.section-j1-2 { background-color: #ebf8ff; color: #2b6cb0; }
+.section-j1-3 { background-color: #fffaf0; color: #c05621; }
+.section-j1-5 { background-color: #f0fff4; color: #276749; }
+.section-j1-6 { background-color: #fff5f7; color: #b83280; }
+.section-j5 { background-color: #f7fafc; color: #4a5568; }
+
+/* Material type indicators */
+.material-concrete { background-color: #e2e8f0; }
+.material-steel { background-color: #cbd5e0; }
+.material-timber { background-color: #feebc8; }
+.material-masonry { background-color: #fed7d7; }
+.material-insulation { background-color: #e9d8fd; }
+.material-glazing { background-color: #c6f6d5; }
+.material-finishes { background-color: #bee3f8; }
+
+/* Carbon sequestration indicator */
+.carbon-negative {
+  color: #38a169;
+  font-weight: 600;
+}
+
+/* Recommendation priority indicators */
+.priority-high {
+  border-left: 4px solid #f56565;
+  padding-left: 8px;
+}
+
+.priority-medium {
+  border-left: 4px solid #ed8936;
+  padding-left: 8px;
+}
+
+.priority-low {
+  border-left: 4px solid #48bb78;
+  padding-left: 8px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .compliance-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .section-details {
+    padding-left: 4px;
+  }
+  
+  .material-breakdown-table {
+    font-size: 12px;
+  }
+}

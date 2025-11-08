@@ -1,4 +1,4 @@
-import { ChartLine, ChartGantt, ShieldHalf, File, Calculator, ChartBar, Bot, Settings, Brain, Zap, Menu, X, BarChart3, Layers, Package } from "lucide-react";
+import { ChartLine, ChartGantt, ShieldHalf, File, Calculator, ChartBar, Bot, Settings, Brain, Zap, Menu, X, BarChart3, Layers, Package, ClipboardCheck } from "lucide-react";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { Logo } from "@/components/ui/logo";
 import { Link, useLocation } from "wouter";
@@ -192,6 +192,14 @@ export function Sidebar({ onAiChatOpen }: SidebarProps) {
               <div className={getNavItemClasses("/scopes-calculator")}>
                 <Calculator className="w-5 h-5 flex-shrink-0" />
                 <span className={`text-sm ${isActive("/scopes-calculator") ? "font-semibold" : "font-medium"}`}>GHG Scopes Calculator</span>
+              </div>
+            </Link>
+
+            {/* NCC Compliance */}
+            <Link href="/ncc-compliance" data-testid="nav-ncc-compliance">
+              <div className={getNavItemClasses("/ncc-compliance")}>
+                <ClipboardCheck className="w-5 h-5 flex-shrink-0" />
+                <span className={`text-sm ${isActive("/ncc-compliance") ? "font-semibold" : "font-medium"}`}>NCC Compliance</span>
               </div>
             </Link>
           </div>

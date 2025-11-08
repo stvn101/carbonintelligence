@@ -16,11 +16,12 @@ import Investments from "@/pages/investments";
 import ML from "@/pages/ml";
 import Integrations from "@/pages/integrations";
 import Settings from "@/pages/settings";
-import CarbonIntelligenceProof from "@/ui/components/CarbonIntelligenceProof";
+import CarbonIntelligenceProof from "@/components/CarbonIntelligenceProof";
 import CarbonDashboard from "@/pages/carbon-dashboard";
 import MaterialComparison from "@/pages/material-comparison";
 import ProjectAnalysisPage from "@/pages/project-analysis";
 import { ScopesCalculatorPage } from "@/pages/scopes-calculator";
+import { NCCCompliancePage } from "@/pages/ncc-compliance";
 
 function Router() {
   const { isAuthenticated, isLoading } = useAuth();
@@ -57,6 +58,7 @@ function Router() {
       <Route path="/material-comparison" component={MaterialComparison} />
       <Route path="/project-analysis" component={ProjectAnalysisPage} />
       <Route path="/scopes-calculator" component={ScopesCalculatorPage} />
+      <Route path="/ncc-compliance" component={NCCCompliancePage} />
       <Route component={NotFound} />
     </Switch>
   );
