@@ -8,10 +8,18 @@
 import MaterialsDatabase from "../../../src/core/materials-database.js";
 // @ts-ignore - JavaScript modules
 import LCACalculator from "../../../src/core/lca-calculator.js";
+// @ts-ignore - JavaScript modules
+import CarbonIntelligenceCore from "../../../src/core/carbon-intelligence-core.js";
+// @ts-ignore - JavaScript modules
+import AustralianIntelligence from "../../../src/core/australian-intelligence.js";
+// @ts-ignore - JavaScript modules
+import CarbonIntelligenceDashboard from "../../../src/core/carbon-intelligence-dashboard.js";
 
 // Initialize singleton instances with default configuration
 let materialsDbInstance: any = null;
 let lcaCalculatorInstance: any = null;
+let carbonCoreInstance: any = null;
+let australianIntelligenceInstance: any = null;
 
 /**
  * Get or create Materials Database instance
@@ -53,11 +61,60 @@ export const getLCACalculator = (options = {}) => {
 };
 
 /**
+ * Get or create Carbon Intelligence Core instance
+ * @param {Object} config - Configuration options
+ * @returns {CarbonIntelligenceCore} Carbon Intelligence Core instance
+ */
+export const getCarbonIntelligenceCore = (config = {}) => {
+  if (!carbonCoreInstance) {
+    carbonCoreInstance = new CarbonIntelligenceCore({
+      state: "nsw",
+      climateZone: 5,
+      projectLife: 50,
+      useEC3: true,
+      enableAI: true,
+      optimizationLevel: "balanced",
+      nccCompliance: true,
+      ...config,
+    });
+  }
+  return carbonCoreInstance;
+};
+
+/**
+ * Get or create Australian Intelligence instance
+ * @param {Object} options - Configuration options
+ * @returns {AustralianIntelligence} Australian Intelligence instance
+ */
+export const getAustralianIntelligence = (options = {}) => {
+  if (!australianIntelligenceInstance) {
+    australianIntelligenceInstance = new AustralianIntelligence({
+      state: "nsw",
+      climateZone: 5,
+      ...options,
+    });
+  }
+  return australianIntelligenceInstance;
+};
+
+/**
+ * Create a new Dashboard instance
+ * @param {string} containerId - HTML element ID to render the dashboard
+ * @param {string} theme - Dashboard theme (standard, professional, minimal)
+ * @returns {CarbonIntelligenceDashboard} Dashboard instance
+ */
+export const createDashboard = (containerId: string, theme = "standard") => {
+  return new CarbonIntelligenceDashboard(containerId, theme);
+};
+
+/**
  * Reset singleton instances (useful for testing or reconfiguration)
  */
 export const resetInstances = () => {
   materialsDbInstance = null;
   lcaCalculatorInstance = null;
+  carbonCoreInstance = null;
+  australianIntelligenceInstance = null;
 };
 
 /**
@@ -127,12 +184,36 @@ export const calculateProjectLCA = (
   return calculator.calculateMaterialsLCA(materials, projectLife, options);
 };
 
+/**
+ * Calculate comprehensive project analysis with all modules
+ * @param projectData - Complete project data
+ * @returns Comprehensive analysis results
+ */
+export const calculateComprehensiveProject = async (projectData: any) => {
+  const core = getCarbonIntelligenceCore();
+  return await core.calculateProject(projectData);
+};
+
 export default {
+  // Core modules
   getMaterialsDatabase,
   getLCACalculator,
+  getCarbonIntelligenceCore,
+  getAustralianIntelligence,
+  createDashboard,
+
+  // Helper functions
   resetInstances,
   australianRegions,
   getMaterialCarbonData,
   calculateMaterialLCA,
   calculateProjectLCA,
+  calculateComprehensiveProject,
+
+  // Classes for direct import
+  MaterialsDatabase,
+  LCACalculator,
+  CarbonIntelligenceCore,
+  AustralianIntelligence,
+  CarbonIntelligenceDashboard,
 };
