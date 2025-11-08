@@ -1,10 +1,10 @@
 /**
  * carbon-intelligence-dashboard.js
- * 
+ *
  * Interactive visualization and reporting tools for the CarbonIntelligence System.
- * This module provides Sankey diagrams, material impact heat maps, 
+ * This module provides Sankey diagrams, material impact heat maps,
  * compliance tracking dashboards, and optimization visualizations.
- * 
+ *
  * @author Climate Scientist & Steven Jenkins
  * @version 2.0.0
  * @company CarbonConstruct
@@ -19,7 +19,7 @@
 class CarbonIntelligenceDashboard {
     /**
      * Initialize the dashboard
-     * 
+     *
      * @param {string} containerId - HTML element ID to render the dashboard
      * @param {string} theme - Dashboard theme (standard, professional, minimal)
      */
@@ -28,54 +28,55 @@ class CarbonIntelligenceDashboard {
         this.theme = theme;
         this.data = null;
         this.charts = {};
-        
+
         this.container = document.getElementById(containerId);
         if (!this.container) {
             console.error(`Container element with ID '${containerId}' not found.`);
             return;
         }
-        
+
         // Set theme colors
         this.colors = this._getThemeColors(theme);
-        
+
         console.log(`CarbonIntelligence Dashboard initialized with ${theme} theme`);
     }
-    
+
     /**
      * Render the dashboard with calculation results
-     * 
+     *
      * @param {Object} results - Comprehensive calculation results from CarbonIntelligenceCore
      * @returns {Promise<boolean>} Success status
      */
     async render(results) {
         console.log('Rendering CarbonIntelligence Dashboard');
-        
+
         try {
             // Store results data
             this.data = results;
-            
+
             // Clear the container
             this.container.innerHTML = '';
-            
+
             // Add dashboard header
             this._addHeader();
-            
+
             // Create main dashboard layout
             const layout = this._createLayout();
             this.container.appendChild(layout);
-            
+
             // Render each section
             await Promise.all([
+                this._renderScopeExplanation(),
                 this._renderSummarySection(),
                 this._renderMaterialsSection(),
                 this._renderLifecycleSection(),
                 this._renderComplianceSection(),
                 this._renderOptimizationSection()
             ]);
-            
+
             console.log('Dashboard rendering complete');
             return true;
-            
+
         } catch (error) {
             console.error('Error rendering dashboard:', error);
             this.container.innerHTML = `
@@ -87,10 +88,10 @@ class CarbonIntelligenceDashboard {
             return false;
         }
     }
-    
+
     /**
      * Generate a report from the dashboard data
-     * 
+     *
      * @param {Object} options - Report generation options
      * @param {string} options.format - Report format (pdf, html, excel)
      * @param {string} options.title - Report title
@@ -101,14 +102,14 @@ class CarbonIntelligenceDashboard {
      */
     async generateReport(options) {
         console.log(`Generating ${options.format} report`);
-        
+
         if (!this.data) {
             throw new Error('No data available. Run calculations before generating a report.');
         }
-        
+
         // In a real implementation, this would generate a report in the specified format
         // For this example, we'll simulate the report generation
-        
+
         const reportData = {
             format: options.format || 'pdf',
             title: options.title || 'Carbon Assessment Report',
@@ -124,40 +125,40 @@ class CarbonIntelligenceDashboard {
             generatedAt: new Date().toISOString(),
             data: this.data
         };
-        
+
         // Simulate processing time
         await new Promise(resolve => setTimeout(resolve, 1000));
-        
+
         console.log('Report generated successfully');
         return reportData;
     }
-    
+
     /**
      * Download a generated report
-     * 
+     *
      * @param {Object} reportData - Report data from generateReport()
      * @param {string} filename - Filename for the download
      */
     downloadReport(reportData, filename) {
         console.log(`Downloading report as ${filename}`);
-        
+
         // In a real implementation, this would create a downloadable file
         // For this example, we'll simulate the download
-        
+
         alert(`Report "${filename}" would now be downloaded in a real implementation.`);
     }
-    
+
     /**
      * Add dashboard header with project info and total carbon summary
-     * 
+     *
      * @private
      */
     _addHeader() {
         const { projectInfo, totalCarbon } = this.data;
-        
+
         const header = document.createElement('div');
         header.className = 'dashboard-header';
-        
+
         header.innerHTML = `
             <div class="project-info">
                 <h1>${projectInfo.name || 'Unnamed Project'}</h1>
@@ -182,106 +183,244 @@ class CarbonIntelligenceDashboard {
                 </div>
             </div>
         `;
-        
+
         this.container.appendChild(header);
     }
-    
+
     /**
      * Create main dashboard layout structure
-     * 
+     *
      * @private
      * @returns {HTMLElement} Layout container element
      */
     _createLayout() {
         const layout = document.createElement('div');
         layout.className = 'dashboard-layout';
-        
+
         layout.innerHTML = `
-            <section id="summary-section" class="dashboard-section">
-                <h2>Carbon Footprint Summary</h2>
+            <section id="scope-explanation-section" class="dashboard-section scope-explanation">
+                <h2>Understanding Your Carbon Footprint</h2>
                 <div class="section-content"></div>
             </section>
-            
+
+            <section id="summary-section" class="dashboard-section">
+                <h2>Carbon Footprint Hierarchy</h2>
+                <div class="section-content"></div>
+            </section>
+
             <section id="materials-section" class="dashboard-section">
                 <h2>Materials Impact Analysis</h2>
                 <div class="section-content"></div>
             </section>
-            
+
             <section id="lifecycle-section" class="dashboard-section">
                 <h2>Lifecycle Assessment</h2>
                 <div class="section-content"></div>
             </section>
-            
+
             <section id="compliance-section" class="dashboard-section">
                 <h2>Compliance Status</h2>
                 <div class="section-content"></div>
             </section>
-            
+
             <section id="optimization-section" class="dashboard-section">
                 <h2>Optimization Opportunities</h2>
                 <div class="section-content"></div>
             </section>
         `;
-        
+
         return layout;
     }
-    
+
+    /**
+     * Render scope explanation section
+     *
+     * @private
+     * @returns {Promise<void>}
+     */
+    async _renderScopeExplanation() {
+        const section = document.querySelector('#scope-explanation-section .section-content');
+        const { totalCarbon, coverageAnalysis, projectInfo } = this.data;
+
+        section.innerHTML = `
+            <div class="scope-explanation-content">
+                <div class="scope-intro">
+                    <p class="lead-text">
+                        This analysis provides a comprehensive carbon footprint assessment covering
+                        <strong>all building elements</strong> across the complete
+                        <strong>${projectInfo.projectLife}-year lifecycle</strong>.
+                    </p>
+                </div>
+
+                <div class="scope-breakdown-cards">
+                    <div class="scope-card embodied-carbon">
+                        <div class="scope-card-icon">🏗️</div>
+                        <h3>Embodied Carbon</h3>
+                        <div class="scope-value">${Math.round(totalCarbon.embodied).toLocaleString()} tonnes</div>
+                        <p>Complete building structure, envelope, MEP systems, finishes, and site works</p>
+                        <div class="scope-details">
+                            <div class="detail-item">
+                                <span class="detail-label">Specified Materials:</span>
+                                <span class="detail-value">${Math.round(coverageAnalysis.specifiedMaterialsTotal).toLocaleString()} tonnes (${coverageAnalysis.specifiedMaterialsCoverage}%)</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Other Components:</span>
+                                <span class="detail-value">${Math.round(coverageAnalysis.unspecifiedComponentsTotal).toLocaleString()} tonnes (${(100 - coverageAnalysis.specifiedMaterialsCoverage).toFixed(1)}%)</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="scope-card operational-carbon">
+                        <div class="scope-card-icon">⚡</div>
+                        <h3>Operational Carbon</h3>
+                        <div class="scope-value">${Math.round(totalCarbon.operational).toLocaleString()} tonnes</div>
+                        <p>HVAC, lighting, equipment, hot water over ${projectInfo.projectLife} years</p>
+                        <div class="scope-details">
+                            ${this.data.operationalBreakdown ? `
+                                <div class="detail-item">
+                                    <span class="detail-label">HVAC:</span>
+                                    <span class="detail-value">${Math.round(this.data.operationalBreakdown.hvac).toLocaleString()} tonnes</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">Lighting:</span>
+                                    <span class="detail-value">${Math.round(this.data.operationalBreakdown.lighting).toLocaleString()} tonnes</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">Equipment:</span>
+                                    <span class="detail-value">${Math.round(this.data.operationalBreakdown.equipment).toLocaleString()} tonnes</span>
+                                </div>
+                            ` : ''}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="scope-note-box">
+                    <h4>📊 About Material Coverage</h4>
+                    <p>${coverageAnalysis.explanation}</p>
+                    <p class="note-callout">
+                        <strong>Why the difference?</strong> The specified materials represent key elements
+                        selected for detailed analysis and optimization. The complete embodied carbon includes
+                        comprehensive calculations for all building systems using industry standard methodologies
+                        (EN 15978, NCC Section J).
+                    </p>
+                </div>
+
+                <div class="scope-actions">
+                    <button class="btn-secondary" onclick="this.showDetailedBreakdown()">
+                        View Complete Component Breakdown
+                    </button>
+                    <button class="btn-secondary" onclick="this.exportComprehensiveReport()">
+                        Export Comprehensive Report
+                    </button>
+                </div>
+            </div>
+        `;
+    }
+
     /**
      * Render the summary section with carbon breakdown
-     * 
+     *
      * @private
      * @returns {Promise<void>}
      */
     async _renderSummarySection() {
         const section = document.querySelector('#summary-section .section-content');
-        const { totalCarbon } = this.data;
-        
-        // Create main stats container
-        const statsContainer = document.createElement('div');
-        statsContainer.className = 'summary-stats';
-        
-        // Add key stats
-        statsContainer.innerHTML = `
-            <div class="stat-card">
-                <h3>Embodied Carbon</h3>
-                <div class="stat-value">${Math.round(totalCarbon.embodied).toLocaleString()}</div>
-                <div class="stat-unit">tonnes CO₂-e</div>
-                <div class="stat-percent">${Math.round(totalCarbon.embodied / totalCarbon.wholeOfLife * 100)}%</div>
+        const { totalCarbon, coverageAnalysis } = this.data;
+
+        // Create hierarchical breakdown
+        const hierarchyContainer = document.createElement('div');
+        hierarchyContainer.className = 'carbon-hierarchy';
+
+        hierarchyContainer.innerHTML = `
+            <div class="breakdown-level-1">
+                <div class="carbon-card total-carbon">
+                    <div class="card-header">
+                        <h3>Total Whole-of-Life Carbon</h3>
+                        <span class="badge-info">Complete Lifecycle</span>
+                    </div>
+                    <div class="carbon-value-large">${Math.round(totalCarbon.wholeOfLife).toLocaleString()}</div>
+                    <div class="carbon-unit">tonnes CO₂-e</div>
+                    <div class="carbon-note">Full building, ${this.data.projectInfo.projectLife} years</div>
+                </div>
             </div>
-            
-            <div class="stat-card">
-                <h3>Operational Carbon</h3>
-                <div class="stat-value">${Math.round(totalCarbon.operational).toLocaleString()}</div>
-                <div class="stat-unit">tonnes CO₂-e</div>
-                <div class="stat-percent">${Math.round(totalCarbon.operational / totalCarbon.wholeOfLife * 100)}%</div>
+
+            <div class="breakdown-level-2">
+                <div class="carbon-card embodied-card">
+                    <div class="card-icon">🏗️</div>
+                    <h3>Embodied Carbon</h3>
+                    <div class="carbon-value">${Math.round(totalCarbon.embodied).toLocaleString()}</div>
+                    <div class="carbon-unit">tonnes CO₂-e</div>
+                    <div class="carbon-percentage">${Math.round(totalCarbon.embodied / totalCarbon.wholeOfLife * 100)}% of total</div>
+                    <div class="carbon-note">All materials and processes</div>
+                </div>
+
+                <div class="carbon-card operational-card">
+                    <div class="card-icon">⚡</div>
+                    <h3>Operational Carbon</h3>
+                    <div class="carbon-value">${Math.round(totalCarbon.operational).toLocaleString()}</div>
+                    <div class="carbon-unit">tonnes CO₂-e</div>
+                    <div class="carbon-percentage">${Math.round(totalCarbon.operational / totalCarbon.wholeOfLife * 100)}% of total</div>
+                    <div class="carbon-note">${this.data.projectInfo.projectLife} year lifecycle</div>
+                </div>
             </div>
-            
-            <div class="stat-card">
-                <h3>Construction</h3>
-                <div class="stat-value">${Math.round(totalCarbon.construction).toLocaleString()}</div>
-                <div class="stat-unit">tonnes CO₂-e</div>
-                <div class="stat-percent">${Math.round(totalCarbon.construction / totalCarbon.wholeOfLife * 100)}%</div>
+
+            <div class="coverage-indicator-section">
+                <h4>Material Coverage Analysis</h4>
+                <div class="coverage-bar-container">
+                    <div class="coverage-bar-fill" style="width: ${coverageAnalysis.specifiedMaterialsCoverage}%">
+                        <span class="coverage-label">Specified Materials: ${coverageAnalysis.specifiedMaterialsCoverage}%</span>
+                    </div>
+                    <div class="coverage-bar-remaining">
+                        <span class="coverage-label">Other Components: ${(100 - coverageAnalysis.specifiedMaterialsCoverage).toFixed(1)}%</span>
+                    </div>
+                </div>
+                <div class="coverage-explanation">
+                    <p>
+                        <strong>Specified Materials:</strong> ${Math.round(coverageAnalysis.specifiedMaterialsTotal).toLocaleString()} tonnes
+                        (detailed in Materials Impact Analysis below)
+                    </p>
+                    <p>
+                        <strong>Other Building Components:</strong> ${Math.round(coverageAnalysis.unspecifiedComponentsTotal).toLocaleString()} tonnes
+                        (foundations, complete MEP systems, envelope, fit-out, site works)
+                    </p>
+                </div>
             </div>
-            
-            <div class="stat-card">
-                <h3>Waste</h3>
-                <div class="stat-value">${Math.round(totalCarbon.waste).toLocaleString()}</div>
-                <div class="stat-unit">tonnes CO₂-e</div>
-                <div class="stat-percent">${Math.round(totalCarbon.waste / totalCarbon.wholeOfLife * 100)}%</div>
+
+            <div class="breakdown-level-3">
+                <h4>Key Metrics</h4>
+                <div class="metrics-grid">
+                    <div class="stat-card">
+                        <h3>Carbon Intensity</h3>
+                        <div class="stat-value">${Math.round(totalCarbon.perSquareMeter.total).toLocaleString()}</div>
+                        <div class="stat-unit">kg CO₂-e/m²</div>
+                    </div>
+
+                    <div class="stat-card">
+                        <h3>Construction Impact</h3>
+                        <div class="stat-value">${Math.round(totalCarbon.construction).toLocaleString()}</div>
+                        <div class="stat-unit">tonnes CO₂-e</div>
+                    </div>
+
+                    <div class="stat-card">
+                        <h3>Waste Impact</h3>
+                        <div class="stat-value">${Math.round(totalCarbon.waste).toLocaleString()}</div>
+                        <div class="stat-unit">tonnes CO₂-e</div>
+                    </div>
+                </div>
             </div>
         `;
-        
-        section.appendChild(statsContainer);
-        
+
+        section.appendChild(hierarchyContainer);
+
         // Create canvas for the breakdown chart
         const chartContainer = document.createElement('div');
         chartContainer.className = 'chart-container';
-        
+
         const canvas = document.createElement('canvas');
         canvas.id = 'carbon-breakdown-chart';
         chartContainer.appendChild(canvas);
         section.appendChild(chartContainer);
-        
+
         // Create the pie chart using Chart.js
         this.charts.carbonBreakdown = this._createPieChart(
             'carbon-breakdown-chart',
@@ -309,37 +448,37 @@ class CarbonIntelligenceDashboard {
             }
         );
     }
-    
+
     /**
      * Render the materials section with material impact analysis
-     * 
+     *
      * @private
      * @returns {Promise<void>}
      */
     async _renderMaterialsSection() {
         const section = document.querySelector('#materials-section .section-content');
         const { materialsBreakdown } = this.data;
-        
+
         // Create grid layout for this section
         const grid = document.createElement('div');
         grid.className = 'grid-layout';
-        
+
         // Left side: Materials breakdown chart
         const chartContainer = document.createElement('div');
         chartContainer.className = 'chart-container';
-        
+
         const canvas = document.createElement('canvas');
         canvas.id = 'materials-breakdown-chart';
         chartContainer.appendChild(canvas);
-        
+
         // Right side: Materials table
         const tableContainer = document.createElement('div');
         tableContainer.className = 'table-container';
-        
+
         // Create materials table
         const table = document.createElement('table');
         table.className = 'materials-table';
-        
+
         // Add table header
         const thead = document.createElement('thead');
         thead.innerHTML = `
@@ -350,10 +489,10 @@ class CarbonIntelligenceDashboard {
             </tr>
         `;
         table.appendChild(thead);
-        
+
         // Add table body
         const tbody = document.createElement('tbody');
-        
+
         // Add rows for each material category
         materialsBreakdown.forEach(category => {
             const row = document.createElement('tr');
@@ -364,15 +503,15 @@ class CarbonIntelligenceDashboard {
             `;
             tbody.appendChild(row);
         });
-        
+
         table.appendChild(tbody);
         tableContainer.appendChild(table);
-        
+
         // Add both containers to the grid
         grid.appendChild(chartContainer);
         grid.appendChild(tableContainer);
         section.appendChild(grid);
-        
+
         // Create the bar chart using Chart.js
         this.charts.materialsBreakdown = this._createBarChart(
             'materials-breakdown-chart',
@@ -394,72 +533,72 @@ class CarbonIntelligenceDashboard {
                 maintainAspectRatio: false
             }
         );
-        
+
         // Add heatmap visualization (simplified)
         const heatmapContainer = document.createElement('div');
         heatmapContainer.className = 'heatmap-container';
         heatmapContainer.innerHTML = '<h3>Material Impact Heat Map</h3>';
-        
+
         const heatmap = document.createElement('div');
         heatmap.className = 'impact-heatmap';
-        
+
         // Create heat map cells
         materialsBreakdown.forEach(category => {
             const percentage = category.percentage;
             const intensity = Math.min(100, percentage * 2); // Scale for visualization
-            
+
             const cell = document.createElement('div');
             cell.className = 'heatmap-cell';
             cell.style.width = `${percentage}%`;
-            cell.style.backgroundColor = `rgba(220, 53, 69, ${intensity/100})`;
+            cell.style.backgroundColor = `rgba(220, 53, 69, ${intensity / 100})`;
             cell.title = `${category.category}: ${percentage.toFixed(1)}%`;
-            
+
             const label = document.createElement('div');
             label.className = 'heatmap-label';
             label.textContent = category.category;
-            
+
             cell.appendChild(label);
             heatmap.appendChild(cell);
         });
-        
+
         heatmapContainer.appendChild(heatmap);
         section.appendChild(heatmapContainer);
     }
-    
+
     /**
      * Render the lifecycle section with LCA stages analysis
-     * 
+     *
      * @private
      * @returns {Promise<void>}
      */
     async _renderLifecycleSection() {
         const section = document.querySelector('#lifecycle-section .section-content');
         const { lcaBreakdown } = this.data;
-        
+
         // Create container for Sankey diagram
         const sankeyContainer = document.createElement('div');
         sankeyContainer.className = 'sankey-container';
         sankeyContainer.innerHTML = '<h3>Carbon Flow Sankey Diagram</h3>';
-        
+
         // In a real implementation, this would create a Sankey diagram using D3.js or similar
         // For this example, we'll create a simplified visualization
-        
+
         const sankeyVisualization = document.createElement('div');
         sankeyVisualization.className = 'sankey-visualization';
         sankeyVisualization.innerHTML = '<div class="sankey-placeholder">Interactive Sankey Diagram would render here</div>';
         sankeyContainer.appendChild(sankeyVisualization);
-        
+
         section.appendChild(sankeyContainer);
-        
+
         // Create bar chart for lifecycle stages
         const chartContainer = document.createElement('div');
         chartContainer.className = 'chart-container';
-        
+
         const canvas = document.createElement('canvas');
         canvas.id = 'lifecycle-stages-chart';
         chartContainer.appendChild(canvas);
         section.appendChild(chartContainer);
-        
+
         // Prepare stage data
         const stages = lcaBreakdown.stages;
         const stageLabels = {
@@ -470,12 +609,12 @@ class CarbonIntelligenceDashboard {
             C1C4: 'End of Life (C1-C4)',
             D: 'Benefits Beyond (D)'
         };
-        
+
         const stageValues = Object.entries(stages).map(([key, value]) => ({
             stage: stageLabels[key] || key,
             value: value
         }));
-        
+
         // Create the chart
         this.charts.lifecycleStages = this._createBarChart(
             'lifecycle-stages-chart',
@@ -498,25 +637,25 @@ class CarbonIntelligenceDashboard {
             }
         );
     }
-    
+
     /**
      * Render the compliance section with NCC and NABERS status
-     * 
+     *
      * @private
      * @returns {Promise<void>}
      */
     async _renderComplianceSection() {
         const section = document.querySelector('#compliance-section .section-content');
         const { compliance } = this.data;
-        
+
         // Create compliance status cards
         const statusContainer = document.createElement('div');
         statusContainer.className = 'compliance-status';
-        
+
         // NCC Compliance card
         const nccCard = document.createElement('div');
         nccCard.className = `compliance-card ${compliance.ncc.pass ? 'pass' : 'fail'}`;
-        
+
         nccCard.innerHTML = `
             <h3>NCC Section J Compliance</h3>
             <div class="compliance-badge ${compliance.ncc.pass ? 'pass' : 'fail'}">
@@ -541,42 +680,42 @@ class CarbonIntelligenceDashboard {
                 </table>
             </div>
         `;
-        
+
         // NABERS Rating card
         const nabersCard = document.createElement('div');
         nabersCard.className = 'compliance-card';
-        
+
         const starsHTML = Array(6)
             .fill()
             .map((_, i) => {
                 const filled = i < Math.floor(compliance.nabers.energy.stars);
-                const half = !filled && (i === Math.floor(compliance.nabers.energy.stars)) && 
-                            (compliance.nabers.energy.stars % 1 >= 0.5);
-                
+                const half = !filled && (i === Math.floor(compliance.nabers.energy.stars)) &&
+                    (compliance.nabers.energy.stars % 1 >= 0.5);
+
                 return `<span class="star ${filled ? 'filled' : half ? 'half' : ''}">★</span>`;
             })
             .join('');
-        
+
         nabersCard.innerHTML = `
             <h3>NABERS Energy Rating</h3>
             <div class="rating-value">${compliance.nabers.energy.stars.toFixed(1)} stars</div>
             <div class="star-rating">${starsHTML}</div>
             <div class="rating-grade">${compliance.nabers.energy.grade}</div>
         `;
-        
+
         statusContainer.appendChild(nccCard);
         statusContainer.appendChild(nabersCard);
         section.appendChild(statusContainer);
-        
+
         // Create canvas for compliance radar chart
         const chartContainer = document.createElement('div');
         chartContainer.className = 'chart-container';
-        
+
         const canvas = document.createElement('canvas');
         canvas.id = 'compliance-radar-chart';
         chartContainer.appendChild(canvas);
         section.appendChild(chartContainer);
-        
+
         // Create radar chart for compliance aspects
         this.charts.complianceRadar = this._createRadarChart(
             'compliance-radar-chart',
@@ -627,44 +766,44 @@ class CarbonIntelligenceDashboard {
             }
         );
     }
-    
+
     /**
      * Render the optimization section with recommendations
-     * 
+     *
      * @private
      * @returns {Promise<void>}
      */
     async _renderOptimizationSection() {
         const section = document.querySelector('#optimization-section .section-content');
         const { optimizations } = this.data;
-        
+
         // Create header with summary stats
         const summaryHeader = document.createElement('div');
         summaryHeader.className = 'optimization-summary';
-        
+
         summaryHeader.innerHTML = `
             <div class="summary-stat">
                 <h3>Total Potential Savings</h3>
                 <div class="stat-value">${Math.round(optimizations.totalPotentialSavings).toLocaleString()}</div>
                 <div class="stat-unit">tonnes CO₂-e</div>
             </div>
-            
+
             <div class="summary-stat">
                 <h3>Percentage Reduction</h3>
                 <div class="stat-value">${optimizations.savingsPercentage.toFixed(1)}</div>
                 <div class="stat-unit">%</div>
             </div>
         `;
-        
+
         section.appendChild(summaryHeader);
-        
+
         // Create recommendations table
         const tableContainer = document.createElement('div');
         tableContainer.className = 'table-container';
-        
+
         const table = document.createElement('table');
         table.className = 'recommendations-table';
-        
+
         // Add table header
         const thead = document.createElement('thead');
         thead.innerHTML = `
@@ -677,10 +816,10 @@ class CarbonIntelligenceDashboard {
             </tr>
         `;
         table.appendChild(thead);
-        
+
         // Add table body
         const tbody = document.createElement('tbody');
-        
+
         // Add rows for top 10 recommendations
         optimizations.recommendations.slice(0, 10).forEach((rec, index) => {
             const row = document.createElement('tr');
@@ -693,27 +832,27 @@ class CarbonIntelligenceDashboard {
             `;
             tbody.appendChild(row);
         });
-        
+
         table.appendChild(tbody);
         tableContainer.appendChild(table);
         section.appendChild(tableContainer);
-        
+
         // Create canvas for optimization matrix
         const chartContainer = document.createElement('div');
         chartContainer.className = 'chart-container';
-        
+
         const canvas = document.createElement('canvas');
         canvas.id = 'optimization-matrix-chart';
         chartContainer.appendChild(canvas);
         section.appendChild(chartContainer);
-        
+
         // Prepare data for optimization scatter plot (implementation difficulty vs. impact)
         const implementationScores = {
             'Easy': 10,
             'Medium': 50,
             'Complex': 90
         };
-        
+
         const costImpactScores = {
             'Savings': 10,
             'Neutral': 30,
@@ -721,7 +860,7 @@ class CarbonIntelligenceDashboard {
             'Moderate Increase': 70,
             'High Initial Cost': 90
         };
-        
+
         const scatterData = optimizations.recommendations.map(rec => ({
             x: implementationScores[rec.implementation] || 50,
             y: costImpactScores[rec.costImpact] || 50,
@@ -730,7 +869,7 @@ class CarbonIntelligenceDashboard {
             savings: rec.carbonSavings,
             category: rec.category
         }));
-        
+
         // Create bubble chart for optimization matrix
         this.charts.optimizationMatrix = this._createBubbleChart(
             'optimization-matrix-chart',
@@ -757,7 +896,7 @@ class CarbonIntelligenceDashboard {
                         min: 0,
                         max: 100,
                         ticks: {
-                            callback: function(value) {
+                            callback: function (value) {
                                 if (value === 10) return 'Easy';
                                 if (value === 50) return 'Medium';
                                 if (value === 90) return 'Complex';
@@ -773,7 +912,7 @@ class CarbonIntelligenceDashboard {
                         min: 0,
                         max: 100,
                         ticks: {
-                            callback: function(value) {
+                            callback: function (value) {
                                 if (value === 10) return 'Savings';
                                 if (value === 30) return 'Neutral';
                                 if (value === 50) return 'Slight';
@@ -787,7 +926,7 @@ class CarbonIntelligenceDashboard {
                 plugins: {
                     tooltip: {
                         callbacks: {
-                            label: function(context) {
+                            label: function (context) {
                                 const data = context.raw;
                                 return [
                                     data.recommendation,
@@ -801,10 +940,10 @@ class CarbonIntelligenceDashboard {
             }
         );
     }
-    
+
     /**
      * Create a pie chart
-     * 
+     *
      * @private
      * @param {string} canvasId - Canvas element ID
      * @param {Object} data - Chart data
@@ -814,11 +953,11 @@ class CarbonIntelligenceDashboard {
     _createPieChart(canvasId, data, options) {
         // In a real implementation, this would use Chart.js
         // For this example, we'll simulate chart creation
-        
+
         console.log(`Creating pie chart: ${canvasId}`);
         console.log('Data:', data);
         console.log('Options:', options);
-        
+
         // Simulate Chart.js instance
         return {
             type: 'pie',
@@ -826,10 +965,10 @@ class CarbonIntelligenceDashboard {
             options: options
         };
     }
-    
+
     /**
      * Create a bar chart
-     * 
+     *
      * @private
      * @param {string} canvasId - Canvas element ID
      * @param {Object} data - Chart data
@@ -839,11 +978,11 @@ class CarbonIntelligenceDashboard {
     _createBarChart(canvasId, data, options) {
         // In a real implementation, this would use Chart.js
         // For this example, we'll simulate chart creation
-        
+
         console.log(`Creating bar chart: ${canvasId}`);
         console.log('Data:', data);
         console.log('Options:', options);
-        
+
         // Simulate Chart.js instance
         return {
             type: 'bar',
@@ -851,10 +990,10 @@ class CarbonIntelligenceDashboard {
             options: options
         };
     }
-    
+
     /**
      * Create a radar chart
-     * 
+     *
      * @private
      * @param {string} canvasId - Canvas element ID
      * @param {Object} data - Chart data
@@ -864,11 +1003,11 @@ class CarbonIntelligenceDashboard {
     _createRadarChart(canvasId, data, options) {
         // In a real implementation, this would use Chart.js
         // For this example, we'll simulate chart creation
-        
+
         console.log(`Creating radar chart: ${canvasId}`);
         console.log('Data:', data);
         console.log('Options:', options);
-        
+
         // Simulate Chart.js instance
         return {
             type: 'radar',
@@ -876,10 +1015,10 @@ class CarbonIntelligenceDashboard {
             options: options
         };
     }
-    
+
     /**
      * Create a bubble chart
-     * 
+     *
      * @private
      * @param {string} canvasId - Canvas element ID
      * @param {Object} data - Chart data
@@ -889,11 +1028,11 @@ class CarbonIntelligenceDashboard {
     _createBubbleChart(canvasId, data, options) {
         // In a real implementation, this would use Chart.js
         // For this example, we'll simulate chart creation
-        
+
         console.log(`Creating bubble chart: ${canvasId}`);
         console.log('Data:', data);
         console.log('Options:', options);
-        
+
         // Simulate Chart.js instance
         return {
             type: 'bubble',
@@ -901,10 +1040,10 @@ class CarbonIntelligenceDashboard {
             options: options
         };
     }
-    
+
     /**
      * Get theme colors based on selected theme
-     * 
+     *
      * @private
      * @param {string} theme - Dashboard theme name
      * @returns {Object} Theme colors
@@ -916,51 +1055,51 @@ class CarbonIntelligenceDashboard {
             operational: 'rgba(255, 99, 132, 0.8)',
             construction: 'rgba(255, 206, 86, 0.8)',
             waste: 'rgba(75, 192, 192, 0.8)',
-            
+
             materialsStart: 'rgba(54, 162, 235, 1)',
             materialsEnd: 'rgba(25, 118, 210, 1)',
-            
+
             lifecycleStart: 'rgba(255, 99, 132, 1)',
             lifecycleEnd: 'rgba(220, 53, 69, 1)'
         };
-        
+
         // Theme-specific colors
         const themeColors = {
             'standard': defaultColors,
-            
+
             'professional': {
                 embodied: 'rgba(25, 118, 210, 0.8)',
                 operational: 'rgba(220, 53, 69, 0.8)',
                 construction: 'rgba(255, 193, 7, 0.8)',
                 waste: 'rgba(40, 167, 69, 0.8)',
-                
+
                 materialsStart: 'rgba(25, 118, 210, 1)',
                 materialsEnd: 'rgba(13, 71, 161, 1)',
-                
+
                 lifecycleStart: 'rgba(220, 53, 69, 1)',
                 lifecycleEnd: 'rgba(137, 32, 44, 1)'
             },
-            
+
             'minimal': {
                 embodied: 'rgba(52, 58, 64, 0.8)',
                 operational: 'rgba(108, 117, 125, 0.8)',
                 construction: 'rgba(73, 80, 87, 0.8)',
                 waste: 'rgba(173, 181, 189, 0.8)',
-                
+
                 materialsStart: 'rgba(52, 58, 64, 1)',
                 materialsEnd: 'rgba(33, 37, 41, 1)',
-                
+
                 lifecycleStart: 'rgba(73, 80, 87, 1)',
                 lifecycleEnd: 'rgba(52, 58, 64, 1)'
             }
         };
-        
+
         return themeColors[theme] || defaultColors;
     }
-    
+
     /**
      * Generate a color gradient array between two colors
-     * 
+     *
      * @private
      * @param {string} startColor - Starting color (rgba or hex)
      * @param {string} endColor - Ending color (rgba or hex)
@@ -995,33 +1134,33 @@ class CarbonIntelligenceDashboard {
                     a: 1
                 };
             }
-            
+
             // Default to black if color can't be parsed
             return { r: 0, g: 0, b: 0, a: 1 };
         };
-        
+
         const start = parseColor(startColor);
         const end = parseColor(endColor);
-        
+
         const gradient = [];
-        
+
         for (let i = 0; i < steps; i++) {
             const ratio = i / (steps - 1);
-            
+
             const r = Math.round(start.r + ratio * (end.r - start.r));
             const g = Math.round(start.g + ratio * (end.g - start.g));
             const b = Math.round(start.b + ratio * (end.b - start.b));
             const a = start.a + ratio * (end.a - start.a);
-            
+
             gradient.push(`rgba(${r}, ${g}, ${b}, ${a})`);
         }
-        
+
         return gradient;
     }
-    
+
     /**
      * Generate categorical colors based on unique categories
-     * 
+     *
      * @private
      * @param {Array<string>} categories - Category labels
      * @param {number} alpha - Color opacity (0-1)
@@ -1041,10 +1180,10 @@ class CarbonIntelligenceDashboard {
             [32, 201, 151],   // seafoam
             [233, 30, 99]     // pink
         ];
-        
+
         // Get unique categories
         const uniqueCategories = [...new Set(categories)];
-        
+
         // Map categories to colors
         const categoryColors = {};
         uniqueCategories.forEach((category, index) => {
@@ -1052,7 +1191,7 @@ class CarbonIntelligenceDashboard {
             const [r, g, b] = baseColors[colorIndex];
             categoryColors[category] = `rgba(${r}, ${g}, ${b}, ${alpha})`;
         });
-        
+
         // Return colors in the same order as input categories
         return categories.map(category => categoryColors[category]);
     }
