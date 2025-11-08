@@ -40,7 +40,7 @@ const australianIntelligence = {
 const simulateAPICall = async (material, source = "EC3") => {
   // Simulate API delay
   await new Promise(resolve => setTimeout(resolve, 800));
-  
+
   const mockData = {
     "ready_mix_25mpa": { carbonRate: 365, unit: "kg/m3", confidence: 0.95, epd_id: "EC3_CONC_001" },
     "steel_rebar_12mm": { carbonRate: 1.65, unit: "kg/kg", confidence: 0.98, epd_id: "EC3_STEEL_001" },
@@ -48,7 +48,7 @@ const simulateAPICall = async (material, source = "EC3") => {
     "glasswool_batts_r25": { carbonRate: 1.1, unit: "kg/m2", confidence: 0.90, epd_id: "EC3_INSUL_001" },
     "pine_framing_90x45": { carbonRate: 0.35, unit: "kg/kg", confidence: 0.88, epd_id: "EC3_TIMBER_001" }
   };
-  
+
   // Log the API call
   apiCallLog.push({
     timestamp: new Date().toLocaleTimeString(),
@@ -56,7 +56,7 @@ const simulateAPICall = async (material, source = "EC3") => {
     source,
     cached: false
   });
-  
+
   return mockData[material] || { carbonRate: 2.5, unit: "kg/unit", confidence: 0.75, epd_id: "EC3_GENERIC_001" };
 };
 
@@ -64,7 +64,7 @@ const simulateAPICall = async (material, source = "EC3") => {
 const getCachedOrFetch = async (material, maxAge = 24 * 60 * 60 * 1000) => {
   const cacheKey = material;
   const cached = materialCache.get(cacheKey);
-  
+
   if (cached && (Date.now() - cached.timestamp) < maxAge) {
     // Return cached data
     apiCallLog.push({
@@ -75,7 +75,7 @@ const getCachedOrFetch = async (material, maxAge = 24 * 60 * 60 * 1000) => {
     });
     return cached.data;
   }
-  
+
   // Fetch fresh data
   const freshData = await simulateAPICall(material);
   materialCache.set(cacheKey, {
@@ -90,15 +90,15 @@ const applyAustralianContext = (baseData, material, location) => {
   const transport = australianIntelligence.transportPenalties[location];
   const suppliers = australianIntelligence.supplierMapping[material]?.[location] || ["Generic Supplier"];
   const climate = australianIntelligence.climateAdjustments[location];
-  
+
   // Apply transport penalty based on material type
   let transportPenalty = 0;
   if (material.includes('steel')) transportPenalty = transport.steel;
   else if (material.includes('concrete') || material.includes('ready_mix')) transportPenalty = transport.concrete;
   else if (material.includes('timber') || material.includes('pine')) transportPenalty = transport.timber;
-  
+
   const adjustedCarbon = baseData.carbonRate + transportPenalty;
-  
+
   return {
     ...baseData,
     adjustedCarbon,
@@ -112,21 +112,21 @@ const applyAustralianContext = (baseData, material, location) => {
 // Batch processing for multiple materials (in real app, this would be part of the materials-database.js)
 const batchProcess = async (materials, location) => {
   const results = [];
-  
+
   // Process in batches of 3 to simulate API efficiency
   for (let i = 0; i < materials.length; i += 3) {
     const batch = materials.slice(i, i + 3);
-    
+
     // Parallel processing within batch
     const batchPromises = batch.map(async (material) => {
       const baseData = await getCachedOrFetch(material);
       return applyAustralianContext(baseData, material, location);
     });
-    
+
     const batchResults = await Promise.all(batchPromises);
     results.push(...batchResults);
   }
-  
+
   return results;
 };
 
@@ -136,7 +136,7 @@ export default function CarbonIntelligenceProof() {
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
   const [cacheStats, setCacheStats] = useState({ hits: 0, misses: 0 });
-  
+
   const availableMaterials = [
     { id: 'ready_mix_25mpa', name: '25MPa Ready Mix Concrete', category: 'Concrete' },
     { id: 'steel_rebar_12mm', name: '12mm Steel Rebar', category: 'Steel' },
@@ -144,7 +144,7 @@ export default function CarbonIntelligenceProof() {
     { id: 'glasswool_batts_r25', name: 'R2.5 Glasswool Batts', category: 'Insulation' },
     { id: 'pine_framing_90x45', name: '90x45 Pine Framing', category: 'Timber' }
   ];
-  
+
   const handleMaterialToggle = (materialId) => {
     setSelectedMaterials(prev =>
       prev.includes(materialId)
@@ -152,17 +152,17 @@ export default function CarbonIntelligenceProof() {
         : [...prev, materialId]
     );
   };
-  
+
   const runAnalysis = async () => {
     if (selectedMaterials.length === 0) return;
-    
+
     setLoading(true);
     apiCallLog = []; // Reset log
-    
+
     try {
       const analysisResults = await batchProcess(selectedMaterials, selectedLocation);
       setResults(analysisResults);
-      
+
       // Update cache stats
       const hits = apiCallLog.filter(log => log.cached).length;
       const misses = apiCallLog.filter(log => !log.cached).length;
@@ -173,13 +173,13 @@ export default function CarbonIntelligenceProof() {
       setLoading(false);
     }
   };
-  
+
   const clearCache = () => {
     materialCache.clear();
     setCacheStats({ hits: 0, misses: 0 });
     apiCallLog = [];
   };
-  
+
   return (
     <div className="max-w-6xl mx-auto p-6 bg-gray-50 min-h-screen">
       <div className="bg-white rounded-lg shadow-lg p-6 mb-6">
@@ -192,7 +192,7 @@ export default function CarbonIntelligenceProof() {
             <p className="text-gray-600">EC3 + OpenEPD + Australian Intelligence</p>
           </div>
         </div>
-        
+
         {/* Performance Stats */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
           <div className="bg-green-50 border border-green-200 rounded-lg p-4">
@@ -232,7 +232,7 @@ export default function CarbonIntelligenceProof() {
             <p className="text-sm text-purple-600">Cache hit rate</p>
           </div>
         </div>
-        
+
         {/* Location Selection */}
         <div className="mb-6">
           <div className="flex items-center gap-2 mb-3">
@@ -260,7 +260,7 @@ export default function CarbonIntelligenceProof() {
             ))}
           </div>
         </div>
-        
+
         {/* Material Selection */}
         <div className="mb-6">
           <div className="flex items-center gap-2 mb-3">
@@ -284,7 +284,7 @@ export default function CarbonIntelligenceProof() {
             ))}
           </div>
         </div>
-        
+
         {/* Action Buttons */}
         <div className="flex gap-3 mb-6">
           <button
@@ -313,7 +313,7 @@ export default function CarbonIntelligenceProof() {
           </button>
         </div>
       </div>
-      
+
       {/* Results Display */}
       {results.length > 0 && (
         <div className="bg-white rounded-lg shadow-lg p-6 mb-6">
@@ -356,7 +356,7 @@ export default function CarbonIntelligenceProof() {
           </div>
         </div>
       )}
-      
+
       {/* API Call Log */}
       {apiCallLog.length > 0 && (
         <div className="bg-white rounded-lg shadow-lg p-6">
