@@ -6,18 +6,18 @@ import { useState } from "react";
 import { NCCComplianceExample } from "@/components/carbon-intelligence/NCCComplianceExample";
 
 export function NCCCompliancePage() {
-  const [aiChatOpen, setAiChatOpen] = useState(false);
-  
-  return (
-    <div className="flex h-screen overflow-hidden bg-neutral-50 dark:bg-gray-950">
-      <Sidebar onAiChatOpen={() => setAiChatOpen(true)} />
-      <div className="flex-1 flex flex-col overflow-hidden lg:ml-0">
-        <Header onAiChatOpen={() => setAiChatOpen(true)} />
-        <main className="flex-1 overflow-y-auto">
-          <NCCComplianceExample />
-        </main>
-      </div>
-      <AIChatModal isOpen={aiChatOpen} onClose={() => setAiChatOpen(false)} />
-    </div>
-  );
+    const [aiChatOpen, setAiChatOpen] = useState(false);
+
+    return (
+        <div className="flex h-screen overflow-hidden bg-neutral-50 dark:bg-gray-950">
+            <Sidebar onAiChatOpen={() => setAiChatOpen(true)} />
+            <div className="flex-1 flex flex-col overflow-hidden lg:ml-0">
+                <Header onAiChatOpen={() => setAiChatOpen(true)} />
+                <main className="flex-1 overflow-y-auto">
+                    <NCCComplianceExample />
+                </main>
+            </div>
+            <AIChatModal isOpen={aiChatOpen} onClose={() => setAiChatOpen(false)} />
+        </div>
+    );
 }

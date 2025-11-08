@@ -4,7 +4,7 @@ import { CheckCircle, XCircle, Info, Zap } from 'lucide-react';
 
 /**
  * NCCCompliance Component
- * 
+ *
  * A comprehensive NCC Section J compliance checker for Australian buildings
  * Includes detailed assessment for:
  * - J1.2 Building Fabric (Thermal Insulation)
@@ -12,14 +12,14 @@ import { CheckCircle, XCircle, Info, Zap } from 'lucide-react';
  * - J1.5 Building Sealing (Air tightness standards)
  * - J1.6 Lighting (Maximum lighting power density)
  * - J5 Embodied Carbon (Whole-of-building limits for commercial)
- * 
+ *
  * @author Climate Scientist & NCC Expert
  * @version 2.0.0
  */
-export default function NCCCompliance({ 
-  buildingData, 
-  climateZone, 
-  buildingClass, 
+export default function NCCCompliance({
+  buildingData,
+  climateZone,
+  buildingClass,
   detailedView = false,
   onComplianceResult = () => {},
   enableEmbodiedCarbon = true
@@ -93,7 +93,7 @@ export default function NCCCompliance({
     let details = [];
     let score = 0;
     const maxScore = 3;
-    
+
     // Roof check
     const roofReq = nccRequirements.thermalResistance.roof[climateZone];
     if (roof?.rValue) {
@@ -106,7 +106,7 @@ export default function NCCCompliance({
         pass: roofPass
       });
     }
-    
+
     // Wall check
     const wallReq = nccRequirements.thermalResistance.wall[climateZone];
     if (walls?.rValue) {
@@ -119,7 +119,7 @@ export default function NCCCompliance({
         pass: wallPass
       });
     }
-    
+
     // Floor check
     const floorReq = nccRequirements.thermalResistance.floor[climateZone];
     if (floor?.rValue) {
@@ -132,27 +132,27 @@ export default function NCCCompliance({
         pass: floorPass
       });
     }
-    
+
     // Overall pass requires all components to pass
     const pass = (score === maxScore) && (details.length === 3);
-    
-    return { 
-      pass, 
-      details, 
-      score: Math.round((score / maxScore) * 100) 
+
+    return {
+      pass,
+      details,
+      score: Math.round((score / maxScore) * 100)
     };
   };
-  
+
   // Check J1.3 Glazing
   const checkJ1_3 = () => {
     const { glazing } = buildingData || {};
     let details = [];
     let score = 0;
     const maxScore = 2;
-    
+
     const uValueReq = nccRequirements.glazing[climateZone].uValue;
     const shgcReq = nccRequirements.glazing[climateZone].shgc;
-    
+
     if (glazing?.uValue) {
       const uValuePass = glazing.uValue <= uValueReq;
       score += uValuePass ? 1 : 0;
@@ -163,7 +163,7 @@ export default function NCCCompliance({
         pass: uValuePass
       });
     }
-    
+
     if (glazing?.shgc) {
       const shgcPass = glazing.shgc <= shgcReq;
       score += shgcPass ? 1 : 0;
@@ -174,26 +174,26 @@ export default function NCCCompliance({
         pass: shgcPass
       });
     }
-    
+
     // Both U-Value and SHGC must pass
     const pass = (score === maxScore) && (details.length === 2);
-    
-    return { 
-      pass, 
-      details, 
+
+    return {
+      pass,
+      details,
       score: Math.round((score / maxScore) * 100)
     };
   };
-  
+
   // Check J1.5 Building Sealing
   const checkJ1_5 = () => {
     const { airTightness } = buildingData || {};
     let details = [];
     let score = 0;
     const maxScore = 1;
-    
+
     const airTightnessReq = nccRequirements.airTightness[climateZone];
-    
+
     if (airTightness?.airChangesPerHour) {
       const airTightnessPass = airTightness.airChangesPerHour <= airTightnessReq;
       score += airTightnessPass ? 1 : 0;
@@ -204,27 +204,27 @@ export default function NCCCompliance({
         pass: airTightnessPass
       });
     }
-    
+
     const pass = (score === maxScore) && (details.length === 1);
-    
-    return { 
-      pass, 
-      details, 
+
+    return {
+      pass,
+      details,
       score: Math.round((score / maxScore) * 100)
     };
   };
-  
+
   // Check J1.6 Lighting
   const checkJ1_6 = () => {
     const { lighting, buildingType, area } = buildingData || {};
     let details = [];
     let score = 0;
     const maxScore = 1;
-    
+
     // Default to office if building type not provided
     const type = buildingType || 'office';
     const lightingReq = nccRequirements.lighting[type.toLowerCase()];
-    
+
     if (lighting?.powerDensity && area) {
       const lightingPass = lighting.powerDensity <= lightingReq;
       score += lightingPass ? 1 : 0;
@@ -235,16 +235,16 @@ export default function NCCCompliance({
         pass: lightingPass
       });
     }
-    
+
     const pass = (score === maxScore) && (details.length === 1);
-    
-    return { 
-      pass, 
-      details, 
+
+    return {
+      pass,
+      details,
       score: Math.round((score / maxScore) * 100)
     };
   };
-  
+
   // Check J5 Embodied Carbon
   const checkJ5 = () => {
     // Skip if embodied carbon compliance is not enabled
@@ -260,16 +260,16 @@ export default function NCCCompliance({
         score: 100
       };
     }
-    
+
     const { embodiedCarbon, buildingType } = buildingData || {};
     let details = [];
     let score = 0;
     const maxScore = 1;
-    
+
     // Default to office if building type not provided
     const type = buildingType || 'office';
     const carbonReq = nccRequirements.embodiedCarbon[type.toLowerCase()];
-    
+
     if (embodiedCarbon?.kgCO2PerM2) {
       const carbonPass = embodiedCarbon.kgCO2PerM2 <= carbonReq;
       score += carbonPass ? 1 : 0;
@@ -280,16 +280,16 @@ export default function NCCCompliance({
         pass: carbonPass
       });
     }
-    
+
     const pass = (score === maxScore) && (details.length === 1);
-    
-    return { 
-      pass, 
-      details, 
+
+    return {
+      pass,
+      details,
       score: Math.round((score / maxScore) * 100)
     };
   };
-  
+
   // Run all checks and consolidate results
   const runComplianceChecks = () => {
     // Run all compliance checks
@@ -298,7 +298,7 @@ export default function NCCCompliance({
     const j1_5Results = checkJ1_5();
     const j1_6Results = checkJ1_6();
     const j5Results = checkJ5();
-    
+
     // Determine overall compliance
     const sectionResults = {
       J1_2: j1_2Results,
@@ -307,31 +307,31 @@ export default function NCCCompliance({
       J1_6: j1_6Results,
       J5: j5Results
     };
-    
+
     // Overall pass requires all sections to pass
     const overallPass = Object.values(sectionResults).every(section => section.pass);
-    
+
     // Set state with results
     const newResults = {
       overall: overallPass,
       sections: sectionResults
     };
-    
+
     setComplianceResults(newResults);
-    
+
     // Call the callback with the results if provided
     onComplianceResult(newResults);
-    
+
     return newResults;
   };
-  
+
   // Run compliance check when component mounts or inputs change
   useEffect(() => {
     if (buildingData && climateZone && buildingClass) {
       runComplianceChecks();
     }
   }, [buildingData, climateZone, buildingClass, enableEmbodiedCarbon]);
-  
+
   // Get the section title
   const getSectionTitle = (section) => {
     switch(section) {
@@ -343,7 +343,7 @@ export default function NCCCompliance({
       default: return section;
     }
   };
-  
+
   // Get section description
   const getSectionDescription = (section) => {
     switch(section) {
@@ -365,7 +365,7 @@ export default function NCCCompliance({
           <p className="text-gray-600 dark:text-gray-400">Climate Zone {climateZone} | Building Class {buildingClass}</p>
         </div>
       </div>
-      
+
       {/* Overall Compliance Status */}
       <div className={`mb-6 p-4 rounded-lg border ${complianceResults.overall ? 'bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-700' : 'bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-700'}`}>
         <div className="flex items-center gap-3">
@@ -379,14 +379,14 @@ export default function NCCCompliance({
               {complianceResults.overall ? 'Section J Compliant' : 'Non-Compliant with Section J'}
             </h2>
             <p className={complianceResults.overall ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}>
-              {complianceResults.overall 
-                ? 'Building design meets all NCC Section J requirements' 
+              {complianceResults.overall
+                ? 'Building design meets all NCC Section J requirements'
                 : 'Building design does not meet one or more NCC Section J requirements'}
             </p>
           </div>
         </div>
       </div>
-      
+
       {/* Section Results */}
       <div className="space-y-4">
         {Object.entries(complianceResults.sections).map(([section, result]) => (
@@ -412,7 +412,7 @@ export default function NCCCompliance({
                 </div>
               </div>
             </div>
-            
+
             {/* Detailed Results (shown when detailedView is true) */}
             {detailedView && result.details.length > 0 && (
               <div className="p-4 bg-white dark:bg-gray-800 border-t border-gray-100 dark:border-gray-700">
@@ -451,7 +451,7 @@ export default function NCCCompliance({
           </div>
         ))}
       </div>
-      
+
       {/* NCC Reference Information */}
       <div className="mt-6 p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-700 rounded-lg">
         <div className="flex items-start gap-3">

@@ -45,7 +45,7 @@ export default function NCCComplianceExample() {
     hasDemandControl: true,
     hasBuildingAutomation: true
   });
-  
+
   // Materials carbon parameters
   const [materials, setMaterials] = useState({
     structuralType: 'concrete',
@@ -56,7 +56,7 @@ export default function NCCComplianceExample() {
     insulationType: 'glasswool',
     windowFrames: 'aluminum'
   });
-  
+
   // NCC compliance results
   const [complianceResults, setComplianceResults] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -65,7 +65,7 @@ export default function NCCComplianceExample() {
   // Simulate NCC compliance check
   const checkCompliance = () => {
     setLoading(true);
-    
+
     setTimeout(() => {
       const buildingData = {
         thermalPerformance: {
@@ -89,33 +89,33 @@ export default function NCCComplianceExample() {
           kgCO2PerM2: calculateEmbodiedCarbon()
         }
       };
-      
+
       // The NCCCompliance component will call onComplianceResult
       setLoading(false);
     }, 500);
   };
-  
+
   // Simulate thermal performance calculation
   const calculateThermalPerformance = () => {
     const roofU = 1 / envelope.roofRValue;
     const wallU = 1 / envelope.wallRValue;
     const floorU = 1 / envelope.floorRValue;
-    
+
     // Simplified overall U-value calculation
     const roofArea = project.gfa / project.stories;
     const wallArea = (project.gfa / project.stories) * 4 * 3; // Simplified
     const floorArea = roofArea;
     const glazingArea = envelope.glazingArea;
-    
+
     const totalArea = roofArea + wallArea + floorArea + glazingArea;
-    
+
     const overallU = (
-      (roofArea * roofU) + 
-      (wallArea * wallU) + 
-      (floorArea * floorU) + 
+      (roofArea * roofU) +
+      (wallArea * wallU) +
+      (floorArea * floorU) +
       (glazingArea * envelope.windowUValue)
     ) / totalArea;
-    
+
     return {
       overallUValue: overallU.toFixed(2),
       roofU: roofU.toFixed(2),
@@ -123,25 +123,25 @@ export default function NCCComplianceExample() {
       floorU: floorU.toFixed(2)
     };
   };
-  
-  // Simulate energy performance calculation  
+
+  // Simulate energy performance calculation
   const calculateEnergyPerformance = () => {
     // Simplified energy calculation
     const baseLoad = project.gfa * 100; // kWh/year base load
-    
+
     // Envelope performance factor
     const thermal = calculateThermalPerformance();
     const envelopeFactor = parseFloat(thermal.overallUValue) / 2.0;
-    
+
     // Lighting factor
     const lightingLoad = project.gfa * systems.lightingPowerDensity * 2000; // hours
-    
+
     // HVAC efficiency factor
     const hvacFactor = systems.hvacCOP >= 3.5 ? 0.8 : 1.0;
-    
+
     const totalEnergy = (baseLoad * envelopeFactor * hvacFactor) + lightingLoad;
     const energyPerM2 = totalEnergy / project.gfa;
-    
+
     return {
       totalAnnualEnergy: Math.round(totalEnergy),
       energyPerM2: Math.round(energyPerM2),
@@ -150,11 +150,11 @@ export default function NCCComplianceExample() {
       rating: energyPerM2 < 100 ? 'Excellent' : energyPerM2 < 150 ? 'Good' : energyPerM2 < 200 ? 'Average' : 'Poor'
     };
   };
-  
+
   // Simulate embodied carbon calculation
   const calculateEmbodiedCarbon = () => {
     let embodiedCarbon = 0;
-    
+
     // Structural system carbon
     if (materials.structuralType === 'concrete') {
       const concreteFactors = {
@@ -169,22 +169,22 @@ export default function NCCComplianceExample() {
     } else if (materials.structuralType === 'timber') {
       embodiedCarbon -= 350; // Carbon sequestration
     }
-    
+
     // Add other material contributions (simplified)
     embodiedCarbon += 50; // Internal walls
     embodiedCarbon += 20; // Insulation
     embodiedCarbon += 75; // Glazing
     embodiedCarbon += 30; // Finishes
-    
+
     return Math.max(embodiedCarbon, 0);
   };
-  
+
   // Generate recommendations for non-compliant sections
   const generateRecommendations = (compliance) => {
     if (!compliance) return [];
-    
+
     const recommendations = [];
-    
+
     // Check J1.2 - Building Fabric
     if (!compliance.sections.J1_2.pass) {
       recommendations.push({
@@ -199,7 +199,7 @@ export default function NCCComplianceExample() {
         ]
       });
     }
-    
+
     // Check J1.3 - Glazing
     if (!compliance.sections.J1_3.pass) {
       recommendations.push({
@@ -214,7 +214,7 @@ export default function NCCComplianceExample() {
         ]
       });
     }
-    
+
     // Check J1.5 - Building Sealing
     if (!compliance.sections.J1_5.pass) {
       recommendations.push({
@@ -229,7 +229,7 @@ export default function NCCComplianceExample() {
         ]
       });
     }
-    
+
     // Check J1.6 - Lighting
     if (!compliance.sections.J1_6.pass) {
       recommendations.push({
@@ -244,7 +244,7 @@ export default function NCCComplianceExample() {
         ]
       });
     }
-    
+
     // Check J5 - Embodied Carbon
     if (!compliance.sections.J5.pass) {
       recommendations.push({
@@ -260,7 +260,7 @@ export default function NCCComplianceExample() {
         ]
       });
     }
-    
+
     return recommendations;
   };
 
@@ -271,14 +271,14 @@ export default function NCCComplianceExample() {
     { value: 'geopolymer', label: 'Geopolymer Concrete (GPC)' },
     { value: 'recycled-aggregate', label: 'Concrete with 30% Recycled Aggregate' }
   ];
-  
+
   const structuralTypes = [
     { value: 'concrete', label: 'Reinforced Concrete' },
     { value: 'steel', label: 'Structural Steel' },
     { value: 'timber', label: 'Mass Timber / CLT' },
     { value: 'hybrid', label: 'Hybrid Structure' }
   ];
-  
+
   const floorTypes = [
     { value: 'concrete', label: 'Concrete Slab' },
     { value: 'timber', label: 'Timber Framed' },
@@ -332,7 +332,7 @@ export default function NCCComplianceExample() {
             Interactive assessment tool for Australian building energy efficiency compliance
           </p>
         </div>
-        <Button 
+        <Button
           onClick={checkCompliance}
           disabled={loading}
           size="lg"
@@ -354,7 +354,7 @@ export default function NCCComplianceExample() {
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label>Project Name</Label>
-                  <Input 
+                  <Input
                     value={project.name}
                     onChange={(e) => setProject({...project, name: e.target.value})}
                   />
@@ -393,7 +393,7 @@ export default function NCCComplianceExample() {
                 </div>
                 <div className="space-y-2">
                   <Label>Gross Floor Area (m²)</Label>
-                  <Input 
+                  <Input
                     type="number"
                     value={project.gfa}
                     onChange={(e) => setProject({...project, gfa: parseInt(e.target.value) || 0})}
@@ -414,12 +414,12 @@ export default function NCCComplianceExample() {
                   <TabsTrigger value="systems">Systems</TabsTrigger>
                   <TabsTrigger value="materials">Materials</TabsTrigger>
                 </TabsList>
-                
+
                 <TabsContent value="envelope" className="space-y-4 mt-4">
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <Label>Roof R-Value</Label>
-                      <Input 
+                      <Input
                         type="number"
                         step="0.1"
                         value={envelope.roofRValue}
@@ -428,7 +428,7 @@ export default function NCCComplianceExample() {
                     </div>
                     <div className="space-y-2">
                       <Label>Wall R-Value</Label>
-                      <Input 
+                      <Input
                         type="number"
                         step="0.1"
                         value={envelope.wallRValue}
@@ -437,7 +437,7 @@ export default function NCCComplianceExample() {
                     </div>
                     <div className="space-y-2">
                       <Label>Floor R-Value</Label>
-                      <Input 
+                      <Input
                         type="number"
                         step="0.1"
                         value={envelope.floorRValue}
@@ -446,7 +446,7 @@ export default function NCCComplianceExample() {
                     </div>
                     <div className="space-y-2">
                       <Label>Window U-Value (W/m²K)</Label>
-                      <Input 
+                      <Input
                         type="number"
                         step="0.1"
                         value={envelope.windowUValue}
@@ -455,7 +455,7 @@ export default function NCCComplianceExample() {
                     </div>
                     <div className="space-y-2">
                       <Label>Window SHGC</Label>
-                      <Input 
+                      <Input
                         type="number"
                         step="0.01"
                         value={envelope.windowSHGC}
@@ -464,7 +464,7 @@ export default function NCCComplianceExample() {
                     </div>
                     <div className="space-y-2">
                       <Label>Air Tightness (ACH @ 50 Pa)</Label>
-                      <Input 
+                      <Input
                         type="number"
                         step="0.1"
                         value={envelope.airTightness}
@@ -473,12 +473,12 @@ export default function NCCComplianceExample() {
                     </div>
                   </div>
                 </TabsContent>
-                
+
                 <TabsContent value="systems" className="space-y-4 mt-4">
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <Label>Lighting Power Density (W/m²)</Label>
-                      <Input 
+                      <Input
                         type="number"
                         step="0.1"
                         value={systems.lightingPowerDensity}
@@ -487,7 +487,7 @@ export default function NCCComplianceExample() {
                     </div>
                     <div className="space-y-2">
                       <Label>HVAC COP</Label>
-                      <Input 
+                      <Input
                         type="number"
                         step="0.1"
                         value={systems.hvacCOP}
@@ -523,7 +523,7 @@ export default function NCCComplianceExample() {
                     </div>
                   </div>
                 </TabsContent>
-                
+
                 <TabsContent value="materials" className="space-y-4 mt-4">
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
@@ -554,7 +554,7 @@ export default function NCCComplianceExample() {
                     </div>
                     <div className="space-y-2">
                       <Label>Steel Recycled Content (%)</Label>
-                      <Input 
+                      <Input
                         type="number"
                         min="0"
                         max="100"
@@ -689,7 +689,7 @@ export default function NCCComplianceExample() {
             <div>
               <h4 className="font-semibold text-blue-900 dark:text-blue-300 mb-2">About This Tool</h4>
               <p className="text-sm text-blue-800 dark:text-blue-400">
-                This interactive tool helps assess compliance with the National Construction Code (NCC) 2022 Section J energy efficiency provisions. 
+                This interactive tool helps assess compliance with the National Construction Code (NCC) 2022 Section J energy efficiency provisions.
                 Adjust the building parameters above and click "Check Compliance" to see if your design meets the requirements for Climate Zone {project.climateZone}.
               </p>
             </div>

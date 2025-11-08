@@ -4,8 +4,8 @@ import NCCComplianceExample from './NCCComplianceExample';
 import './NCCCompliance.css';
 
 export {
-  NCCCompliance,
-  NCCComplianceExample
+    NCCCompliance,
+    NCCComplianceExample
 };
 
 // Default export for easy importing
