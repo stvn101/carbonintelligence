@@ -16,6 +16,7 @@ import Investments from "@/pages/investments";
 import ML from "@/pages/ml";
 import Integrations from "@/pages/integrations";
 import Settings from "@/pages/settings";
+import CarbonIntelligenceProof from "@/ui/components/CarbonIntelligenceProof";
 
 function Router() {
   const { isAuthenticated, isLoading } = useAuth();
@@ -37,16 +38,17 @@ function Router() {
 
   return (
     <Switch>
-      <Route path="/" component={Dashboard}/>
-      <Route path="/dashboard" component={Dashboard}/>
-      <Route path="/portfolio" component={Portfolio}/>
-      <Route path="/regulatory" component={Regulatory}/>
-      <Route path="/reports" component={Reports}/>
-      <Route path="/budget" component={Budget}/>
-      <Route path="/investments" component={Investments}/>
-      <Route path="/ml" component={ML}/>
-      <Route path="/integrations" component={Integrations}/>
-      <Route path="/settings" component={Settings}/>
+      <Route path="/" component={Dashboard} />
+      <Route path="/dashboard" component={Dashboard} />
+      <Route path="/demo" component={CarbonIntelligenceProof} />
+      <Route path="/portfolio" component={Portfolio} />
+      <Route path="/regulatory" component={Regulatory} />
+      <Route path="/reports" component={Reports} />
+      <Route path="/budget" component={Budget} />
+      <Route path="/investments" component={Investments} />
+      <Route path="/ml" component={ML} />
+      <Route path="/integrations" component={Integrations} />
+      <Route path="/settings" component={Settings} />
       <Route component={NotFound} />
     </Switch>
   );
