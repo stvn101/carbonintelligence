@@ -1,0 +1,57 @@
+{
+  "recommendations": [
+    // ============================================
+    // ESSENTIAL EXTENSIONS
+    // ============================================
+    "dbaeumer.vscode-eslint",
+    "esbenp.prettier-vscode",
+    "bradlc.vscode-tailwindcss",
+
+    // ============================================
+    // TYPESCRIPT & REACT
+    // ============================================
+    "dsznajder.es7-react-js-snippets",
+    "formulahendry.auto-rename-tag",
+    "ms-vscode.vscode-typescript-next",
+
+    // ============================================
+    // DATABASE & API TOOLS
+    // ============================================
+    "mtxr.sqltools",
+    "mtxr.sqltools-driver-pg",
+    "rangav.vscode-thunder-client",
+
+    // ============================================
+    // GIT TOOLS
+    // ============================================
+    "eamodio.gitlens",
+    "donjayamanne.githistory",
+
+    // ============================================
+    // CODE QUALITY & UTILITIES
+    // ============================================
+    "christian-kohler.path-intellisense",
+    "usernamehw.errorlens",
+    "wayou.vscode-todo-highlight",
+    "streetsidesoftware.code-spell-checker",
+    "yoavbls.pretty-ts-errors",
+
+    // ============================================
+    // BUILD TOOLS
+    // ============================================
+    "antfu.vite",
+
+    // ============================================
+    // DOCKER (OPTIONAL)
+    // ============================================
+    "ms-azuretools.vscode-docker",
+
+    // ============================================
+    // ADDITIONAL HELPFUL EXTENSIONS
+    // ============================================
+    "pranaygp.vscode-css-peek",
+    "steoates.autoimport",
+    "wix.vscode-import-cost"
+  ],
+  "unwantedRecommendations": []
+}

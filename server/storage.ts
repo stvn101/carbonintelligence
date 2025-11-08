@@ -387,23 +387,40 @@ export class MemStorage implements IStorage {
 
   async upsertUser(userData: UpsertUser): Promise<User> {
     const existing = userData.id ? this.users.get(userData.id) : undefined;
-    const user: User = existing
-      ? { ...existing, ...userData, updatedAt: new Date() }
-      : { 
-          ...userData, 
-          id: userData.id || `user_${this.currentId++}`,
-          createdAt: new Date(),
-          updatedAt: new Date(),
-        };
-    this.users.set(user.id, user);
-    return user;
+    if (existing) {
+      const updatedUser: User = {
+        ...existing,
+        email: userData.email ?? existing.email ?? null,
+        firstName: userData.firstName ?? existing.firstName ?? null,
+        lastName: userData.lastName ?? existing.lastName ?? null,
+        profileImageUrl: userData.profileImageUrl ?? existing.profileImageUrl ?? null,
+        updatedAt: new Date(),
+      };
+      this.users.set(updatedUser.id, updatedUser);
+      return updatedUser;
+    }
+
+    const newUser: User = {
+      id: userData.id || `user_${this.currentId++}`,
+      email: userData.email ?? null,
+      firstName: userData.firstName ?? null,
+      lastName: userData.lastName ?? null,
+      profileImageUrl: userData.profileImageUrl ?? null,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+    this.users.set(newUser.id, newUser);
+    return newUser;
   }
 
   async createUser(insertUser: InsertUser): Promise<User> {
     const id = `user_${this.currentId++}`;
     const user: User = { 
-      ...insertUser, 
       id,
+      email: insertUser.email ?? null,
+      firstName: insertUser.firstName ?? null,
+      lastName: insertUser.lastName ?? null,
+      profileImageUrl: insertUser.profileImageUrl ?? null,
       createdAt: new Date(),
       updatedAt: new Date(),
     };
@@ -415,7 +432,14 @@ export class MemStorage implements IStorage {
     const user = this.users.get(id);
     if (!user) throw new Error('User not found');
     
-    const updatedUser = { ...user, ...updates, updatedAt: new Date() };
+    const updatedUser: User = {
+      ...user,
+      email: updates.email ?? user.email ?? null,
+      firstName: updates.firstName ?? user.firstName ?? null,
+      lastName: updates.lastName ?? user.lastName ?? null,
+      profileImageUrl: updates.profileImageUrl ?? user.profileImageUrl ?? null,
+      updatedAt: new Date(),
+    };
     this.users.set(id, updatedUser);
     return updatedUser;
   }
@@ -516,13 +540,24 @@ export class MemStorage implements IStorage {
     const alert: RegulatoryAlert = { 
       ...insertAlert, 
       id, 
+      updatedAt: new Date(),
       createdAt: new Date(),
       status: insertAlert.status || "active",
       effectiveDate: insertAlert.effectiveDate || null,
       deadline: insertAlert.deadline || null,
       affectedProjects: insertAlert.affectedProjects || null,
       source: insertAlert.source || null,
-      impact: insertAlert.impact || null
+      impact: insertAlert.impact || null,
+      regulatoryFramework: insertAlert.regulatoryFramework || null,
+      jurisdiction: insertAlert.jurisdiction || null,
+      legislativeInstrument: insertAlert.legislativeInstrument || null,
+      complianceThresholds: insertAlert.complianceThresholds || null,
+      reportingRequirements: insertAlert.reportingRequirements || null,
+      penaltyFramework: insertAlert.penaltyFramework || null,
+      relatedGreenStarCategories: insertAlert.relatedGreenStarCategories || null,
+      relatedNabersMetrics: insertAlert.relatedNabersMetrics || null,
+      relatedNccSections: insertAlert.relatedNccSections || null,
+      complianceScore: insertAlert.complianceScore || null
     };
     this.regulatoryAlerts.set(id, alert);
     return alert;

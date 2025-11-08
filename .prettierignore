@@ -1,0 +1,43 @@
+# Dependencies
+node_modules
+
+# Build outputs
+dist
+build
+.vite
+*.tsbuildinfo
+
+# Lock files
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Version control
+.git
+.gitignore
+
+# Environment files
+.env
+.env.*
+
+# Logs
+logs
+*.log
+
+# IDE
+.vscode
+.idea
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Vercel
+.vercel
+
+# Replit
+.replit
+replit.nix
+
+# Generated files
+migrations

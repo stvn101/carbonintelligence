@@ -29,6 +29,14 @@ export interface OptimizationRecommendation {
   cost: string;
   roi: string;
   category: string;
+  id?: string;
+  status?: string;
+  projections?: {
+    before: string;
+    after: string;
+    savings: string;
+  };
+  carbonReduction?: string;
 }
 
 export interface InvestmentAnalysis {

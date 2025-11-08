@@ -1,0 +1,22 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(vercel --version:*)",
+      "Bash(vercel whoami:*)",
+      "Bash(vercel ls:*)",
+      "Bash(echo:*)",
+      "Bash(vercel project ls:*)",
+      "Bash(supabase status:*)",
+      "Bash(supabase --version:*)",
+      "Bash(vercel link:*)",
+      "Bash(docker login:*)",
+      "Bash(code --version:*)",
+      "Bash(docker info:*)",
+      "Bash(vercel env ls:*)",
+      "Bash(docker ps:*)",
+      "Bash(git add:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

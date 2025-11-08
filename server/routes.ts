@@ -2,7 +2,7 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { setupAuth, isAuthenticated } from "./replitAuth";
-import { openaiService } from "./services/openai";
+import { openaiService, type OptimizationRecommendation } from "./services/openai";
 import { carbonConstructService } from "./services/carbonConstruct";
 import { regulatoryService } from "./services/regulatory";
 import { mlService } from "./services/mlService";
@@ -18,6 +18,23 @@ import {
   insertStateBuildingRegulationSchema, insertFederalComplianceTrackingSchema
 } from "@shared/schema";
 import { z } from "zod";
+
+const getErrorMessage = (error: unknown): string => {
+  if (error instanceof Error) return error.message;
+  if (typeof error === "string") return error;
+  return "Unknown error";
+};
+
+type RecommendationWithMetadata = OptimizationRecommendation & {
+  id?: string;
+  status?: string;
+  projections?: {
+    before: string;
+    after: string;
+    savings: string;
+  };
+  carbonReduction?: string;
+};
 
 // Custom validation schemas for complex routes
 const aiQuerySchema = z.object({
@@ -120,7 +137,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const currentYear = new Date().getFullYear();
       const budget = await storage.getCarbonBudget(currentYear);
 
-      let recommendations;
+      let recommendations: RecommendationWithMetadata[] = [];
       
       try {
         recommendations = await openaiService.generateOptimizationRecommendations(
@@ -142,6 +159,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
             roi: 'A$280K savings',
             carbonReduction: '156',
             status: 'pending',
+            impact: 'Reduces embodied carbon intensity across core structural elements',
+            expectedReduction: 156,
+            cost: 'A$1.2M CAPEX',
             projections: {
               before: '520 tCO₂e',
               after: '364 tCO₂e',
@@ -157,6 +177,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
             roi: 'A$150K savings',
             carbonReduction: '89',
             status: 'pending',
+            impact: 'Offsets grid electricity with renewable generation',
+            expectedReduction: 89,
+            cost: 'A$950K CAPEX',
             projections: {
               before: '240 tCO₂e/year',
               after: '151 tCO₂e/year',
@@ -172,6 +195,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
             roi: 'A$95K savings',
             carbonReduction: '42',
             status: 'pending',
+            impact: 'Reduces Scope 3 transport emissions for timber packages',
+            expectedReduction: 42,
+            cost: 'A$120K logistics premium',
             projections: {
               before: '180 tCO₂e',
               after: '138 tCO₂e',
@@ -187,13 +213,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const appliedIds = appliedInsights.map(insight => {
         const data = typeof insight.data === 'string' ? JSON.parse(insight.data) : insight.data;
         return data?.id || data?.recommendationId;
-      }).filter(Boolean);
+      }).filter((value): value is string => Boolean(value));
       
       // Mark applied recommendations
-      const recommendationsWithStatus = recommendations.map(rec => ({
-        ...rec,
-        status: appliedIds.includes(rec.id) ? 'applied' : 'pending'
-      }));
+      const recommendationsWithStatus = recommendations.map((rec, index) => {
+        const recommendationId = rec.id ?? `rec_${index + 1}`;
+        return {
+          ...rec,
+          id: recommendationId,
+          status: appliedIds.includes(recommendationId) ? 'applied' : 'pending'
+        };
+      });
 
       // Store insights in database
       for (const rec of recommendationsWithStatus.slice(0, 3)) { // Store top 3
@@ -538,8 +568,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         submissionDeadline: `${reportingYear + 1}-10-31`
       });
     } catch (error) {
-      console.error("Failed to generate NGER compliance report:", error);
-      res.status(500).json({ error: "Failed to generate NGER compliance report", details: error.message });
+      const message = getErrorMessage(error);
+      console.error("Failed to generate NGER compliance report:", message);
+      res.status(500).json({ error: "Failed to generate NGER compliance report", details: message });
     }
   });
 
@@ -577,6 +608,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const nccCompliance = await storage.getNccCompliance(projectId);
       const complianceScore = await fetch(`${req.protocol}://${req.get('host')}/api/regulatory/compliance-score?projectId=${projectId || ''}`);
       const complianceData = await complianceScore.json();
+      const estimatedAnnualEmissions = federalCompliance?.estimatedAnnualEmissions
+        ? Number(federalCompliance.estimatedAnnualEmissions)
+        : null;
 
       // Generate NGER report if applicable
       let ngerReport = null;
@@ -638,7 +672,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         federalCompliance: {
           nger: {
             status: federalCompliance?.ngerComplianceStatus || "not_applicable",
-            thresholdMet: federalCompliance?.estimatedAnnualEmissions > 25000,
+            thresholdMet: estimatedAnnualEmissions !== null && estimatedAnnualEmissions > 25000,
             nextDeadline: `${(reportingYear || new Date().getFullYear())}-10-31`,
             report: ngerReport
           },

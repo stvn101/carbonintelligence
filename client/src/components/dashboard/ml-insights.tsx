@@ -5,15 +5,53 @@ import { Brain, TrendingUp, AlertTriangle, Zap, Play, Settings } from "lucide-re
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 
+type Forecast = {
+  timeframe: string;
+  predictedEmissions: number;
+  confidence: number;
+  change: number;
+  factors: string[];
+};
+
+type PatternInsight = {
+  type: string;
+  confidence: number;
+  impact: "high" | "medium" | "low" | string;
+  description: string;
+};
+
+type MlAnomaly = {
+  description: string;
+  severity: "critical" | "warning" | "info" | string;
+  suggestedAction: string;
+};
+
+type CompanyModelStatus = {
+  status?: string;
+  accuracy?: number;
+};
+
+type MLInsightsResponse = {
+  forecasts?: Forecast[];
+  modelAccuracy?: number;
+  trainingDataSize?: string | number;
+  anomalies?: MlAnomaly[];
+  companyModel?: CompanyModelStatus;
+};
+
+type PatternInsightsResponse = {
+  patterns?: PatternInsight[];
+};
+
 export function MLInsights() {
   const [selectedModel, setSelectedModel] = useState("advanced_forecasting");
   const { toast } = useToast();
 
-  const { data: mlData, isLoading, isError } = useQuery({
+  const { data: mlData, isLoading, isError } = useQuery<MLInsightsResponse>({
     queryKey: ["/api/ml/insights"],
   });
 
-  const { data: patterns, isError: patternsError } = useQuery({
+  const { data: patterns, isError: patternsError } = useQuery<PatternInsightsResponse>({
     queryKey: ["/api/ml/patterns"],
   });
 
@@ -59,7 +97,17 @@ export function MLInsights() {
     );
   }
 
-  const forecasts = mlData?.forecasts || [
+  if (isError || patternsError) {
+    return (
+      <div className="bg-white rounded-lg shadow-sm border border-red-200 p-6">
+        <p className="text-red-700 text-sm">
+          Unable to load ML insights right now. Please try again shortly.
+        </p>
+      </div>
+    );
+  }
+
+  const forecasts: Forecast[] = mlData?.forecasts || [
     {
       timeframe: "Next Quarter",
       predictedEmissions: 2450,
@@ -77,7 +125,7 @@ export function MLInsights() {
   ];
 
   const modelAccuracy = mlData?.modelAccuracy || 0.87;
-  const patternInsights = patterns?.patterns || [
+  const patternInsights: PatternInsight[] = patterns?.patterns || [
     {
       type: "Seasonal Material Usage",
       confidence: 0.92,
@@ -91,6 +139,9 @@ export function MLInsights() {
       description: "Local sourcing reduces emissions by 25%"
     }
   ];
+
+  const anomalies = mlData?.anomalies || [];
+  const companyModel = mlData?.companyModel;
 
   return (
     <div className="bg-white rounded-lg shadow-sm border border-neutral-200 p-6">
@@ -223,24 +274,24 @@ export function MLInsights() {
             </Button>
           </div>
           <div className="text-sm text-neutral-700">
-            <span className="font-medium">Status:</span> {mlData?.companyModel?.status || "Ready to train"}
-            {mlData?.companyModel?.accuracy && (
+            <span className="font-medium">Status:</span> {companyModel?.status || "Ready to train"}
+            {companyModel?.accuracy && (
               <span className="ml-4">
-                <span className="font-medium">Accuracy:</span> {(mlData.companyModel.accuracy * 100).toFixed(1)}%
+                <span className="font-medium">Accuracy:</span> {(companyModel.accuracy * 100).toFixed(1)}%
               </span>
             )}
           </div>
         </div>
 
         {/* Anomaly Detection */}
-        {mlData?.anomalies && mlData.anomalies.length > 0 && (
+        {anomalies.length > 0 && (
           <div>
             <h4 className="font-medium text-neutral-900 mb-3 flex items-center">
               <AlertTriangle className="w-4 h-4 mr-2 text-red-600" />
               Detected Anomalies
             </h4>
             <div className="space-y-2">
-              {mlData.anomalies.map((anomaly: any, index: number) => (
+              {anomalies.map((anomaly, index) => (
                 <div key={index} className="bg-red-50 border border-red-200 rounded-lg p-3">
                   <div className="flex items-center justify-between">
                     <span className="font-medium text-red-900">{anomaly.description}</span>

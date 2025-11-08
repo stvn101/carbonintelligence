@@ -1,0 +1,36 @@
+# Dependencies
+node_modules
+
+# Build outputs
+dist
+build
+.vite
+*.tsbuildinfo
+
+# Configuration files
+*.config.ts
+*.config.js
+vite.config.ts
+tailwind.config.ts
+postcss.config.js
+drizzle.config.ts
+
+# Lock files
+package-lock.json
+
+# Version control
+.git
+
+# Environment files
+.env
+.env.*
+
+# Logs
+logs
+*.log
+
+# Vercel
+.vercel
+
+# Generated files
+migrations
