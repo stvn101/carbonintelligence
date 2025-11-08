@@ -22,6 +22,9 @@ import MaterialComparison from "@/pages/material-comparison";
 import ProjectAnalysisPage from "@/pages/project-analysis";
 import { ScopesCalculatorPage } from "@/pages/scopes-calculator";
 import { NCCCompliancePage } from "@/pages/ncc-compliance";
+import LCACalculatorPage from "@/pages/lca-calculator";
+import MaterialsDatabasePage from "@/pages/materials-database";
+import ReportingManagerPage from "@/pages/reporting-manager";
 
 function Router() {
   const { isAuthenticated, isLoading } = useAuth();
@@ -59,6 +62,9 @@ function Router() {
       <Route path="/project-analysis" component={ProjectAnalysisPage} />
       <Route path="/scopes-calculator" component={ScopesCalculatorPage} />
       <Route path="/ncc-compliance" component={NCCCompliancePage} />
+      <Route path="/lca-calculator" component={LCACalculatorPage} />
+      <Route path="/materials-database" component={MaterialsDatabasePage} />
+      <Route path="/reporting-manager" component={ReportingManagerPage} />
       <Route component={NotFound} />
     </Switch>
   );

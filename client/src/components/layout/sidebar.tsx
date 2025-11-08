@@ -1,4 +1,4 @@
-import { ChartLine, ChartGantt, ShieldHalf, File, Calculator, ChartBar, Bot, Settings, Brain, Zap, Menu, X, BarChart3, Layers, Package, ClipboardCheck } from "lucide-react";
+import { ChartLine, ChartGantt, ShieldHalf, File, Calculator, ChartBar, Bot, Settings, Brain, Zap, Menu, X, BarChart3, Layers, Package, ClipboardCheck, Beaker, Database, FileSpreadsheet } from "lucide-react";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { Logo } from "@/components/ui/logo";
 import { Link, useLocation } from "wouter";
@@ -200,6 +200,30 @@ export function Sidebar({ onAiChatOpen }: SidebarProps) {
               <div className={getNavItemClasses("/ncc-compliance")}>
                 <ClipboardCheck className="w-5 h-5 flex-shrink-0" />
                 <span className={`text-sm ${isActive("/ncc-compliance") ? "font-semibold" : "font-medium"}`}>NCC Compliance</span>
+              </div>
+            </Link>
+
+            {/* LCA Calculator */}
+            <Link href="/lca-calculator" data-testid="nav-lca-calculator">
+              <div className={getNavItemClasses("/lca-calculator")}>
+                <Beaker className="w-5 h-5 flex-shrink-0" />
+                <span className={`text-sm ${isActive("/lca-calculator") ? "font-semibold" : "font-medium"}`}>LCA Calculator</span>
+              </div>
+            </Link>
+
+            {/* Materials Database */}
+            <Link href="/materials-database" data-testid="nav-materials-database">
+              <div className={getNavItemClasses("/materials-database")}>
+                <Database className="w-5 h-5 flex-shrink-0" />
+                <span className={`text-sm ${isActive("/materials-database") ? "font-semibold" : "font-medium"}`}>Materials Database</span>
+              </div>
+            </Link>
+
+            {/* Reporting Manager */}
+            <Link href="/reporting-manager" data-testid="nav-reporting-manager">
+              <div className={getNavItemClasses("/reporting-manager")}>
+                <FileSpreadsheet className="w-5 h-5 flex-shrink-0" />
+                <span className={`text-sm ${isActive("/reporting-manager") ? "font-semibold" : "font-medium"}`}>Reporting Manager</span>
               </div>
             </Link>
           </div>
