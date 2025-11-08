@@ -17,6 +17,9 @@ import ML from "@/pages/ml";
 import Integrations from "@/pages/integrations";
 import Settings from "@/pages/settings";
 import CarbonIntelligenceProof from "@/ui/components/CarbonIntelligenceProof";
+import CarbonDashboard from "@/pages/carbon-dashboard";
+import MaterialComparison from "@/pages/material-comparison";
+import ProjectAnalysisPage from "@/pages/project-analysis";
 
 function Router() {
   const { isAuthenticated, isLoading } = useAuth();
@@ -49,6 +52,9 @@ function Router() {
       <Route path="/ml" component={ML} />
       <Route path="/integrations" component={Integrations} />
       <Route path="/settings" component={Settings} />
+      <Route path="/carbon-dashboard" component={CarbonDashboard} />
+      <Route path="/material-comparison" component={MaterialComparison} />
+      <Route path="/project-analysis" component={ProjectAnalysisPage} />
       <Route component={NotFound} />
     </Switch>
   );
