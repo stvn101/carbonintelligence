@@ -20,6 +20,7 @@ import CarbonIntelligenceProof from "@/ui/components/CarbonIntelligenceProof";
 import CarbonDashboard from "@/pages/carbon-dashboard";
 import MaterialComparison from "@/pages/material-comparison";
 import ProjectAnalysisPage from "@/pages/project-analysis";
+import { ScopesCalculatorPage } from "@/pages/scopes-calculator";
 
 function Router() {
   const { isAuthenticated, isLoading } = useAuth();
@@ -55,6 +56,7 @@ function Router() {
       <Route path="/carbon-dashboard" component={CarbonDashboard} />
       <Route path="/material-comparison" component={MaterialComparison} />
       <Route path="/project-analysis" component={ProjectAnalysisPage} />
+      <Route path="/scopes-calculator" component={ScopesCalculatorPage} />
       <Route component={NotFound} />
     </Switch>
   );

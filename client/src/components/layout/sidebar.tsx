@@ -186,6 +186,14 @@ export function Sidebar({ onAiChatOpen }: SidebarProps) {
                 <span className={`text-sm ${isActive("/project-analysis") ? "font-semibold" : "font-medium"}`}>Project Analysis</span>
               </div>
             </Link>
+
+            {/* GHG Scopes Calculator */}
+            <Link href="/scopes-calculator" data-testid="nav-scopes-calculator">
+              <div className={getNavItemClasses("/scopes-calculator")}>
+                <Calculator className="w-5 h-5 flex-shrink-0" />
+                <span className={`text-sm ${isActive("/scopes-calculator") ? "font-semibold" : "font-medium"}`}>GHG Scopes Calculator</span>
+              </div>
+            </Link>
           </div>
 
           {/* AI Assistant Section */}
