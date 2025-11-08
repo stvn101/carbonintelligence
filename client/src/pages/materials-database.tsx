@@ -2,6 +2,7 @@ import { Sidebar } from "@/components/layout/sidebar";
 import { Header } from "@/components/layout/header";
 import { AIChatModal } from "@/components/dashboard/ai-chat-modal";
 import { useState } from "react";
+// @ts-ignore - TODO: Convert EmbodiedCarbonDatabase to TypeScript
 import EmbodiedCarbonDatabase from "@/components/carbon-intelligence/EmbodiedCarbonDatabase";
 
 export default function MaterialsDatabasePage() {
