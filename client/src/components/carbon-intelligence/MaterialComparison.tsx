@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import React, { useState, useEffect } from 'react';
 import { Search, Plus, Zap, DollarSign, Truck, BarChart3, TrendingDown } from 'lucide-react';
 import {

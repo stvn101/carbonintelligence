@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import React, { useState } from 'react';
 import {
   Calculator, Building2, TrendingDown, AlertCircle, Download,

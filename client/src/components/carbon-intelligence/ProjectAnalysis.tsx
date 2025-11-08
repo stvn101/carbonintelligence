@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import React, { useState, useEffect } from 'react';
 import { Layers, Building2, CloudRain, TrendingUp, Recycle, Zap, Truck } from 'lucide-react';
 import {

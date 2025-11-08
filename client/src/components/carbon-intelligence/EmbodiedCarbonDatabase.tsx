@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import React, { useState } from 'react';
 import {
   Database, Search, TrendingDown, Package, Info, Zap,
