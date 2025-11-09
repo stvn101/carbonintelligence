@@ -1,16 +1,3 @@
-cd /path/to/carbonintelligence
-
-# Create the vercel.json file
-cat > vercel.json << 'EOF'
 {
-  "$schema": "https://openapi.vercel.sh/vercel.json",
-  "buildCommand": "npm run build",
-  "outputDirectory": "dist/public",
-  "rewrites": [
-    {
-      "source": "/(.*)",
-      "destination": "/index.html"
-    }
-  ]
+  "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
 }
-EOF
